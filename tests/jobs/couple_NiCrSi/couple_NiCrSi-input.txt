@@ -1,0 +1,33 @@
+# Thermodynamic and mobility databases
+thermo_db = schuster2000
+mob_db    = du2001
+
+# System constituents
+independent    = Si, Cr                  # independent constituents
+dependent      = Ni                      # dependent constituent
+
+# System conditions
+phase     = fcc                          # phase
+TC        = 1200                         # temperature (Celsius)
+
+# Simulation conditions
+th        = 10                           # total time (h)
+num_out   = 11                           # number of saved time steps, optional
+
+# Domain geometry
+geometry  = planar                       # optional
+
+# Initial space grid
+zmin      = 0                            # position of left-hand domain border (m), optional
+zmax      = 5e-4                         # position of right-hand domain border (m)
+nz        = 60                           # number of space steps, optional
+grid      = linear                       # grid type, optional
+
+# Initial atom fraction profile
+x_profile = step 0.5                     # profile type and options
+x_left    = Si: 0, Cr: 0.3               # independent constituents on left-hand side
+x_right   = Si: 0.1, Cr: 0               # independent constituents on right-hand side
+
+# Boundary conditions
+JBC_left  = Si: 0, Cr: 0, Ni: 0          # flux of atom constituents on left boundary, optional
+JBC_right = Si: 0, Cr: 0, Ni: 0          # flux of atom constituents on right boundary, optional

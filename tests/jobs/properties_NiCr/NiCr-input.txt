@@ -1,0 +1,8 @@
+thermo_db = schuster2000
+mob_db    = du2001
+
+independent = Cr
+dependent   = Ni
+
+phase     = fcc
+TC        = 1200

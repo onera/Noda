@@ -1,0 +1,32 @@
+# Thermodynamic and mobility databases
+thermo_db = thermo_bin_ideal
+mob_db    = mob_bin_ideal
+
+# System constituents
+independent    = B
+dependent      = A
+
+# System conditions
+phase     = fcc
+TC        = 1000
+
+# Simulation conditions
+th        = 1
+
+# Initial space grid
+grid      = geo
+q         = 1.02
+zmin      = 0
+zmax      = 1e-4
+nz        = 50
+
+# Initial atom fraction profile
+x_profile = flat
+x_left    = B: 1e-4
+
+# Boundary conditions
+xBC_left = B: 0.3
+xBC_right = B: 1e-4
+
+# Space discretization
+stencil = G

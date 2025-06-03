@@ -1,0 +1,58 @@
+[molar_volume]
+# Partial molar volume in m3/mol
+
+[molar_volume.standard]
+default = 1e-5
+
+[molar_volume.Vegard]
+# Calculated by dividing the atomic mass by the density of the pure metals.
+Va = "local"
+pore = "local"
+Al = 9.99e-06
+Cr = 7.27e-06
+Ni = 6.59e-06
+Si = 1.21e-05
+
+[vacancy_formation_energy]
+# Vacancy formation energy
+# GfV = HfV - T*SfV with [HfV, SfV] in [eV, eV/K]
+
+[vacancy_formation_energy.Shang2016]
+# Source: Shang et al 2016, https://doi.org/10.1016/j.actamat.2016.02.031,
+# supplementary materials, xls sheet
+fcc-Ni = [1.669, 3.5953e-04]
+fcc-Cr = [1.681, 2.4272e-04]
+fcc-Fe = [2.423, 6.2757e-04]
+fcc-Al = [0.734, 3.2038e-04]
+
+[vacancy_formation_energy.standard]
+# Made-up data
+default = [2, 3e-04]
+
+[vacancy_formation_energy.madeup]
+# Made-up data
+fcc-A = [2, 3e-04]
+fcc-B = [2, 3e-04]
+
+[thermodynamics]
+
+[thermodynamics.schuster2000]
+# Database for CrNiSi system
+# Source: Schuster and Du 2000, https://doi.org/10.1007/s11661-006-0248-y
+file = "fcc-NiCrSi-thermo-schuster2000.ods"
+
+[thermodynamics.thermo_bin_ideal]
+# Made-up data for an ideal A-B binary system
+file = "fcc-AB-thermo-bin_ideal.ods"
+
+[mobility]
+
+[mobility.du2001]
+# Database for fcc phase of CrNiSi system
+# Source: Du and Schuster, "Assessment of Diffusional Mobilities of Cr, Ni, and
+# Si in fcc Cr-Ni-Si Alloys", Zeitschrift fur Metallkunde 92 (2001) 28-31
+file = "fcc-NiCrSi-mob-du2001.ods"
+
+[mobility.mob_bin_ideal]
+# Made-up data for an ideal A-B binary system
+file = "fcc-AB-mob-bin_ideal.ods"

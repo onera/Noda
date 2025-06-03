@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noda"
+version = "1.3.2"
+authors = [
+  { name="Thomas Gheno", email="thomas.gheno@onera.fr" },
+]
+description = "noda is a Python package to simulate diffusion in multicomponent systems."
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE.txt"]
+requires-python = ">=3.11"
+keywords = ["diffusion", "alloys"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+]
+dependencies = [
+  "numpy",
+  "scipy",
+  "pandas",
+  "matplotlib",
+  "odfpy",
+  "numdifftools"
+]
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
+pythonpath = "tests/jobs"
