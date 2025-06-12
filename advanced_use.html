@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced use &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=fee868cc" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/tabs.js?v=3ee01567"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Background" href="background.html" />
+    <link rel="prev" title="Basic use" href="basic_use.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            noda
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_use.html">Basic use</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced use</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#stencil">Stencil</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#time-step">Time step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#non-ideal-lattice">Non-ideal lattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-options">Run options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#default-parameters">Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Advanced use</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/advanced_use.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="advanced-use">
+<h1>Advanced use<a class="headerlink" href="#advanced-use" title="Link to this heading"></a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#stencil" id="id4">Stencil</a></p></li>
+<li><p><a class="reference internal" href="#time-step" id="id5">Time step</a></p></li>
+<li><p><a class="reference internal" href="#non-ideal-lattice" id="id6">Non-ideal lattice</a></p></li>
+<li><p><a class="reference internal" href="#run-options" id="id7">Run options</a></p></li>
+<li><p><a class="reference internal" href="#default-parameters" id="id8">Default parameters</a></p></li>
+</ul>
+</nav>
+<section id="stencil">
+<span id="id1"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">Stencil</a><a class="headerlink" href="#stencil" title="Link to this heading"></a></h2>
+<p>As shown in the <a class="reference internal" href="background.html#implementation-diffusion"><span class="std std-ref">Diffusion</span></a> Section, fluxes are discretized
+using a resistance <span class="math notranslate nohighlight">\(R_i\)</span> which represents a local average of
+<span class="math notranslate nohighlight">\(\Delta z/L\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[J^{\text{lat}}_i = - \frac{\mu_i - \mu_{i - 1}}{R_i}.\]</div>
+<p>Three discretization schemes are provided with the parameter <code class="docutils literal notranslate"><span class="pre">stencil</span></code>
+(factory default: <code class="docutils literal notranslate"><span class="pre">A</span></code>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">A</span></code>: Quotient of arithmetic averages of <span class="math notranslate nohighlight">\(\Delta z\)</span> and <span class="math notranslate nohighlight">\(L\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[R_i = \frac{\Delta z_i + \Delta z_{i - 1}}{L_i + L_{i - 1}}.\]</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">H</span></code>: Arithmetic average of <span class="math notranslate nohighlight">\(\Delta z/L\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[R_i = \frac{1}{2}\left(\frac{\Delta z_i}{L_i} + \frac{\Delta z_{i - 1}}{L_{i - 1}}\right).\]</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">G</span></code>: arithmetic average of <span class="math notranslate nohighlight">\(\Delta z\)</span>, geometric average of <span class="math notranslate nohighlight">\(L\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[R_i = \frac{1}{2}\frac{\Delta z_i + \Delta z_{i - 1}}{\sqrt{L_iL_{i - 1}}}.\]</div>
+</li>
+</ul>
+</section>
+<section id="time-step">
+<span id="id2"></span><h2><a class="toc-backref" href="#id5" role="doc-backlink">Time step</a><a class="headerlink" href="#time-step" title="Link to this heading"></a></h2>
+<p>The default time step is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[\Delta t_\mathrm{default} = \mathrm{Fo}
+                            \frac{\Delta z^2_\mathrm{min}}{D^*_\mathrm{max}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathrm{Fo}\)</span> is the Fourier number (factory default: 0.4),
+<span class="math notranslate nohighlight">\(\Delta z_\mathrm{min}\)</span> is the minimum value of the initial
+<span class="math notranslate nohighlight">\(\Delta z\)</span> array and <span class="math notranslate nohighlight">\(D^*_\mathrm{max}\)</span> is the maximum <span class="math notranslate nohighlight">\(D^*\)</span>
+value among all atom species over the initial concentration profile (see
+<a class="reference internal" href="modules/simu.html#simu.Simulation.add_time" title="simu.Simulation.add_time"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simu.Simulation.add_time()</span></code></a> for implementation details). The actual time
+time step is obtained by multiplying <span class="math notranslate nohighlight">\(\Delta t_\mathrm{default}\)</span> by an
+optional input parameter <code class="docutils literal notranslate"><span class="pre">dt_multiplier</span></code>. This is usually used to reduce the
+time step when the solver is unstable (<code class="docutils literal notranslate"><span class="pre">dt_multiplier</span></code> &lt; 1). Alternatively,
+the time step may be modified with input parameter <code class="docutils literal notranslate"><span class="pre">nt_multiplier</span></code> (alias
+<code class="docutils literal notranslate"><span class="pre">nt_mult</span></code>), which is used as the inverse of <code class="docutils literal notranslate"><span class="pre">dt_multiplier</span></code>. One would
+decrease the time step (i.e., increase the number of time steps) with
+<code class="docutils literal notranslate"><span class="pre">nt_mult</span></code> &gt; 1.</p>
+<p>Unstabilities mostly arise in two cases:</p>
+<ul class="simple">
+<li><p>When an initial or boundary atom fraction is close to 0. In this case,
+<code class="docutils literal notranslate"><span class="pre">nt_multiplier</span></code> values of 2-3 are usually sufficient to recover stability.</p></li>
+<li><p>When running simulations with finite sink strengths
+(see <a class="reference internal" href="#non-ideal"><span class="std std-ref">Non-ideal lattice</span></a>).</p></li>
+</ul>
+</section>
+<section id="non-ideal-lattice">
+<span id="non-ideal"></span><h2><a class="toc-backref" href="#id6" role="doc-backlink">Non-ideal lattice</a><a class="headerlink" href="#non-ideal-lattice" title="Link to this heading"></a></h2>
+<p>By default, simulations are run with the commonly used assumption of an ideal
+lattice, where vacancies are maintained at equilibrium through the action of
+dislocations, which produces Kirkendall shift and no pores. Instead, users may
+set a finite sink strength for dislocations, which will reduce the Kirkendall
+shift and let vacancy supersaturation develop. A sink strength associated with
+porosity may also be specified, which will produce Kirkendall porosity.</p>
+<p>Sink strengths <span class="math notranslate nohighlight">\(k_\mathrm{d}\)</span> and <span class="math notranslate nohighlight">\(k_\mathrm{p}\)</span> as defined in
+<a class="reference internal" href="background.html#lattice-velocity"><span class="std std-ref">Lattice velocity</span></a> can be specified in either of two ways:</p>
+<ul>
+<li><p>Using input parameters <code class="docutils literal notranslate"><span class="pre">k_dislo</span></code> and <code class="docutils literal notranslate"><span class="pre">k_pores</span></code>, respectively. These may be
+either:</p>
+<ul class="simple">
+<li><p>A numerical value.</p></li>
+<li><p>A file name, which allows position-dependent values to be read from a file in
+the current job folder. The file can be in any format readable by the Numpy
+<code class="docutils literal notranslate"><span class="pre">genfromtxt</span></code> method and should contain <cite>nz - 1</cite> values.</p></li>
+</ul>
+</li>
+<li><p>Or using input parameters <code class="docutils literal notranslate"><span class="pre">rho_dislo</span></code> and <code class="docutils literal notranslate"><span class="pre">rho_pores</span></code>, which represent sink
+densities (in m<sup>-2</sup>). In this case <span class="math notranslate nohighlight">\(k_i\ (i = d\ \text{or}\ p)\)</span>
+is obtained as <span class="math notranslate nohighlight">\(k_i = \rho_i D_0^*\)</span>, where <span class="math notranslate nohighlight">\(\rho_i\)</span> is the
+user-specified density and <span class="math notranslate nohighlight">\(D_0^*\)</span> is the vacancy diffusion coefficient:</p>
+<div class="math notranslate nohighlight">
+\[D_0^* = \frac{1}{y_0}\sum_{k=1}^n{y_k\,D_k^*}\]</div>
+<p><span class="math notranslate nohighlight">\(D_0^*\)</span> is composition-dependent, therefore <span class="math notranslate nohighlight">\(k_i\)</span> will be
+composition-dependent. Like <code class="docutils literal notranslate"><span class="pre">k_dislo</span></code> and <code class="docutils literal notranslate"><span class="pre">k_pores</span></code>, <code class="docutils literal notranslate"><span class="pre">rho_dislo</span></code> and
+<code class="docutils literal notranslate"><span class="pre">rho_pores</span></code> can be scalar values or file names.</p>
+</li>
+</ul>
+<p>The lattice is considered non-ideal when either <code class="docutils literal notranslate"><span class="pre">k_dislo</span></code>, <code class="docutils literal notranslate"><span class="pre">k_pores</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rho_dislo</span></code> or <code class="docutils literal notranslate"><span class="pre">rho_pores</span></code> is specified. If only one <span class="math notranslate nohighlight">\(k_i\)</span> is given a
+value (via <code class="docutils literal notranslate"><span class="pre">k_xxxxx</span></code> or <code class="docutils literal notranslate"><span class="pre">rho_xxxxx</span></code>), the other takes the default value 0.</p>
+<p>With a non-ideal lattice, the user can specify initial vacancy site fraction
+and pore volume fraction profiles, using input parameters <code class="docutils literal notranslate"><span class="pre">yVa_profile</span></code> and
+<code class="docutils literal notranslate"><span class="pre">fp_profile</span></code>, respectively. The syntax is the same as that applying to initial
+atom fractions (see <a class="reference internal" href="basic_use.html#initial-atom-fraction"><span class="std std-ref">Initial atom fraction profile</span></a>), using keys <code class="docutils literal notranslate"><span class="pre">yVa_left</span></code>,
+<code class="docutils literal notranslate"><span class="pre">yVa_right</span></code>, <code class="docutils literal notranslate"><span class="pre">fp_left</span></code>, <code class="docutils literal notranslate"><span class="pre">fp_right</span></code>.</p>
+<p>The <a class="reference internal" href="modules/results.html#results.UnitResult.plot_quartet" title="results.UnitResult.plot_quartet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">results.UnitResult.plot_quartet()</span></code></a> method produces a 2 x 2 grid of
+subplots with profiles of the following variables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>atom fraction;</p></li>
+<li><p>relative difference between simulated and equilibrium vacancy site
+fraction;</p></li>
+<li><p>flux in the lattice-fixed frame;</p></li>
+<li><p>volume fraction of pores.</p></li>
+</ul>
+</div></blockquote>
+<p>It is convenient to analyse the results of non-ideal lattice simulations.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Non-ideal lattice simulations require much smaller time steps than ideal lattice
+simulations: typically, <code class="docutils literal notranslate"><span class="pre">nt_multiplier</span></code> should be in the order of
+<span class="math notranslate nohighlight">\(1/y_0^\mathrm{eq}\)</span>, which can be in the order of <span class="math notranslate nohighlight">\(10^4 - 10^6\)</span>.
+These simulations take several hours to complete.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Non-ideal lattice simulations may produce results that are difficult to
+interpret and should be run with caution. This type of simulation has not
+been thoroughly tested. Users are encouraged to be well acquainted with
+ideal lattice simulations and to read the <a class="reference internal" href="background.html#background"><span class="std std-ref">Background</span></a> Section before
+working with non-ideal cases.</p>
+</div>
+</section>
+<section id="run-options">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Run options</a><a class="headerlink" href="#run-options" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="modules/simu.html#simu.Simulation.run" title="simu.Simulation.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simu.Simulation.run()</span></code></a> method has two optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">show_completion</span></code> (bool): whether to show times and completion rates,
+defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>. Can be used to preview the duration of long simulations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code> (int): verbosity level. Passed to the diffusion solver, controls
+the level of information logged (in particular, when volumes are created or
+deleted, see <a class="reference internal" href="modules/solvers.html#solvers.remesh" title="solvers.remesh"><code class="xref py py-func docutils literal notranslate"><span class="pre">solvers.remesh()</span></code></a>). Defaults to 1 (logs remeshing info).</p></li>
+</ul>
+</section>
+<section id="default-parameters">
+<span id="id3"></span><h2><a class="toc-backref" href="#id8" role="doc-backlink">Default parameters</a><a class="headerlink" href="#default-parameters" title="Link to this heading"></a></h2>
+<p>When an optional parameter is not present in the input file, it is assigned a
+default value. “Factory” default values are defined as part of the package
+installation (see <a class="reference internal" href="modules/constants.html#constants.factory_default_parameters" title="constants.factory_default_parameters"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.factory_default_parameters</span></code></a>). These can be
+overridden by creating a table named <code class="docutils literal notranslate"><span class="pre">default_parameters</span></code> in the user data file
+(“user_data.toml”) and indicating the new default values as key-value pairs,
+for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># user_data.toml</span>
+
+<span class="p">[</span><span class="n">default_parameters</span><span class="p">]</span>
+
+<span class="n">number_space_steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">volume_db</span> <span class="o">=</span> <span class="s1">&#39;Vegard&#39;</span>
+</pre></div>
+</div>
+<p>In this case, when <code class="docutils literal notranslate"><span class="pre">nz</span></code> is absent from the input file, it will take the value
+100. Likewise, <code class="docutils literal notranslate"><span class="pre">volume_db</span></code> will default to <code class="docutils literal notranslate"><span class="pre">Vegard</span></code>.</p>
+<p>In addition to optional parameters, <a class="reference internal" href="modules/constants.html#constants.factory_default_parameters" title="constants.factory_default_parameters"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.factory_default_parameters</span></code></a>
+includes numerical parameters that cannot be set on a per-job basis, but can be
+set system-wide via the <code class="docutils literal notranslate"><span class="pre">default_parameters</span></code> table in “user_data.toml”:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">min_atom_fraction</span></code>: Noda solves the diffusion problem using transport
+coefficients which are proportional to concentrations (see Eq.
+<a class="reference internal" href="background.html#equation-onsager-coefficients">(22)</a> in <a class="reference internal" href="background.html#mobility"><span class="std std-ref">Mobility</span></a>). As a consequence, Noda
+cannot handle concentrations strictly equal to 0. Atom fractions given by
+the user to specify initial profiles and boundary conditions are therefore
+clipped between a lower bound, <code class="docutils literal notranslate"><span class="pre">min_atom_fraction</span></code>, and a higher bound,
+<code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">min_atom_fraction</span></code>.  The factory default is 1e-9.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_number_time_steps</span></code>: this is a lower bound for the number of time
+steps. The factory default is 20.</p></li>
+</ul>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="basic_use.html" class="btn btn-neutral float-left" title="Basic use" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="background.html" class="btn btn-neutral float-right" title="Background" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

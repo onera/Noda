@@ -1,0 +1,641 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>para_io &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">para_io</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for para_io</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Parse the input file that defines the system and various options.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">it</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+
+
+<span class="n">alias_db</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;k_dislo&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;kin_homo&#39;</span><span class="p">,</span> <span class="s1">&#39;km&#39;</span><span class="p">,</span> <span class="s1">&#39;nu_dislo&#39;</span><span class="p">],</span> <span class="c1"># backward compatibility</span>
+            <span class="s1">&#39;k_pores&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;kin_pore&#39;</span><span class="p">,</span> <span class="s1">&#39;kp&#39;</span><span class="p">,</span> <span class="s1">&#39;nu_pores&#39;</span><span class="p">],</span> <span class="c1"># backward compatibility</span>
+            <span class="s1">&#39;x_profile&#39;</span><span class="p">:</span> <span class="s1">&#39;profile_type&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;grid&#39;</span><span class="p">:</span> <span class="s1">&#39;grid_type&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dep&#39;</span><span class="p">:</span> <span class="s1">&#39;dependent&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;inds&#39;</span><span class="p">:</span> <span class="s1">&#39;independent&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nt_multiplier&#39;</span><span class="p">:</span> <span class="s1">&#39;nt_mult&#39;</span><span class="p">}</span>
+
+<span class="n">extra_entries</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">,</span> <span class="s1">&#39;grid_type&#39;</span><span class="p">,</span> <span class="s1">&#39;nt_multiplier&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;xBC_left&#39;</span><span class="p">,</span> <span class="s1">&#39;xBC_right&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;JBC_left&#39;</span><span class="p">,</span> <span class="s1">&#39;JBC_right&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;xrange&#39;</span><span class="p">,</span> <span class="s1">&#39;independent&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;tim&#39;</span><span class="p">,</span> <span class="s1">&#39;mim&#39;</span><span class="p">,</span>  <span class="c1"># backward compatibility</span>
+                 <span class="p">]</span>
+
+<span class="n">required_entries</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dep&#39;</span><span class="p">,</span> <span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;thermo_db&#39;</span><span class="p">,</span> <span class="s1">&#39;mob_db&#39;</span><span class="p">,</span> <span class="s1">&#39;TC&#39;</span><span class="p">]</span>
+
+<span class="n">phase_alias_db</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fcc&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;fcc_a1&#39;</span><span class="p">]}</span>
+
+
+<div class="viewcode-block" id="read_log_string">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.read_log_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_log_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read the log created by a diffusion simulation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s : str</span>
+<span class="sd">        Simulation log.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    di : dict</span>
+<span class="sd">        Parameters and options defining the simulation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sio</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">sio</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;\s+=\s+&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;list&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+        <span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">di</span></div>
+
+
+
+<div class="viewcode-block" id="scrap_simu_attributes">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.scrap_simu_attributes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scrap_simu_attributes</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate list of valid attributes.</span>
+
+<span class="sd">    Get list of all attributes of :class:`alloy_system.AlloySystem` and</span>
+<span class="sd">    :class:`simu.Simulation`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;alloy_system&#39;</span><span class="p">,</span> <span class="s1">&#39;simu&#39;</span><span class="p">]:</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s1">.py&#39;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;self.(\w+) = (?:self.params|get_and_log)&#39;</span><span class="p">,</span> <span class="n">raw</span><span class="p">)</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attr</span> <span class="k">if</span> <span class="s2">&quot;func&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">a</span><span class="p">]</span>
+        <span class="n">attributes</span> <span class="o">+=</span> <span class="n">attr</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">attributes</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="find_parameter_name">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.find_parameter_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_parameter_name</span><span class="p">(</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">di</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find key used for the parameter ref_name in the input dict.</span>
+
+<span class="sd">    For some parameters in the user input file, there exists one prefered name</span>
+<span class="sd">    and one or more aliases. This function recognizes the name used as an alias</span>
+<span class="sd">    of the reference name as key of the input dictionary and returns it. This</span>
+<span class="sd">    was implemented for backward compatibility reasons (aliases are former</span>
+<span class="sd">    parameter names).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ref_name : str</span>
+<span class="sd">        Reference name of the parameter.</span>
+<span class="sd">    di : dict</span>
+<span class="sd">        Input parameters.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If input dict contains two or more keys that correspond to the same</span>
+<span class="sd">        parameter.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    par_name : str</span>
+<span class="sd">        Key used for the parameter in the input dict.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="n">alias_db</span><span class="p">[</span><span class="n">ref_name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">aliases</span><span class="p">]</span>
+
+    <span class="n">possible_keys</span> <span class="o">=</span> <span class="n">aliases</span> <span class="o">+</span> <span class="p">[</span><span class="n">ref_name</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">k1</span><span class="p">,</span> <span class="n">k2</span> <span class="ow">in</span> <span class="n">it</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">possible_keys</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k1</span> <span class="ow">in</span> <span class="n">di</span> <span class="ow">and</span> <span class="n">k2</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Use either </span><span class="si">{</span><span class="n">k1</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">k2</span><span class="si">}</span><span class="s2">, not both.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="n">used_aliases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">di</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">aliases</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">used_aliases</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">par_name</span> <span class="o">=</span> <span class="n">used_aliases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">par_name</span> <span class="o">=</span> <span class="n">ref_name</span>
+    <span class="k">return</span> <span class="n">par_name</span></div>
+
+
+
+<div class="viewcode-block" id="handle_aliases">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.handle_aliases">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_aliases</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replace aliases by their prefered equivalent name.</span>
+
+<span class="sd">    Use :func:`find_parameter_name` to find all possible aliases in input dict,</span>
+<span class="sd">    and then replace them by the prefered parameter name.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">ref_name</span> <span class="ow">in</span> <span class="n">alias_db</span><span class="p">:</span>
+        <span class="n">par_name</span> <span class="o">=</span> <span class="n">find_parameter_name</span><span class="p">(</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">di</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">par_name</span> <span class="o">!=</span> <span class="n">ref_name</span><span class="p">:</span>
+            <span class="n">di</span><span class="p">[</span><span class="n">ref_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="n">par_name</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">di</span><span class="p">[</span><span class="n">par_name</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter name &#39;</span><span class="si">{</span><span class="n">par_name</span><span class="si">}</span><span class="s2">&#39; replaced by prefered name&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="n">ref_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">di</span></div>
+
+
+
+<div class="viewcode-block" id="handle_phase_aliases">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.handle_phase_aliases">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_phase_aliases</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replace phase alias by the prefered phase name.</span>
+
+<span class="sd">    Main purpose is backward compatibility.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">ref_name</span><span class="p">,</span> <span class="n">aliases</span> <span class="ow">in</span> <span class="n">phase_alias_db</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Phase entry &#39;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">&#39; replaced by prefered name&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="n">ref_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ref_name</span>
+    <span class="k">return</span> <span class="n">phase</span></div>
+
+
+
+<div class="viewcode-block" id="process_xrange">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.process_xrange">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_xrange</span><span class="p">(</span><span class="n">xr_raw_string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make dict of atom fraction ranges from input string.&quot;&quot;&quot;</span>
+    <span class="n">xr_strings</span> <span class="o">=</span> <span class="n">xr_raw_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">xr_lists</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:|-&#39;</span><span class="p">,</span> <span class="n">xr</span><span class="p">)</span> <span class="k">for</span> <span class="n">xr</span> <span class="ow">in</span> <span class="n">xr_strings</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">xr_raw</span> <span class="o">=</span> <span class="p">{</span><span class="n">xr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">):</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">xr</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">xr</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
+                  <span class="k">for</span> <span class="n">xr</span> <span class="ow">in</span> <span class="n">xr_lists</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid entry &#39;</span><span class="si">{</span><span class="n">xr_raw_string</span><span class="si">}</span><span class="s2">&#39; in input file. &quot;</span>
+               <span class="s2">&quot;Required format for range of allowed atom fractions: &quot;</span>
+               <span class="s2">&quot;&#39;element1: min - max, element2: min - max, ...&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="n">ut</span><span class="o">.</span><span class="n">format_element_symbol</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">xr_raw</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="get_independent_constituents">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.get_independent_constituents">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_independent_constituents</span><span class="p">(</span><span class="n">inds_raw</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make list of independent constituents from string.&quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">inds_raw</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">ut</span><span class="o">.</span><span class="n">format_element_symbol</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="preprocess_initial_profile">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.preprocess_initial_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_initial_profile</span><span class="p">(</span><span class="n">profile_string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Separate initial profile input into keyword and option.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">profile_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">groups</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">isalpha</span><span class="p">())]</span>
+        <span class="n">option</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">groups</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">words</span> <span class="o">+</span> <span class="n">option</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">profile_string</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="check_profile_config">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.check_profile_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_profile_config</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sure input related to initial profile of var is consistent.&quot;&quot;&quot;</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">_profile&#39;</span><span class="p">]</span>
+    <span class="n">par_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_profile&quot;</span>
+    <span class="n">original_input</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">profile</span><span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">par_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">original_input</span><span class="si">}</span><span class="s2"> in input. &quot;</span>
+    <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">isfilename</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">_left&#39;</span> <span class="ow">in</span> <span class="n">di</span> <span class="ow">or</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">_right&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">par_name</span><span class="si">}</span><span class="s2"> parameter is a filename. &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Cannot specify </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_left or </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_right.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">profile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;step&#39;</span> <span class="ow">or</span> <span class="n">profile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;smooth step&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">_left&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">di</span> <span class="ow">or</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">_right&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Parameters </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_left and </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_right are required.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Step position is missing.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Step type profiles take only one argument.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Step argument should be a float (or int).&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">profile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;flat&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">_left&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_left is required.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Flat profile takes no argument.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Invalid profile parameter.&quot;</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="process_x_profile">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.process_x_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_x_profile</span><span class="p">(</span><span class="n">x_string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make dict of atom fractions from initial condition input string.&quot;&quot;&quot;</span>
+    <span class="n">side_strings</span> <span class="o">=</span> <span class="n">x_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">side_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">side_strings</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">):</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">side_list</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid entry &#39;</span><span class="si">{</span><span class="n">x_string</span><span class="si">}</span><span class="s2">&#39; in input file. &quot;</span>
+               <span class="s2">&quot;Required format for initial atom fractions: &quot;</span>
+               <span class="s2">&quot;&#39;element1: value, element2: value, ...&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="n">ut</span><span class="o">.</span><span class="n">format_element_symbol</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="process_var_profile">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.process_var_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_var_profile</span><span class="p">(</span><span class="n">var_string</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make dict of var values from initial condition input string.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">var_string</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">res</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="sa">f</span><span class="s2">&quot;Value of </span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2"> must be between 0 and 1.&quot;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">var_string</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="make_BC_type">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.make_BC_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_BC_type</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Guess BC type from input dict and make sure input is consistent.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;xBC_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s1">&#39;Dirichlet&#39;</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;JBC_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2"> boundary condition: cannot fix both &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;composition and flux&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="sa">f</span><span class="s1">&#39;JBC_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s1">&#39;Neumann&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="make_BC_dict">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.make_BC_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_BC_dict</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert raw BC input into BC dict.&quot;&quot;&quot;</span>
+    <span class="n">var_strings</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">var_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">var_strings</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">:</span>
+        <span class="n">constituent</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">constituent</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">format_element_symbol</span><span class="p">(</span><span class="n">constituent</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">constituent</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="check_num_out">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.check_num_out">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_num_out</span><span class="p">(</span><span class="n">di</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sure num_out is greater than 2 if present.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;num_out&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">di</span><span class="p">[</span><span class="s1">&#39;num_out&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;num_out&#39; must be greater than 2. &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;Found &#39;num_out = </span><span class="si">{</span><span class="n">di</span><span class="p">[</span><span class="s1">&#39;num_out&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="check_time_multiplier_config">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.check_time_multiplier_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_time_multiplier_config</span><span class="p">(</span><span class="n">di</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sure input related to time multipliers is consistent.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;nt_multiplier&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;dt_multiplier&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Use either dt_multiplier or nt_multiplier, not both.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="n">di</span><span class="p">[</span><span class="s1">&#39;dt_multiplier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">di</span><span class="p">[</span><span class="s1">&#39;nt_multiplier&#39;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="check_sink_config">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.check_sink_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_sink_config</span><span class="p">(</span><span class="n">di</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sure input related to sink strength is consistent.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dislo&#39;</span><span class="p">,</span> <span class="s1">&#39;pores&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;rho_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">di</span> <span class="ow">and</span> <span class="s1">&#39;k_</span><span class="si">{name}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot specify both k_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> and rho_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="compact">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.compact">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compact</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove empty lines and commented entries in input string.&quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
+                     <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="input_string_to_dict">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.input_string_to_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">input_string_to_dict</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert input string into a dictionary.&quot;&quot;&quot;</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;\s+=\s+&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">entries</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> found more than once in input file.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;list&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+        <span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">di</span></div>
+
+
+
+<div class="viewcode-block" id="make_valid_entries">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.make_valid_entries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_valid_entries</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all recognized parameters for user input file.&quot;&quot;&quot;</span>
+    <span class="n">valid_entries</span> <span class="o">=</span> <span class="n">scrap_simu_attributes</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">alias_db</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">valid_entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">valid_entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">valid_entries</span> <span class="o">+=</span> <span class="n">v</span>
+    <span class="n">valid_entries</span> <span class="o">+=</span> <span class="n">extra_entries</span>
+    <span class="n">valid_entries</span> <span class="o">+=</span> <span class="n">required_entries</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">valid_entries</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="check_valid_entries">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.check_valid_entries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_valid_entries</span><span class="p">(</span><span class="n">di</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sure all entries in input dict are valid.&quot;&quot;&quot;</span>
+    <span class="n">valid_entries</span> <span class="o">=</span> <span class="n">make_valid_entries</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_entries</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unknown entry &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; in input file.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="check_required_entries">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.check_required_entries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_required_entries</span><span class="p">(</span><span class="n">di</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sure all required entries are present in dict.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">required_entries</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Missing required parameter &#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&#39; in input file.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="read_parameter_string">
+<a class="viewcode-back" href="../modules/para_io.html#para_io.read_parameter_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_parameter_string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse input file to get set of parameters.</span>
+
+<span class="sd">    In the file, parameter names and values must be separated by &#39;=&#39;.</span>
+<span class="sd">    Commented lines (#) and blank lines are ignored.</span>
+<span class="sd">    Blank spaces around &#39;=&#39; delimiters are ignored.</span>
+<span class="sd">    Blank spaces in future dictionaries (x_left, x_right) are ignored.</span>
+<span class="sd">    See :class:`simu.System` for role of parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s: str</span>
+<span class="sd">        Input file given as str.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    compacted_string : str</span>
+<span class="sd">        Input string without unnecessary lines.</span>
+<span class="sd">    di: dict</span>
+<span class="sd">        Set of parameters that define a system, simulation conditions and</span>
+<span class="sd">        various options.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Pre-processing</span>
+    <span class="n">compacted_string</span> <span class="o">=</span> <span class="n">compact</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">input_string_to_dict</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">handle_aliases</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+    <span class="n">check_valid_entries</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+    <span class="n">check_required_entries</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+    <span class="n">di</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">handle_phase_aliases</span><span class="p">(</span><span class="n">di</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">],</span> <span class="n">logger</span><span class="p">)</span>
+
+    <span class="c1"># System constituents</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="n">get_independent_constituents</span><span class="p">(</span><span class="n">di</span><span class="p">[</span><span class="s1">&#39;inds&#39;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">xrange</span> <span class="o">=</span> <span class="n">process_xrange</span><span class="p">(</span><span class="n">di</span><span class="p">[</span><span class="s1">&#39;xrange&#39;</span><span class="p">])</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xrange</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">di</span><span class="p">[</span><span class="s1">&#39;inds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">inds</span><span class="p">)</span>
+    <span class="n">di</span><span class="p">[</span><span class="s1">&#39;dep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">format_element_symbol</span><span class="p">(</span><span class="n">di</span><span class="p">[</span><span class="s1">&#39;dep&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Initial profiles</span>
+    <span class="n">init_profile_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;yVa&#39;</span><span class="p">,</span> <span class="s1">&#39;fp&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">init_profile_variables</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_profile&#39;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">di</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">preprocess_initial_profile</span><span class="p">(</span><span class="n">di</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">check_profile_config</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x_left&#39;</span><span class="p">,</span> <span class="s1">&#39;x_right&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">di</span><span class="p">[</span><span class="n">side</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_x_profile</span><span class="p">(</span><span class="n">di</span><span class="p">[</span><span class="n">side</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">init_profile_variables</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;x&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_left&#39;</span><span class="p">,</span> <span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_right&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+                <span class="n">di</span><span class="p">[</span><span class="n">side</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_var_profile</span><span class="p">(</span><span class="n">di</span><span class="p">[</span><span class="n">side</span><span class="p">],</span> <span class="n">side</span><span class="p">)</span>
+
+    <span class="c1"># Boundary conditions</span>
+    <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]:</span>
+        <span class="n">di</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;BC_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_BC_type</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">side</span><span class="p">)</span>
+
+    <span class="n">BC_dicts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;xBC_left&#39;</span><span class="p">,</span> <span class="s1">&#39;xBC_right&#39;</span><span class="p">,</span> <span class="s1">&#39;JBC_left&#39;</span><span class="p">,</span> <span class="s1">&#39;JBC_right&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">BC_dicts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+            <span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_BC_dict</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+
+    <span class="c1"># Convert numerical values to float if present</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Convert numerical values to int if present</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">,</span> <span class="s1">&#39;num_out&#39;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">di</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Other sanity checks</span>
+    <span class="n">check_num_out</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+    <span class="n">check_time_multiplier_config</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+    <span class="n">check_sink_config</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">compacted_string</span><span class="p">,</span> <span class="n">di</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">accepted</span> <span class="o">=</span> <span class="n">make_valid_entries</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">accepted</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

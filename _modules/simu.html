@@ -1,0 +1,1134 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>simu &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">simu</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for simu</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Define and load diffusion simulation.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.alloy_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlloySystem</span><span class="p">,</span> <span class="n">intro_msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.log_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_and_log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.para_io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.composition_variables</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.meshing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mesh</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.solvers</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">so</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.results_io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">results</span>
+
+
+<div class="viewcode-block" id="Simulation">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Simulation</span><span class="p">(</span><span class="n">AlloySystem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Thermodynamic system, simulation conditions, simulation results.</span>
+
+<span class="sd">    This is a base class that does some pre-processing and provides methods to</span>
+<span class="sd">    set up simulation conditions, run simulation and plot the results.</span>
+
+<span class="sd">    It is possible to create a new simulation directly with this class, in</span>
+<span class="sd">    which case the setup methods have to be called by the user. This provides</span>
+<span class="sd">    the possibility of changing the system properties and simulation conditions</span>
+<span class="sd">    in a user script, with functions not provided by this class (or the parent</span>
+<span class="sd">    :class:`alloy_system.AlloySystem`). Note that this should be done with</span>
+<span class="sd">    great care, as the custom modifications may cause unexpected issues and</span>
+<span class="sd">    will not be recorded in the log file.</span>
+
+<span class="sd">    The recommended way to create a simulation is to use :class:`NewSimulation`</span>
+<span class="sd">    (new simulation) or :class:`ReadSimulation` (read from log file), where the</span>
+<span class="sd">    default setup methods will be called.</span>
+
+<span class="sd">    Also note that using :class:`ReadSimulation` to load a simulation first</span>
+<span class="sd">    created with :class:`Simulation` and custom setup functions (instead of</span>
+<span class="sd">    :class:`NewSimulation`) may produce an inconsistent state.</span>
+
+<span class="sd">    This is a 1D version, with time-invariant space grid and time step.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x_profile : str</span>
+<span class="sd">        Type of initial atom fraction profiles. See accepted values in</span>
+<span class="sd">        :func:`make_profile`.</span>
+<span class="sd">    zstep : float</span>
+<span class="sd">        Position of step along step profile in m (see doc in</span>
+<span class="sd">        :func:`meshing.make_step_profile`).</span>
+<span class="sd">    q : float</span>
+<span class="sd">        Common ratio for geometric grid.</span>
+<span class="sd">    x_left : dict of floats</span>
+<span class="sd">        Initial atom fractions of independent constituents on left-hand side.</span>
+<span class="sd">    x_right : dict of floats</span>
+<span class="sd">        Initial atom fractions of independent constituents on right-hand side.</span>
+<span class="sd">    yVa_profile : str</span>
+<span class="sd">        Type of initial vacancy site fraction profile. See accepted values in</span>
+<span class="sd">        :func:`make_profile`.</span>
+<span class="sd">    yVa_left : float</span>
+<span class="sd">        Initial vacancy site fraction on left-hand side.</span>
+<span class="sd">    yVa_right : float</span>
+<span class="sd">        Initial vacancy site fraction on right-hand side.</span>
+<span class="sd">    fp_profile : str</span>
+<span class="sd">        Type of initial pore volume fraction profile. See accepted values in</span>
+<span class="sd">        :func:`make_profile`.</span>
+<span class="sd">    fp_left : float</span>
+<span class="sd">        Initial pore volume fraction on left-hand side.</span>
+<span class="sd">    fp_right : float</span>
+<span class="sd">        Initial pore volume fraction on right-hand side.</span>
+<span class="sd">    stencil : str</span>
+<span class="sd">        Discretization stencil. See accepted values in</span>
+<span class="sd">        :func:`solvers.compute_resistance`.</span>
+<span class="sd">    title : str</span>
+<span class="sd">        Title to be used in plots. See :func:`plots.make_plot_title`.</span>
+<span class="sd">    zmin : float</span>
+<span class="sd">        Initial position of left-hand domain boundary (m).</span>
+<span class="sd">    zmax : float</span>
+<span class="sd">        Initial position of right-hand domain boundary (m).</span>
+<span class="sd">    nz_init : int</span>
+<span class="sd">        Number of steps in initial space grid.</span>
+<span class="sd">    z_init : 1D array</span>
+<span class="sd">        Initial node positions. Ranges from 0 to zmax, size nz. This is where</span>
+<span class="sd">        fluxes are evaluated.</span>
+<span class="sd">    dz_init : 1D array</span>
+<span class="sd">        Initial space step, shape (nz - 1,).</span>
+<span class="sd">    zm_init : 1D array</span>
+<span class="sd">        Initial midpoint positions, shape (nz - 1,). This is where</span>
+<span class="sd">        composition variables are evaluated.</span>
+<span class="sd">    geometry : str</span>
+<span class="sd">        Domain geometry (planar, cylindrical or spherical).</span>
+<span class="sd">    th : float</span>
+<span class="sd">        Simulation time in h.</span>
+<span class="sd">    ts : float</span>
+<span class="sd">        Simulation time in s.</span>
+<span class="sd">    dt_multiplier : float</span>
+<span class="sd">        Factor by which default time step is multiplied (see :meth:`add_time`).</span>
+<span class="sd">    dt : float</span>
+<span class="sd">        Time step size in s.</span>
+<span class="sd">    nt : int</span>
+<span class="sd">        Number of time steps (positions in time sequence), including 0.</span>
+<span class="sd">    num_out : int</span>
+<span class="sd">        Number of time steps where simulation results are stored and saved on</span>
+<span class="sd">        file.</span>
+<span class="sd">    saved_steps : list</span>
+<span class="sd">        Steps for which simulation results are stored and saved on file.</span>
+<span class="sd">    saved_times : list</span>
+<span class="sd">        Times in h (rounded) for which simulation results are stored and saved</span>
+<span class="sd">        on file.</span>
+<span class="sd">    x_init : dict of 1D arrays</span>
+<span class="sd">        Initial atom fraction profiles of independent constituents.</span>
+<span class="sd">    yVa_init : 1D array</span>
+<span class="sd">        Initial vacancy site fraction profile.</span>
+<span class="sd">    fm_init : 1D array</span>
+<span class="sd">        Initial pore volume fraction profile.</span>
+<span class="sd">    cvar : :class:`composition_variables.CompositionVariables`</span>
+<span class="sd">        Composition variables (x, y, c, Vm, ...).</span>
+<span class="sd">    BC : dict</span>
+<span class="sd">        Type of boundary condition (Dirichlet, Neumann) and corresponding</span>
+<span class="sd">        values or expressions. See  :meth:`add_BC`.</span>
+<span class="sd">    res : dict</span>
+<span class="sd">        Simulation results, nested dicts with syntax res[th][var][k].</span>
+<span class="sd">    simres : :class:`results.SimulationResults`</span>
+<span class="sd">        Simulation results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Simulation.__init__">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Use :class:`alloy_system.AlloySystem` constructor to define system</span>
+<span class="sd">        parameters, then pre-process some simulation conditions. See</span>
+<span class="sd">        :func:`para_io.read_parameter_file` for how input file is parsed.</span>
+
+<span class="sd">        Perform consistency checks: if lattice is ideal, custom initial vacancy</span>
+<span class="sd">        and pore fraction profiles are not allowed (vacancy fraction profile</span>
+<span class="sd">        will be set to equilibrium, pore fraction profile will be set to 0).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating &#39;</span><span class="si">%s</span><span class="s2">&#39; simulation.&quot;</span><span class="p">,</span> <span class="n">ref</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;x_profile&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;x_left&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;x_right&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">yVa_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;yVa_profile&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yVa_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;yVa_left&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yVa_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;yVa_right&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa_profile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ideal_lattice</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Custom initial yVa profile not compatible with ideal &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;lattice&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fp_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fp_profile&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fp_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fp_left&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fp_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fp_right&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fp_profile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ideal_lattice</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Custom initial fp profile not compatible with ideal &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;lattice&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stencil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stencil&#39;</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;stencil&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stencil</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">]:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Stencil &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stencil</span><span class="si">}</span><span class="s1">&quot; not implemented&#39;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">make_plot_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_profile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_left</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">x_right</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TC</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;title = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_boundary_conditions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">get_and_log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="s1">&#39;geometry&#39;</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">],</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;planar&#39;</span><span class="p">,</span> <span class="s1">&#39;cylindrical&#39;</span><span class="p">,</span> <span class="s1">&#39;spherical&#39;</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unknown geometry parameter </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_grid_config</span><span class="p">()</span>
+
+        <span class="c1"># Initialize other attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nz_init</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_init</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dz_init</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zm_init</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zstep</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">th</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ts</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt_multiplier</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_out</span> <span class="o">=</span> <span class="n">get_and_log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="s1">&#39;num_out&#39;</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;num_out&#39;</span><span class="p">],</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_init</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yVa_init</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fm_init</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cvar</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BC</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simres</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Simulation.check_boundary_conditions">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.check_boundary_conditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_boundary_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check that boundary conditions are consistent.</span>
+
+<span class="sd">        Make sure all expected constituents are present in the declared</span>
+<span class="sd">        boundary conditions.</span>
+
+<span class="sd">        Call :meth:`unit_check_BC_constituents` for the 4 conditions.</span>
+
+<span class="sd">        * Condition on x: expect to find all independent constituents.</span>
+<span class="sd">        * Condition on J: expect to find all atom constituents</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;xBC_left&#39;</span><span class="p">,</span> <span class="s1">&#39;xBC_right&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unit_check_BC_constituents</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unit_check_BC_values</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;JBC_left&#39;</span><span class="p">,</span> <span class="s1">&#39;JBC_right&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unit_check_BC_constituents</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span></div>
+
+
+<div class="viewcode-block" id="Simulation.unit_check_BC_constituents">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.unit_check_BC_constituents">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unit_check_BC_constituents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make sure all expected constituents are present in the BC.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">var</span><span class="p">]))</span>
+            <span class="k">assert</span> <span class="n">found</span> <span class="o">==</span> <span class="n">expected</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">var</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing or extra elements in &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; boundary &quot;</span>
+                   <span class="s2">&quot;condition.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;found </span><span class="si">{</span><span class="n">found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+
+
+<div class="viewcode-block" id="Simulation.unit_check_BC_values">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.unit_check_BC_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unit_check_BC_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make sure atom fractions are within accepted bounds.&quot;&quot;&quot;</span>
+        <span class="n">min_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;min_atom_fraction&#39;</span><span class="p">]</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;min_atom_fraction&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">var</span><span class="p">]:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2"> replaced &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;by minimum allowed </span><span class="si">{</span><span class="n">min_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">min_val</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">min_val</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2"> replaced &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;by maximum allowed </span><span class="si">{</span><span class="n">max_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">max_val</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.check_grid_config">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.check_grid_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_grid_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make sure grid-related input is consistent.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s1">&#39;grid&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;zmax&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Grid not specified. Parameter zmax is required.&quot;</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">ut</span><span class="o">.</span><span class="n">isfilename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;grid&#39;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="s1">&#39;zmax&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Grid parameter is not a file name &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;(grid = &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;grid&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;). &quot;</span>
+                       <span class="s2">&quot;Parameter zmax is required.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">,</span> <span class="s1">&#39;zmin&#39;</span><span class="p">,</span> <span class="s1">&#39;zmax&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Found filename as grid parameter &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;(grid = &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;grid&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;). &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;Cannot specify </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Simulation.add_grid">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.add_grid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add initial space grid.</span>
+
+<span class="sd">        Behavior controlled by the &#39;grid&#39; parameter:</span>
+
+<span class="sd">        * &#39;linear&#39;: linear grid from zmin to zmax with size nz (zmax and nz</span>
+<span class="sd">          must be included in parameter input file, zmin defaults to 0).</span>
+<span class="sd">        * &#39;geo&#39;: geometric grid from zmin to zmax with size nz and common ratio</span>
+<span class="sd">          q (zmax and nz must be included in input file, zmin and q are</span>
+<span class="sd">          optional).</span>
+<span class="sd">        * filename: read from sdir/filename using np.genfromtxt (zmin, zmax and</span>
+<span class="sd">          nz are inferred from the grid).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">get_and_log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="s1">&#39;grid&#39;</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">grid</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;geo&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zmin&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;zmax&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nz_init</span> <span class="o">=</span> <span class="n">get_and_log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="s1">&#39;nz&#39;</span><span class="p">,</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;number_space_steps&#39;</span><span class="p">],</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">grid</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z_init</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="p">,</span>
+                                          <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nz_init</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">grid</span> <span class="o">==</span> <span class="s1">&#39;geo&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">get_and_log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="s1">&#39;q&#39;</span><span class="p">,</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;common_ratio&#39;</span><span class="p">],</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z_init</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geo_grid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz_init</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">/</span> <span class="n">grid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z_init</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_init</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_init</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nz_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_init</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dz_init</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_init</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zm_init</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_init</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_init</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">/</span><span class="mi">2</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;cylindrical&#39;</span><span class="p">,</span> <span class="s1">&#39;spherical&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found strictly negative zmin in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="si">}</span><span class="s2"> &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;geometry (zmin = &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">zmin</span><span class="si">}</span><span class="s2">&#39;). &quot;</span>
+                       <span class="s2">&quot;zmin should be positive.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found negative zmax in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="si">}</span><span class="s2"> geometry &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;(zmax = &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="si">}</span><span class="s2">&#39;). &quot;</span>
+                       <span class="s2">&quot;zmax should be strictly positive.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found zmin &gt;= zmax in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="si">}</span><span class="s2"> geometry &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;(zmin = &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">zmin</span><span class="si">}</span><span class="s2">&#39;, zmax = &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="si">}</span><span class="s2">&#39;). &quot;</span>
+                       <span class="s2">&quot;zmin should be strictly smaller than zmax.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Simulation.add_time">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.add_time">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add time step and number of time steps.</span>
+
+<span class="sd">        The time step dt is calculated to ensure the stability of explicit</span>
+<span class="sd">        schemes, with a default Fourier number Fo = 0.4. The DT value is </span>
+<span class="sd">        calculated from the initial concentration profile. The time step</span>
+<span class="sd">        can be made smaller using the user-specified dt_multiplier (or</span>
+<span class="sd">        nt_multiplier, see :func:`para_io.read_parameter_string`).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">th</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;th&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">th</span><span class="o">*</span><span class="mi">3600</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt_multiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dt_multiplier&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">x_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_init</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">DTmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">(</span><span class="n">x_arr</span><span class="p">))</span>
+        <span class="n">Fo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;Fourier_number&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">Fo</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_multiplier</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dz_init</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">DTmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ts</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1"># Adjust dt to recover ts (rounding nt introduces error)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># make sure there are at least 10 time steps</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;min_number_time_steps&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;min_number_time_steps&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.add_saved_steps">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.add_saved_steps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_saved_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add list of time steps where simulation results will be saved to file.</span>
+
+<span class="sd">        The time steps are determined based on the num_out parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_out</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nt</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_out</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">3600</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e4</span><span class="p">:</span>
+            <span class="n">question</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            The simulation will generate a large output file. Do you want to</span>
+<span class="s2">            proceed ? [y/N]</span>
+<span class="s2">            (Check &quot;num_out&quot; parameter in input file.)&quot;&quot;&quot;</span>
+            <span class="n">ans</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">question</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;n&#39;</span>
+            <span class="k">if</span> <span class="n">ans</span> <span class="o">!=</span> <span class="p">(</span><span class="s1">&#39;y&#39;</span> <span class="ow">or</span> <span class="s1">&#39;Y&#39;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="s1">&#39;Canceled&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.add_profiles">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.add_profiles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_profiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add initial composition profiles.</span>
+
+<span class="sd">        Make atom fraction, vacancy site fraction and pore volume fraction</span>
+<span class="sd">        profiles. These are then used to initialize cvar (see</span>
+<span class="sd">        :class:`composition_variables.CompositionVariables`).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ut</span><span class="o">.</span><span class="n">isfilename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_profile</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_x_profile</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_x_profile_from_file</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_x_profile_from_dicts</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_x_profile</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_init</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_init</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_yVa_profile</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_fm_profile</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cvar</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CompositionVariables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_init</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">yVa_init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">fm_init</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.add_x_profile">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.add_x_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_x_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make initial atom fraction profile.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zstep</span> <span class="o">=</span> <span class="n">make_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_profile</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">zm_init</span><span class="p">,</span>
+                                               <span class="n">val_left</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_left</span><span class="p">,</span>
+                                               <span class="n">val_right</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_right</span><span class="p">,</span>
+                                               <span class="n">sdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.check_x_profile_from_file">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.check_x_profile_from_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_x_profile_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare initial atom fraction profile.</span>
+
+<span class="sd">        Applies to profiles provided as file.</span>
+
+<span class="sd">        * Make sure the constituents in the initial atom fraction profile match</span>
+<span class="sd">          the list of independent constituents declared in the input file.</span>
+<span class="sd">        * Enforce bounds on initial atom fractions and print warning.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_init</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Missing or extra element in initial atom fraction profile.&#39;</span>
+                   <span class="sa">f</span><span class="s2">&quot;Declared independent constituents: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">x_profile</span><span class="si">}</span><span class="s2"> contains profiles for &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_init</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="n">min_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;min_atom_fraction&#39;</span><span class="p">]</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;min_atom_fraction&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_init</span><span class="p">:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_init</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">prof</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">prof</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Some atom fractions in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">x_profile</span><span class="si">}</span><span class="s2"> were replaced&quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot; by minimum allowed </span><span class="si">{</span><span class="n">min_val</span><span class="si">}</span><span class="s2">&quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot; or maximum allowed </span><span class="si">{</span><span class="n">max_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">prof</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.check_x_profile_from_dicts">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.check_x_profile_from_dicts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_x_profile_from_dicts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare initial atom fraction profile.</span>
+
+<span class="sd">        Applies to profiles provided as predefined types (see list in</span>
+<span class="sd">        :func:`make_profile`).</span>
+
+<span class="sd">        * Make sure the constituents in the initial atom fraction profile match</span>
+<span class="sd">          the list of independent constituents declared in the input file.</span>
+<span class="sd">        * Enforce bounds on initial atom fractions and print warning.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;min_atom_fraction&#39;</span><span class="p">]</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;min_atom_fraction&#39;</span><span class="p">]</span>
+        <span class="n">varlist</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x_left&#39;</span><span class="p">,</span> <span class="s1">&#39;x_right&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_right</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;x_left&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">varlist</span><span class="p">:</span>
+            <span class="n">x_side</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">x_side</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2"> replaced &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;by minimum allowed </span><span class="si">{</span><span class="n">min_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_val</span>
+                <span class="k">if</span> <span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2"> replaced &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;by maximum allowed </span><span class="si">{</span><span class="n">max_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_val</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_left</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_right</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_right</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Missing or extra element(s) in initial atom fraction &quot;</span>
+                   <span class="s2">&quot;profile.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;Declared independent constituents: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="s2">&quot;Constituents in initial profile:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;x_left: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_left</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_right</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">x_right: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_right</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+
+
+<div class="viewcode-block" id="Simulation.add_yVa_profile">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.add_yVa_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_yVa_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make initial vacancy site fraction profile.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa_profile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">yVa_left</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;yVa&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa_left</span><span class="p">}</span>
+            <span class="n">yVa_right</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;yVa&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa_right</span><span class="p">}</span>
+            <span class="n">yVa_init</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">make_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yVa_profile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">zm_init</span><span class="p">,</span>
+                                       <span class="n">val_left</span><span class="o">=</span><span class="n">yVa_left</span><span class="p">,</span> <span class="n">val_right</span><span class="o">=</span><span class="n">yVa_right</span><span class="p">,</span>
+                                       <span class="n">sdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yVa_init</span> <span class="o">=</span> <span class="n">yVa_init</span><span class="p">[</span><span class="s1">&#39;yVa&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x_init_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x_init</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yVa_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa_fun</span><span class="p">(</span><span class="n">x_init_arr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.add_fm_profile">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.add_fm_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_fm_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make initial metal volume fraction profile.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fp_profile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fp_left</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fp&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fp_left</span><span class="p">}</span>
+            <span class="n">fp_right</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fp&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fp_right</span><span class="p">}</span>
+            <span class="n">fp_init</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">make_profile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fp_profile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">zm_init</span><span class="p">,</span>
+                                      <span class="n">val_left</span><span class="o">=</span><span class="n">fp_left</span><span class="p">,</span> <span class="n">val_right</span><span class="o">=</span><span class="n">fp_right</span><span class="p">,</span>
+                                      <span class="n">sdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fm_init</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">fp_init</span><span class="p">[</span><span class="s1">&#39;fp&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fm_init</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nz_init</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.add_BC">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.add_BC">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_BC</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add boundary conditions.</span>
+
+<span class="sd">        The keys of the BC attribute are &#39;left&#39;, &#39;right&#39;, &#39;cvar_left&#39;,</span>
+<span class="sd">        &#39;cvar_right&#39;, &#39;J_left&#39;, &#39;J_right&#39;.</span>
+
+<span class="sd">        &#39;left&#39; and &#39;right&#39; indicate the type of BC and can be either:</span>
+
+<span class="sd">        * &#39;Dirichlet&#39;: prescribed composition, if &#39;xBC_left&#39; or &#39;xBC_right&#39;</span>
+<span class="sd">          is provided in params.</span>
+<span class="sd">        * &#39;Neumann&#39;: prescribed flux, if &#39;JBC_left&#39; or &#39;JBC_right&#39; is</span>
+<span class="sd">          provided in params.</span>
+
+<span class="sd">        The other keys (&#39;cvar_left&#39;, &#39;cvar_right&#39;, &#39;J_left&#39;, &#39;J_right&#39;) are</span>
+<span class="sd">        functions of time (ex: (3*t + 2)**(1/2)) that return composition</span>
+<span class="sd">        variables and flux arrays.</span>
+
+<span class="sd">        Defaults to 0-flux BC if no BC is specified in the input file.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BC</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">info_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">BC</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;BC_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">_type&#39;</span><span class="p">,</span> <span class="s1">&#39;Neumann&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">BC</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Dirichlet&#39;</span><span class="p">:</span>
+                <span class="n">x_strings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;xBC_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">BC</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;c_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_cBC_fun</span><span class="p">(</span><span class="n">x_strings</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">J_strings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;JBC_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">{})</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">J_strings</span><span class="p">:</span>
+                        <span class="n">J_strings</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+                        <span class="n">info_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">side</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">BC</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;J_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_JBC_fun</span><span class="p">(</span><span class="n">J_strings</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">info_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Auto boundary conditions:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">side</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">info_list</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;* </span><span class="si">{</span><span class="n">side</span><span class="si">:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> BC for </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> set to 0 flux&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.make_JBC_fun">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.make_JBC_fun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_JBC_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">J_strings</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make function that returns a boundary flux array.</span>
+
+<span class="sd">        The inner function returns a 1D array of fluxes, which include</span>
+<span class="sd">        all atom constituents.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">funs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">J_strings</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="nb">eval</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]}</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">fun</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="n">J_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">funs</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]}</span>
+            <span class="n">J_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">J_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="k">return</span> <span class="n">J_arr</span>
+
+        <span class="k">return</span> <span class="n">fun</span></div>
+
+
+<div class="viewcode-block" id="Simulation.make_cBC_fun">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.make_cBC_fun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_cBC_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_strings</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make function that returns a boundary composition variable.</span>
+
+<span class="sd">        The inner function returns a</span>
+<span class="sd">        :class:`composition_variables.CompositionVariables` instance. Two</span>
+<span class="sd">        assumptions are made:</span>
+
+<span class="sd">        * vacancies are at equilibrium,</span>
+<span class="sd">        * the pore fraction is 0.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fm</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">fun</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">x_strings</span><span class="p">):</span>
+            <span class="n">x_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">eval</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">}</span>
+            <span class="n">x_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">])</span>
+            <span class="n">yVa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa_fun</span><span class="p">(</span><span class="n">x_arr</span><span class="p">)</span>
+            <span class="n">cvar</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CompositionVariables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span> <span class="n">x_dict</span><span class="p">,</span> <span class="n">yVa</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">,</span> <span class="n">fm</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">cvar</span>
+
+        <span class="k">return</span> <span class="n">fun</span></div>
+
+
+<div class="viewcode-block" id="Simulation.prepare_simulation_log">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.prepare_simulation_log">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_simulation_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add simulation info to log.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;nt = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nt</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dt = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;saved_steps = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;saved_times = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;zstep = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">zstep</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Running simulation&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.run">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_completion</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run diffusion simulation.</span>
+
+<span class="sd">        * Call to :func:`solvers.solver`. The function returns variables at</span>
+<span class="sd">          saved_steps.</span>
+<span class="sd">        * These are printed to files, and stored in res dict. The keys of res</span>
+<span class="sd">          are the time steps. The last time step can be accessed with -1 as</span>
+<span class="sd">          key.</span>
+<span class="sd">        * A mass balance is performed (see :meth:`add_mass_balance`).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        show_completion : bool, optional</span>
+<span class="sd">            Print completion rate while simulation is running.</span>
+<span class="sd">        verbose : int, optional</span>
+<span class="sd">            Verbosity level, sets amount of information printed while</span>
+<span class="sd">            simulation is running. Recommended values: 0 (less verbose) and 1</span>
+<span class="sd">            (more verbose). See :func:`solvers.solver` and</span>
+<span class="sd">            :func:`solvers.remesh`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prepare_simulation_log</span><span class="p">()</span>
+
+        <span class="n">resdict</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cvar</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">MU_funy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">L_fun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa_fun</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">nt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">ideal_lattice</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">k_dislo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_pores</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">rho_dislo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_pores</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">DVa_fun</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">Va_method</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">BC</span><span class="p">,</span> <span class="n">show_completion</span><span class="p">,</span>
+                            <span class="n">verbose</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">stencil</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">results</span><span class="p">(</span><span class="n">resdict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">add_results</span><span class="p">(</span><span class="n">resdict</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="NewSimulation">
+<a class="viewcode-back" href="../modules/simu.html#simu.NewSimulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NewSimulation</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create new simulation from input file.</span>
+
+<span class="sd">    This is the recommended way to create a new simulation. See</span>
+<span class="sd">    :class:`Simulation` for documentation on attributes and methods.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NewSimulation.__init__">
+<a class="viewcode-back" href="../modules/simu.html#simu.NewSimulation.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Call :class:`Simulation` constructor to define system parameters and</span>
+<span class="sd">        pre-process simulation conditions. Then call :class:`Simulation`</span>
+<span class="sd">        methods to complete simulation setup.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adding space grid.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_grid</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adding initial composition profiles.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_profiles</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adding boundary conditions.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_BC</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adding time steps.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_saved_steps</span><span class="p">()</span>
+
+        <span class="c1"># Initialize results</span>
+        <span class="n">simu_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;comps&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                           <span class="s1">&#39;V_partial&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">,</span>
+                           <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+                           <span class="s1">&#39;saved_times&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simres</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">SimulationResults</span><span class="p">(</span><span class="n">simu_parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># shortcut</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># backward compatibility</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">result</span>  <span class="c1"># shortcut</span>
+
+        <span class="c1"># Shortcuts to useful plot methods</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_quartet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">plot_quartet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interactive_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">interactive_plot</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ReadSimulationOld">
+<a class="viewcode-back" href="../modules/simu.html#simu.ReadSimulationOld">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReadSimulationOld</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create simulation from results file.</span>
+
+<span class="sd">    See :class:`Simulation` for documentation on attributes and methods.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ReadSimulationOld.__init__">
+<a class="viewcode-back" href="../modules/simu.html#simu.ReadSimulationOld.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Read input parameters, log and simulation results from output file.</span>
+<span class="sd">        Check that the parameters in the output file coincide with those in the</span>
+<span class="sd">        input file. A difference would mean that the input file has been</span>
+<span class="sd">        modified after the simulation was run, and would be error-inducing.</span>
+<span class="sd">        Then add attributes to complete initialization.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+
+        <span class="n">read_pstring</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">resdict</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">read_res_from_file</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">read_pstring</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pstring</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="s2">&quot;Warning: the set of parameter read in the result file &quot;</span>
+            <span class="n">info</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;differs from that found in </span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">-input.txt&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+        <span class="n">log_dict</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">read_log_string</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
+        <span class="n">saved_steps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">resdict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">log_dict</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+        <span class="n">saved_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">step</span><span class="o">*</span><span class="n">dt</span><span class="o">/</span><span class="mi">3600</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">saved_steps</span><span class="p">])</span>
+        <span class="n">simu_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;comps&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                            <span class="s1">&#39;V_partial&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">,</span>
+                            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+                            <span class="s1">&#39;saved_times&#39;</span><span class="p">:</span> <span class="n">saved_times</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simres</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">SimulationResults</span><span class="p">(</span><span class="n">simu_parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">add_results</span><span class="p">(</span><span class="n">resdict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># shortcut</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># backward compatibility</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">result</span>  <span class="c1"># shortcut</span>
+
+        <span class="c1"># Shortcuts to useful plot methods</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_quartet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">plot_quartet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interactive_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">interactive_plot</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ReadSimulation">
+<a class="viewcode-back" href="../modules/simu.html#simu.ReadSimulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReadSimulation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create simulation from results file.</span>
+
+<span class="sd">    See :class:`Simulation` for documentation on attributes and methods.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ReadSimulation.__init__">
+<a class="viewcode-back" href="../modules/simu.html#simu.ReadSimulation.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Read log file of a previous simulation, extract useful attributes (see</span>
+<span class="sd">        list in :class:`alloy_system.AlloySystem` and :class:`Simulation`) and</span>
+<span class="sd">        make instance of :class:`results.SimulationResults`. The latter</span>
+<span class="sd">        organizes the results and exposes plot methods. The most useful plot</span>
+<span class="sd">        methods are added as attributes of this class for ease of access (and</span>
+<span class="sd">        backward compatibility).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">intro_msg</span><span class="p">(),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;INFO   : </span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s2"> Reading &#39;</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">&#39; results.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">resdict</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">parse_log</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;comps&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;V_partial&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">resdict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;saved_times&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;nt&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">th</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;th&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zstep</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;zstep&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thermo_db</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;thermo_db&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mob_db</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;mob_db&#39;</span><span class="p">]</span>
+        <span class="n">simu_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;comps&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                           <span class="s1">&#39;V_partial&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">,</span>
+                           <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+                           <span class="s1">&#39;saved_times&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simres</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">SimulationResults</span><span class="p">(</span><span class="n">simu_parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">add_results</span><span class="p">(</span><span class="n">resdict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># shortcut</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># backward compatibility</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">result</span>  <span class="c1"># shortcut</span>
+
+        <span class="c1"># Shortcuts to useful plot methods</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_quartet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">plot_quartet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interactive_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">interactive_plot</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="make_profile">
+<a class="viewcode-back" href="../modules/simu.html#simu.make_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_profile</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">zm_init</span><span class="p">,</span>
+                 <span class="n">val_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sdir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make profile along distance axis.</span>
+
+<span class="sd">    Behavior determined by the &#39;profile&#39; parameter:</span>
+
+<span class="sd">    * &#39;step&#39; followed by a float argument: step profile with step at zstep (see</span>
+<span class="sd">      doc in :func:`meshing.make_step_profile`) and values from val_left and</span>
+<span class="sd">      val_right.</span>
+
+<span class="sd">      If the argument is &gt; 0.1, it is interpreted as a fraction of zrange</span>
+<span class="sd">      -&gt; zstep = zmin + argument*(zmax - zmin)</span>
+
+<span class="sd">      If the argument is &lt; 0.1, it is interpreted as zstep in m.</span>
+<span class="sd">    * &#39;smooth step&#39; followed by a float argument: same with an error function</span>
+<span class="sd">      instead of heaviside (see :func:`meshing.make_smooth_step_profile`)</span>
+<span class="sd">    * &#39;flat&#39;: flat profile with values from val_left.</span>
+<span class="sd">    * filename: read from sdir/filename using np.genfromtxt</span>
+
+<span class="sd">    The input file must have the constituent profiles arranged by</span>
+<span class="sd">    columns, with the constituent names on the first line. The size</span>
+<span class="sd">    of the columns must match that of zm (i.e., `nz - 1`).</span>
+
+<span class="sd">    The &#39;val_left&#39; and &#39;val_right&#39; parameters are dicts with the independent</span>
+<span class="sd">    constituents as keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prof</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">zstep</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">profile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="s1">&#39;smooth step&#39;</span><span class="p">):</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+            <span class="n">zstep</span> <span class="o">=</span> <span class="n">zmin</span> <span class="o">+</span> <span class="n">arg</span> <span class="o">*</span> <span class="p">(</span><span class="n">zmax</span> <span class="o">-</span> <span class="n">zmin</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">zstep</span> <span class="o">=</span> <span class="n">arg</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;step&#39;</span><span class="p">:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">make_step_profile</span><span class="p">(</span><span class="n">zm_init</span><span class="p">,</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">val_left</span><span class="p">,</span> <span class="n">val_right</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">profile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;smooth step&#39;</span><span class="p">:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">make_smooth_step_profile</span><span class="p">(</span><span class="n">zm_init</span><span class="p">,</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">val_left</span><span class="p">,</span>
+                                                 <span class="n">val_right</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">profile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;flat&#39;</span><span class="p">:</span>
+        <span class="n">prof</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">zm_init</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val_left</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">sdir</span> <span class="o">/</span> <span class="n">profile</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">zm_init</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Initial atom fraction profile provided in </span><span class="si">{</span><span class="n">profile</span><span class="si">}</span><span class="s2"> has &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;size </span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">. It is not compatible with initial &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;grid of size </span><span class="si">{</span><span class="n">zm_init</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> (nz = </span><span class="si">{</span><span class="n">zm_init</span><span class="o">.</span><span class="n">size</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;nodes i.e. </span><span class="si">{</span><span class="n">zm_init</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> volumes).&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="n">prof</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">arr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">arr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">prof</span><span class="p">,</span> <span class="n">zstep</span></div>
+
+
+
+<div class="viewcode-block" id="make_compo_string_from_xdict">
+<a class="viewcode-back" href="../modules/simu.html#simu.make_compo_string_from_xdict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_compo_string_from_xdict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dep</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make label indicating an alloy composition.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : dict</span>
+<span class="sd">        Atom fractions of independent constituents.</span>
+<span class="sd">    dep : str</span>
+<span class="sd">        Name of dependent constituent.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    A : str</span>
+<span class="sd">        Label indicating an alloy composition.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; x = {&#39;Cr&#39;: 0.2, &#39;Al&#39;: 0.062}</span>
+<span class="sd">    &gt;&gt;&gt; dep = &#39;Ni&#39;</span>
+<span class="sd">    &gt;&gt;&gt; make_compo_string_from_xdict(x, dep)</span>
+<span class="sd">    &#39;Ni-20Cr-6.2Al&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">N</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">N</span><span class="o">.</span><span class="n">is_integer</span><span class="p">()</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">N</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">dep</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;-</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">A</span></div>
+
+
+
+<div class="viewcode-block" id="make_plot_title">
+<a class="viewcode-back" href="../modules/simu.html#simu.make_plot_title">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_plot_title</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">profile_type</span><span class="p">,</span> <span class="n">x_left</span><span class="p">,</span> <span class="n">x_right</span><span class="p">,</span> <span class="n">TC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make plot title.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dep : str</span>
+<span class="sd">        Name of dependent constituent.</span>
+<span class="sd">    profile_type : str</span>
+<span class="sd">        Type of initial atom fraction profile. See :func:`make_profile`.</span>
+<span class="sd">    x_left : dict of floats</span>
+<span class="sd">        Initial atom fraction of dependent constituents on left hand side.</span>
+<span class="sd">    x_right : dict of floats</span>
+<span class="sd">        Initial atom fraction of dependent constituents on right hand side.</span>
+<span class="sd">    TC : float</span>
+<span class="sd">        Temperature in Celsius.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    title : str</span>
+<span class="sd">        Plot title.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">profile_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;step&#39;</span><span class="p">:</span>
+        <span class="n">A_left</span> <span class="o">=</span> <span class="n">make_compo_string_from_xdict</span><span class="p">(</span><span class="n">x_left</span><span class="p">,</span> <span class="n">dep</span><span class="p">)</span>
+        <span class="n">A_right</span> <span class="o">=</span> <span class="n">make_compo_string_from_xdict</span><span class="p">(</span><span class="n">x_right</span><span class="p">,</span> <span class="n">dep</span><span class="p">)</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">rf</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">A_left</span><span class="si">}</span><span class="s1"> vs. </span><span class="si">{</span><span class="n">A_right</span><span class="si">}</span><span class="s1"> at </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">TC</span><span class="p">)</span><span class="si">}</span><span class="s1"> $^\circ$C&#39;</span>
+
+    <span class="k">elif</span> <span class="n">profile_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;flat&#39;</span><span class="p">:</span>
+        <span class="n">A_left</span> <span class="o">=</span> <span class="n">make_compo_string_from_xdict</span><span class="p">(</span><span class="n">x_left</span><span class="p">,</span> <span class="n">dep</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">rf</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">A_left</span><span class="si">}</span><span class="s1"> at </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">TC</span><span class="p">)</span><span class="si">}</span><span class="s1"> $^\circ$C&#39;</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;No title implemented for &quot;</span><span class="si">{</span><span class="n">profile_type</span><span class="si">}</span><span class="s1">&quot; profile&#39;</span>
+
+    <span class="k">return</span> <span class="n">title</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

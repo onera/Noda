@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>para_io &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="paths" href="paths.html" />
+    <link rel="prev" title="meshing" href="meshing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.read_log_string"><code class="docutils literal notranslate"><span class="pre">read_log_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.scrap_simu_attributes"><code class="docutils literal notranslate"><span class="pre">scrap_simu_attributes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.find_parameter_name"><code class="docutils literal notranslate"><span class="pre">find_parameter_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.handle_aliases"><code class="docutils literal notranslate"><span class="pre">handle_aliases()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.handle_phase_aliases"><code class="docutils literal notranslate"><span class="pre">handle_phase_aliases()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.process_xrange"><code class="docutils literal notranslate"><span class="pre">process_xrange()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.get_independent_constituents"><code class="docutils literal notranslate"><span class="pre">get_independent_constituents()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.preprocess_initial_profile"><code class="docutils literal notranslate"><span class="pre">preprocess_initial_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.check_profile_config"><code class="docutils literal notranslate"><span class="pre">check_profile_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.process_x_profile"><code class="docutils literal notranslate"><span class="pre">process_x_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.process_var_profile"><code class="docutils literal notranslate"><span class="pre">process_var_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.make_BC_type"><code class="docutils literal notranslate"><span class="pre">make_BC_type()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.make_BC_dict"><code class="docutils literal notranslate"><span class="pre">make_BC_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.check_num_out"><code class="docutils literal notranslate"><span class="pre">check_num_out()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.check_time_multiplier_config"><code class="docutils literal notranslate"><span class="pre">check_time_multiplier_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.check_sink_config"><code class="docutils literal notranslate"><span class="pre">check_sink_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.compact"><code class="docutils literal notranslate"><span class="pre">compact()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.input_string_to_dict"><code class="docutils literal notranslate"><span class="pre">input_string_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.make_valid_entries"><code class="docutils literal notranslate"><span class="pre">make_valid_entries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.check_valid_entries"><code class="docutils literal notranslate"><span class="pre">check_valid_entries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.check_required_entries"><code class="docutils literal notranslate"><span class="pre">check_required_entries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#para_io.read_parameter_string"><code class="docutils literal notranslate"><span class="pre">read_parameter_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/para_io.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-para_io">
+<span id="para-io"></span><h1><a class="reference internal" href="#module-para_io" title="para_io"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a><a class="headerlink" href="#module-para_io" title="Link to this heading"></a></h1>
+<p>Parse the input file that defines the system and various options.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.read_log_string">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">read_log_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#read_log_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.read_log_string" title="Link to this definition"></a></dt>
+<dd><p>Read the log created by a diffusion simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – Simulation log.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>di</strong> – Parameters and options defining the simulation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.scrap_simu_attributes">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">scrap_simu_attributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#scrap_simu_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.scrap_simu_attributes" title="Link to this definition"></a></dt>
+<dd><p>Generate list of valid attributes.</p>
+<p>Get list of all attributes of <a class="reference internal" href="alloy_system.html#alloy_system.AlloySystem" title="alloy_system.AlloySystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">alloy_system.AlloySystem</span></code></a> and
+<a class="reference internal" href="simu.html#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">simu.Simulation</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.find_parameter_name">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">find_parameter_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">di</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#find_parameter_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.find_parameter_name" title="Link to this definition"></a></dt>
+<dd><p>Find key used for the parameter ref_name in the input dict.</p>
+<p>For some parameters in the user input file, there exists one prefered name
+and one or more aliases. This function recognizes the name used as an alias
+of the reference name as key of the input dictionary and returns it. This
+was implemented for backward compatibility reasons (aliases are former
+parameter names).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ref_name</strong> (<em>str</em>) – Reference name of the parameter.</p></li>
+<li><p><strong>di</strong> (<em>dict</em>) – Input parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If input dict contains two or more keys that correspond to the same
+    parameter.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>par_name</strong> – Key used for the parameter in the input dict.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.handle_aliases">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">handle_aliases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#handle_aliases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.handle_aliases" title="Link to this definition"></a></dt>
+<dd><p>Replace aliases by their prefered equivalent name.</p>
+<p>Use <a class="reference internal" href="#para_io.find_parameter_name" title="para_io.find_parameter_name"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_parameter_name()</span></code></a> to find all possible aliases in input dict,
+and then replace them by the prefered parameter name.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.handle_phase_aliases">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">handle_phase_aliases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#handle_phase_aliases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.handle_phase_aliases" title="Link to this definition"></a></dt>
+<dd><p>Replace phase alias by the prefered phase name.</p>
+<p>Main purpose is backward compatibility.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.process_xrange">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">process_xrange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xr_raw_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#process_xrange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.process_xrange" title="Link to this definition"></a></dt>
+<dd><p>Make dict of atom fraction ranges from input string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.get_independent_constituents">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">get_independent_constituents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inds_raw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#get_independent_constituents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.get_independent_constituents" title="Link to this definition"></a></dt>
+<dd><p>Make list of independent constituents from string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.preprocess_initial_profile">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">preprocess_initial_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#preprocess_initial_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.preprocess_initial_profile" title="Link to this definition"></a></dt>
+<dd><p>Separate initial profile input into keyword and option.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.check_profile_config">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">check_profile_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#check_profile_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.check_profile_config" title="Link to this definition"></a></dt>
+<dd><p>Make sure input related to initial profile of var is consistent.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.process_x_profile">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">process_x_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#process_x_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.process_x_profile" title="Link to this definition"></a></dt>
+<dd><p>Make dict of atom fractions from initial condition input string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.process_var_profile">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">process_var_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#process_var_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.process_var_profile" title="Link to this definition"></a></dt>
+<dd><p>Make dict of var values from initial condition input string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.make_BC_type">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">make_BC_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#make_BC_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.make_BC_type" title="Link to this definition"></a></dt>
+<dd><p>Guess BC type from input dict and make sure input is consistent.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.make_BC_dict">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">make_BC_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#make_BC_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.make_BC_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert raw BC input into BC dict.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.check_num_out">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">check_num_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#check_num_out"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.check_num_out" title="Link to this definition"></a></dt>
+<dd><p>Make sure num_out is greater than 2 if present.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.check_time_multiplier_config">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">check_time_multiplier_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#check_time_multiplier_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.check_time_multiplier_config" title="Link to this definition"></a></dt>
+<dd><p>Make sure input related to time multipliers is consistent.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.check_sink_config">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">check_sink_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#check_sink_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.check_sink_config" title="Link to this definition"></a></dt>
+<dd><p>Make sure input related to sink strength is consistent.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.compact">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">compact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#compact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.compact" title="Link to this definition"></a></dt>
+<dd><p>Remove empty lines and commented entries in input string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.input_string_to_dict">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">input_string_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#input_string_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.input_string_to_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert input string into a dictionary.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.make_valid_entries">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">make_valid_entries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#make_valid_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.make_valid_entries" title="Link to this definition"></a></dt>
+<dd><p>List all recognized parameters for user input file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.check_valid_entries">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">check_valid_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#check_valid_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.check_valid_entries" title="Link to this definition"></a></dt>
+<dd><p>Make sure all entries in input dict are valid.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.check_required_entries">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">check_required_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#check_required_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.check_required_entries" title="Link to this definition"></a></dt>
+<dd><p>Make sure all required entries are present in dict.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="para_io.read_parameter_string">
+<span class="sig-prename descclassname"><span class="pre">para_io.</span></span><span class="sig-name descname"><span class="pre">read_parameter_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/para_io.html#read_parameter_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#para_io.read_parameter_string" title="Link to this definition"></a></dt>
+<dd><p>Parse input file to get set of parameters.</p>
+<p>In the file, parameter names and values must be separated by ‘=’.
+Commented lines (#) and blank lines are ignored.
+Blank spaces around ‘=’ delimiters are ignored.
+Blank spaces in future dictionaries (x_left, x_right) are ignored.
+See <code class="xref py py-class docutils literal notranslate"><span class="pre">simu.System</span></code> for role of parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – Input file given as str.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>compacted_string</strong> (<em>str</em>) – Input string without unnecessary lines.</p></li>
+<li><p><strong>di</strong> (<em>dict</em>) – Set of parameters that define a system, simulation conditions and
+various options.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="meshing.html" class="btn btn-neutral float-left" title="meshing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="paths.html" class="btn btn-neutral float-right" title="paths" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

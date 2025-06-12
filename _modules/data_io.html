@@ -1,0 +1,820 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>data_io &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">data_io</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for data_io</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Load thermodynamics and mobility data.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.thermo_functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tfu</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">co</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">factory_default_parameters</span> <span class="k">as</span> <span class="n">factory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">pkg_data_dir</span>
+
+
+<div class="viewcode-block" id="get_user_data">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_user_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_user_data</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get user data from toml file.</span>
+<span class="sd">    </span>
+<span class="sd">    If toml file is not found in data folder, </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_dir : pathlib.Path</span>
+<span class="sd">        Path of data folder.</span>
+<span class="sd">    </span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : dict</span>
+<span class="sd">        Content of file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fpath</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="s1">&#39;user_data.toml&#39;</span>
+    <span class="k">if</span> <span class="n">fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pkg_data_dir</span> <span class="o">/</span> <span class="s1">&#39;user_data.toml&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No &#39;user_data.toml&#39; file found in </span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">. Using &quot;</span>
+               <span class="s2">&quot;&#39;user_data.toml&#39; file from package installation directory &quot;</span>
+               <span class="sa">f</span><span class="s2">&quot;instead (</span><span class="si">{</span><span class="n">pkg_data_dir</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="get_volume_data">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_volume_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_volume_data</span><span class="p">(</span><span class="n">volume_databases</span><span class="p">,</span> <span class="n">volume_db</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get partial molar volumes from specified database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    volume_databases : dict</span>
+<span class="sd">        Available molar volume data.</span>
+<span class="sd">    volume_db : str</span>
+<span class="sd">        Name of partial molar volume database.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents.</span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If database is not present in databases dict.</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If database entry is formatted incorrectly.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : dict</span>
+<span class="sd">        ``{k: V_k for k in comps}``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">di</span> <span class="o">=</span> <span class="n">volume_databases</span><span class="p">[</span><span class="n">volume_db</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown molar volume database &#39;</span><span class="si">{</span><span class="n">volume_db</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+               <span class="s2">&quot;Please check the &#39;molar_volume&#39; table in your &quot;</span>
+               <span class="s2">&quot;&#39;user_data.toml&#39; file&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">sorted_keys</span> <span class="o">=</span> <span class="n">comps</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;pore&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sorted_keys</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;default&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No entry for </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> in molar volume database &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">volume_db</span><span class="si">}</span><span class="s2">&#39;. Using default entry in the database.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;Va&#39;</span><span class="p">,</span> <span class="s1">&#39;pore&#39;</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span><span class="p">[</span><span class="s1">&#39;partial_molar_volume&#39;</span><span class="p">]</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Molar volume database &#39;</span><span class="si">{</span><span class="n">volume_db</span><span class="si">}</span><span class="s2">&#39; contains no data &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;for </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">, and no default value. Using system-wide &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;default value (Vm = </span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2"> m3/mol) instead.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;Va&#39;</span><span class="p">,</span> <span class="s1">&#39;pore&#39;</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;Va&#39;</span><span class="p">,</span> <span class="s1">&#39;pore&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;local&#39;</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid entry for species </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> in molar volume &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;database &#39;</span><span class="si">{</span><span class="n">volume_db</span><span class="si">}</span><span class="s2">&#39; (found &#39;</span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;, should be &quot;</span>
+                       <span class="s2">&quot;a float or string &#39;local&#39;).&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid entry for species </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> in database &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">volume_db</span><span class="si">}</span><span class="s2">&#39; (found &#39;</span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;, should be a float).&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="get_vacancy_formation_energy">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_vacancy_formation_energy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_vacancy_formation_energy</span><span class="p">(</span><span class="n">vacancy_databases</span><span class="p">,</span> <span class="n">vacancy_db</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span>
+                                 <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get vacancy formation energy in pure metals.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    volume_databases : dict</span>
+<span class="sd">        Available vacancy formation energy data.</span>
+<span class="sd">    vacancy_db : str</span>
+<span class="sd">        Name of database with vacancy formation energy in pure metals.</span>
+<span class="sd">    phase : str</span>
+<span class="sd">        Name of metal phase.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents.</span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If database is not included in databases dict.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : dict</span>
+<span class="sd">        ``{k: [enthalpy, entropy] for k in comps}``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">di</span> <span class="o">=</span> <span class="n">vacancy_databases</span><span class="p">[</span><span class="n">vacancy_db</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown vacancy formation energy database &#39;</span><span class="si">{</span><span class="n">vacancy_db</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+               <span class="s2">&quot;Please check the &#39;vacancy_formation_energy&#39; table in your &quot;</span>
+               <span class="s2">&quot;&#39;user_data.toml&#39; file&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="n">di_phase</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">di_phase</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;default&#39;</span> <span class="ow">in</span> <span class="n">di</span><span class="p">:</span>
+                <span class="n">di_phase</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No entry for </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> in vacancy formation energy &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;database &#39;</span><span class="si">{</span><span class="n">vacancy_db</span><span class="si">}</span><span class="s2">&#39;. Using default entry in the &quot;</span>
+                       <span class="s2">&quot;database.&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">di_phase</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span><span class="p">[</span><span class="s1">&#39;vacancy_formation_energy&#39;</span><span class="p">]</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vacancy formation energy database &#39;</span><span class="si">{</span><span class="n">vacancy_db</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;contains no data for </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">, and no default value. &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;Using system-wide default value (</span><span class="si">{</span><span class="n">di_phase</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2">) &quot;</span>
+                       <span class="s2">&quot;instead.&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[</span><span class="n">v</span><span class="o">*</span><span class="n">co</span><span class="o">.</span><span class="n">EV</span><span class="o">*</span><span class="n">co</span><span class="o">.</span><span class="n">NA</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">di_phase</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Begin code from OPTIMOB</span>
+<span class="c1"># =============================================================================</span>
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Thermodynamic parameters</span>
+
+<div class="viewcode-block" id="get_thermo_from_file">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_thermo_from_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_thermo_from_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span> <span class="n">TK</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get parameters needed to calculate Gibbs free energy from spreadsheet file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fpath : pathlib.Path</span>
+<span class="sd">        Path of file with thermodynamic database.</span>
+<span class="sd">    phase : str</span>
+<span class="sd">        Name of metal phase.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If file is not found.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    p : dict of floats</span>
+<span class="sd">        Thermodynamic parameters arranged as follows:</span>
+
+<span class="sd">        | ``A: G_A for A in endmembers``</span>
+<span class="sd">        | ``AB: [L0, L1] for AB in binary subsystems``</span>
+<span class="sd">        | ``ABC: [L0, L1] for ABC in ternary subsystems``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">data_dir</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pkg_fpath</span> <span class="o">=</span> <span class="n">pkg_data_dir</span> <span class="o">/</span> <span class="n">fname</span>
+        <span class="k">if</span> <span class="n">pkg_fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">pkg_fpath</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Thermodynamic database file &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&#39; not found in &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">. Using file from package installation &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;directory instead (</span><span class="si">{</span><span class="n">pkg_data_dir</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Thermodynamic database file &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&#39; not found in &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2"> or in package installation directory. </span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="s2">&quot;Please provide a thermodynamic database file.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="n">G0_para</span> <span class="o">=</span> <span class="n">get_G0_parameters</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+    <span class="n">G0</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">tfu</span><span class="o">.</span><span class="n">G0_fun</span><span class="p">(</span><span class="n">G0_para</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">TK</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">}</span>
+    <span class="n">solvents</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">make_combinations</span><span class="p">(</span><span class="n">comps</span><span class="p">)[</span><span class="s1">&#39;mix&#39;</span><span class="p">]</span>
+    <span class="n">interactions</span> <span class="o">=</span> <span class="n">get_thermo_interaction_parameters</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">solvents</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+    <span class="n">L_para</span> <span class="o">=</span> <span class="n">interactions</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">make_L_isotherm</span><span class="p">(</span><span class="n">L_para</span><span class="p">,</span> <span class="n">TK</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">G0</span><span class="p">,</span> <span class="o">**</span><span class="n">L</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="get_G0_parameters">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_G0_parameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_G0_parameters</span><span class="p">(</span><span class="n">fpath</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get parameters needed to compute Gibbs free energy of endmembers.</span>
+
+<span class="sd">    Data retrieved from spreadsheet file. Requires an external dependency:</span>
+
+<span class="sd">    ======  ============</span>
+<span class="sd">    format  package name</span>
+<span class="sd">    ======  ============</span>
+<span class="sd">    xls     xlrd</span>
+<span class="sd">    xlsx    openpyxl</span>
+<span class="sd">    ods     odfpy</span>
+<span class="sd">    ======  ============</span>
+
+<span class="sd">    Data is in the form of G - H_SER. See Dinsdale 1991 [#Dinsdale_1991]_.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fpath : pathlib.Path</span>
+<span class="sd">        Path of file with thermodynamic database.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Parameters, see in file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Pure elements&#39;</span><span class="p">,</span>
+                       <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">ut</span><span class="o">.</span><span class="n">format_element_symbol</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">di</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+
+<div class="viewcode-block" id="get_thermo_interaction_parameters">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_thermo_interaction_parameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_thermo_interaction_parameters</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">solvents</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get thermodynamic interaction parameters from spreadsheet file.</span>
+
+<span class="sd">    Requires an external dependency:</span>
+
+<span class="sd">    ======  ============</span>
+<span class="sd">    format  package name</span>
+<span class="sd">    ======  ============</span>
+<span class="sd">    xls     xlrd</span>
+<span class="sd">    xlsx    openpyxl</span>
+<span class="sd">    ods     odfpy</span>
+<span class="sd">    ======  ============</span>
+
+<span class="sd">    The parameters belong to the following categories (variables) depending</span>
+<span class="sd">    on the quantity they are related to:</span>
+
+<span class="sd">    * L : Gibbs free energy</span>
+<span class="sd">    * Tc : critical temperature</span>
+<span class="sd">    * beta : magnetism</span>
+
+<span class="sd">    The parameters correspond to:</span>
+
+<span class="sd">    * binary interactions (orders 0 and 1)</span>
+<span class="sd">    * ternary interactions (order 0, with `L1 = 0` for compatibility)</span>
+
+<span class="sd">    Parameters are given as:</span>
+
+<span class="sd">    * order 0: A and B in `L0 = A + B*T`</span>
+<span class="sd">    * order 1: C and D in `L1 = C + D*T`</span>
+
+<span class="sd">    If a variable is not included in the input file, all parameters are set to</span>
+<span class="sd">    0 for this variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fpath : pathlib.Path</span>
+<span class="sd">        Path to thermodynamic database file.</span>
+<span class="sd">    solvents : list of str</span>
+<span class="sd">        Binary and ternary subsystems, concatenated to strings.</span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    di: dict</span>
+<span class="sd">        Thermodynamic interaction parameters,</span>
+
+<span class="sd">        ``{var: subdi for var in [&#39;L&#39;, &#39;Tc&#39;, &#39;beta&#39;]}``</span>
+
+<span class="sd">        where subdi is result of :func:`process_interaction_parameters`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Interactions&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;Tc&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">]:</span>
+        <span class="n">sub_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">k</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">sub_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">di</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">solvents</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sub_df</span> <span class="o">=</span> <span class="n">sub_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;solvent&#39;</span><span class="p">)</span>
+            <span class="n">di</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_interaction_parameters</span><span class="p">(</span><span class="n">sub_df</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">solvents</span><span class="p">,</span>
+                                                   <span class="n">logger</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">di</span></div>
+
+
+
+<div class="viewcode-block" id="process_interaction_parameters">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.process_interaction_parameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_interaction_parameters</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">solvents</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process dataframe with thermodynamic interaction parameters.</span>
+
+<span class="sd">    Apply sanitary checks and convert from dataframe to dict. For each</span>
+<span class="sd">    subsystem in solvents, operation depends on number of matching keys in the</span>
+<span class="sd">    dataframe:</span>
+
+<span class="sd">    * if 0, set all interaction parameters to 0</span>
+<span class="sd">    * if 1, get interaction parameters</span>
+<span class="sd">    * if more than 1, raise exception.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : dataframe</span>
+<span class="sd">        Thermodynamic interaction parameters for one variable. Columns:</span>
+
+<span class="sd">        * variable : either of L, Tc or beta (see</span>
+<span class="sd">          :func:`get_thermo_interaction_parameters`).</span>
+<span class="sd">        * solvent : constituents of subsystem concatenated to string.</span>
+<span class="sd">        * A, B, C, D : interaction parameters, with</span>
+
+<span class="sd">            * order 0 = A + B*T</span>
+<span class="sd">            * order 1 = C + D*T</span>
+
+<span class="sd">    fpath : pathlib.Path</span>
+<span class="sd">        Path of file with thermodynamic database.</span>
+<span class="sd">    solvents : list of str</span>
+<span class="sd">        Binary and ternary subsystems, concatenated to strings.</span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If several equivalent subsystems (ie permutations of the same</span>
+<span class="sd">        subsystem) are present in the database.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    di_reduced : dict of dicts</span>
+<span class="sd">        Thermodynamic interaction parameters,</span>
+
+<span class="sd">        ``{k: {letter: val for letter in &#39;ABCD&#39;} for k in solvents}``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">variable</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">solvents</span><span class="p">:</span>
+        <span class="n">possible</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">make_permutations_samesize</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">kfile_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">possible</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kfile_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="s1">&#39;ABCD&#39;</span><span class="p">]</span>
+            <span class="c1"># Interactions parameters for Tc and beta are not always available,</span>
+            <span class="c1"># and are not used in Noda -&gt; do not issue any warning for these</span>
+            <span class="c1"># variables.</span>
+            <span class="k">if</span> <span class="n">variable</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Tc&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">]:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> interaction parameters for variable &#39;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;are missing. Using 0 as default.&quot;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">kfile_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># In binary subsystems, if the 2 elements are reversed, the order 1</span>
+            <span class="c1"># parameters must be changed because</span>
+            <span class="c1"># G = ... + x_i*x_j*(L0_ij + L1_ij*(x_i - x_j)) + ...</span>
+            <span class="c1"># with L1_ij = C + D*T</span>
+            <span class="c1"># In ternary subsystems, order 1 parameters are 0 for the moment</span>
+            <span class="c1"># Introducing order 1 parameters would be more complex -&gt; order of</span>
+            <span class="c1"># elements does not matter</span>
+
+            <span class="n">kfile</span> <span class="o">=</span> <span class="n">kfile_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">kfile</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">{</span><span class="n">kfile</span><span class="p">:</span> <span class="n">k</span><span class="p">})</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># binary subsystems</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Input file: &quot;</span><span class="si">{</span><span class="n">fpath</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> interaction parameters for </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;Several equivalent solvents given: </span><span class="si">{</span><span class="n">kfile_list</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+    <span class="n">di_reduced</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">di</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">solvents</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">di_reduced</span></div>
+
+
+
+<div class="viewcode-block" id="make_L_isotherm">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.make_L_isotherm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_L_isotherm</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate interaction parameters at given temperature.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    L : dict</span>
+<span class="sd">        Interaction parameters,</span>
+
+<span class="sd">        ``{k: {letter: val for letter in &#39;ABCD&#39;} for k in solvents}``.</span>
+<span class="sd">    T : float or int</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : dict of lists</span>
+<span class="sd">        Interaction parameters, ``{k: [L0, L1] for k in solvents}``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[</span><span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;B&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">T</span><span class="p">,</span>
+               <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;C&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;D&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">T</span><span class="p">]</span>
+           <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">L</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Mobility parameters</span>
+
+<div class="viewcode-block" id="get_mob_from_file">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_mob_from_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mob_from_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span> <span class="n">TK</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get mobility parameters from input file.</span>
+
+<span class="sd">    File formats currently supported:</span>
+
+<span class="sd">    * xls, xlsx or ods: database from literature</span>
+<span class="sd">    * json: database from OPTIMOB.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fpath : pathlib.Path</span>
+<span class="sd">        Path of file with mobility database.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If file is not found or file format not accepted.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    p : dict of dicts</span>
+<span class="sd">        ``{i: subdict for i in comps}``</span>
+
+<span class="sd">        subdict: ``{j: val for j in subsystems}``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">data_dir</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pkg_fpath</span> <span class="o">=</span> <span class="n">pkg_data_dir</span> <span class="o">/</span> <span class="n">fname</span>
+        <span class="k">if</span> <span class="n">pkg_fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">pkg_fpath</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mobility database file &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&#39; not found in &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">. Using file from package installation &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;directory instead (</span><span class="si">{</span><span class="n">pkg_data_dir</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mobility database file &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&#39; not found in &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2"> or in package installation directory. </span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="s2">&quot;Please provide a mobility database file.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;xls&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;ods&#39;</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">get_mob_from_spreadsheet</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span> <span class="n">TK</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;json&#39;</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">get_mob_from_json</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span> <span class="n">TK</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Input file format (.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s1">) not accepted.&#39;</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="get_mob_from_spreadsheet">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_mob_from_spreadsheet">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mob_from_spreadsheet</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get mobility parameters from spreadsheet file.</span>
+
+<span class="sd">    Requires an external dependency:</span>
+
+<span class="sd">    ======  ============</span>
+<span class="sd">    format  package name</span>
+<span class="sd">    ======  ============</span>
+<span class="sd">    xls     xlrd</span>
+<span class="sd">    xlsx    openpyxl</span>
+<span class="sd">    ods     odfpy</span>
+<span class="sd">    ======  ============</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fpath : pathlib.Path</span>
+<span class="sd">        Path of file with mobility database.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    p : dict of dicts</span>
+<span class="sd">        ``{i: subdict for i in comps}``</span>
+
+<span class="sd">        subdict: ``{j: val for j in subsystems}``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">di</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">solute</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">solute</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">format_element_symbol</span><span class="p">)</span>
+
+    <span class="n">solvents</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">make_combinations</span><span class="p">(</span><span class="n">comps</span><span class="p">)[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">:</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">solvents</span><span class="p">:</span>
+            <span class="n">redf</span> <span class="o">=</span> <span class="n">get_reduced_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">redf</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="n">redf</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">TK</span>
+
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="get_mob_from_json">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_mob_from_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mob_from_json</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get mobility parameters from json file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fpath : pathlib.Path</span>
+<span class="sd">        Path of file with mobility database.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    p : dict of dicts</span>
+<span class="sd">        ``{i: subdict for i in comps}``</span>
+
+<span class="sd">        subdict: ``{j: val for j in subsystems}``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pylint: disable=too-many-locals</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">di_full</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="c1"># Check that temperature is correct</span>
+    <span class="n">TC_file_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">di_full</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;exp &#39;</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
+            <span class="n">di</span> <span class="o">=</span> <span class="n">di_full</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">TC_file_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">di_full</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;TC&#39;</span><span class="p">])</span>
+    <span class="n">TC_file</span> <span class="o">=</span> <span class="n">TC_file_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">TC</span> <span class="o">==</span> <span class="n">TC_file</span> <span class="k">for</span> <span class="n">TC</span> <span class="ow">in</span> <span class="n">TC_file_list</span><span class="p">)</span>
+    <span class="n">TC</span> <span class="o">=</span> <span class="n">TK</span> <span class="o">-</span> <span class="mf">273.15</span>
+    <span class="k">if</span> <span class="n">TC</span> <span class="o">!=</span> <span class="nb">round</span><span class="p">(</span><span class="n">TC_file</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Optimized parameters are valid at </span><span class="si">{</span><span class="n">TC_file</span><span class="si">}</span><span class="s1"> *C, &#39;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;not compatible with simulation at </span><span class="si">{</span><span class="n">TC</span><span class="si">}</span><span class="s1"> *C.&#39;</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="c1"># Get nested dicts with parameters</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">di_full</span><span class="p">[</span><span class="s2">&quot;popt&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Keep values for required solute-solvent combinations</span>
+    <span class="n">solvents</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">make_combinations</span><span class="p">(</span><span class="n">comps</span><span class="p">)[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">:</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">solvents</span><span class="p">:</span>
+            <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">di</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="get_reduced_df">
+<a class="viewcode-back" href="../modules/data_io.html#data_io.get_reduced_df">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_reduced_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">solvent</span><span class="p">,</span> <span class="n">solute</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter dataframe to keep mobility data for solute in solvent.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : dataframe</span>
+<span class="sd">        Parameters to compute mobility of solutes in solvents.</span>
+<span class="sd">    solvent : str</span>
+<span class="sd">        Solvent of interest (constituents concatenated to string).</span>
+<span class="sd">    solute : str</span>
+<span class="sd">        Solute of interest.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If several equivalent solvents (ie permutations of the same solvent)</span>
+<span class="sd">        are present in the df.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : dataframe</span>
+<span class="sd">        Reduced dataframe.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">possible_solvents</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">make_permutations_samesize</span><span class="p">(</span><span class="n">solvent</span><span class="p">)</span>
+    <span class="n">possible_lower_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">possible_solvents</span><span class="p">]</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">solute</span> <span class="o">==</span> <span class="n">solute</span><span class="p">)</span>
+             <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">solvent</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">possible_lower_key</span><span class="p">))]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Mobility parameters for </span><span class="si">{</span><span class="n">solute</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">solvent</span><span class="si">}</span><span class="s2"> are missing. &quot;</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mobility parameters for </span><span class="si">{</span><span class="n">solute</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">solvent</span><span class="si">}</span><span class="s2">. &quot;</span>
+               <span class="sa">f</span><span class="s2">&quot;Several equivalent solvents given: </span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">solvent</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># End code from OPTIMOB</span>
+<span class="c1"># =============================================================================</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

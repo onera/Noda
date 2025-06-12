@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>composition_variables &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="constants" href="constants.html" />
+    <link rel="prev" title="alloy_system" href="alloy_system.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#composition_variables.vec_to_nod"><code class="docutils literal notranslate"><span class="pre">vec_to_nod()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#composition_variables.arr_to_nod"><code class="docutils literal notranslate"><span class="pre">arr_to_nod()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#composition_variables.MultiVariable"><code class="docutils literal notranslate"><span class="pre">MultiVariable</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.MultiVariable.__init__"><code class="docutils literal notranslate"><span class="pre">MultiVariable.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.MultiVariable.nod"><code class="docutils literal notranslate"><span class="pre">MultiVariable.nod()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#composition_variables.UniVariable"><code class="docutils literal notranslate"><span class="pre">UniVariable</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.UniVariable.__init__"><code class="docutils literal notranslate"><span class="pre">UniVariable.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.UniVariable.nod"><code class="docutils literal notranslate"><span class="pre">UniVariable.nod()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#composition_variables.CompositionVariables"><code class="docutils literal notranslate"><span class="pre">CompositionVariables</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.CompositionVariables.__init__"><code class="docutils literal notranslate"><span class="pre">CompositionVariables.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.CompositionVariables.x"><code class="docutils literal notranslate"><span class="pre">CompositionVariables.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.CompositionVariables.y"><code class="docutils literal notranslate"><span class="pre">CompositionVariables.y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.CompositionVariables.V"><code class="docutils literal notranslate"><span class="pre">CompositionVariables.V</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.CompositionVariables.Vm"><code class="docutils literal notranslate"><span class="pre">CompositionVariables.Vm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.CompositionVariables.fm"><code class="docutils literal notranslate"><span class="pre">CompositionVariables.fm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#composition_variables.CompositionVariables.fp"><code class="docutils literal notranslate"><span class="pre">CompositionVariables.fp</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/composition_variables.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-composition_variables">
+<span id="composition-variables"></span><h1><a class="reference internal" href="#module-composition_variables" title="composition_variables"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a><a class="headerlink" href="#module-composition_variables" title="Link to this heading"></a></h1>
+<p>Gather and organize the variables that describe a system composition.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="composition_variables.vec_to_nod">
+<span class="sig-prename descclassname"><span class="pre">composition_variables.</span></span><span class="sig-name descname"><span class="pre">vec_to_nod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#vec_to_nod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.vec_to_nod" title="Link to this definition"></a></dt>
+<dd><p>Evaluate <cite>x</cite> (defined on midpoints) on nodes by linear interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>1D array</em>) – Variable, shape (<cite>nz</cite> - 1).</p></li>
+<li><p><strong>z</strong> (<em>1D array</em>) – Node positions, shape (<cite>nz</cite>,).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>arr</strong> – Variable evaluated on nodes, shape (<cite>nind</cite>, <cite>nz</cite>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="composition_variables.arr_to_nod">
+<span class="sig-prename descclassname"><span class="pre">composition_variables.</span></span><span class="sig-name descname"><span class="pre">arr_to_nod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpkind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#arr_to_nod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.arr_to_nod" title="Link to this definition"></a></dt>
+<dd><p>Evaluate <cite>x</cite> (defined on midpoints) on nodes by linear interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>2D array</em>) – Variable, shape (<cite>nind</cite>, <cite>nz</cite> - 1).</p></li>
+<li><p><strong>z</strong> (<em>1D array</em>) – Node positions, shape (<cite>nz</cite>,).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>arr</strong> – Variable evaluated on nodes, shape (<cite>nind</cite>, <cite>nz</cite>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>2D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="composition_variables.MultiVariable">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">composition_variables.</span></span><span class="sig-name descname"><span class="pre">MultiVariable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_init</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#MultiVariable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.MultiVariable" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Vector variable evaluated on midpoints <cite>zm</cite>.</p>
+<p>One row per independent constituent.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="composition_variables.MultiVariable.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_init</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#MultiVariable.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.MultiVariable.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v_init</strong> (<em>dict</em>) – Initial value, dict of 1D arrays of shape (<cite>nz</cite> - 1,), with
+independent constituents as keys.</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>mid</strong> (<em>2D array</em>) – Variable evaluated on midpoints, shape (<cite>ninds</cite>, <cite>nz</cite> - 1)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="composition_variables.MultiVariable.nod">
+<span class="sig-name descname"><span class="pre">nod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#MultiVariable.nod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.MultiVariable.nod" title="Link to this definition"></a></dt>
+<dd><p>Evaluate on node, see <a class="reference internal" href="#composition_variables.arr_to_nod" title="composition_variables.arr_to_nod"><code class="xref py py-func docutils literal notranslate"><span class="pre">arr_to_nod()</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="composition_variables.UniVariable">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">composition_variables.</span></span><span class="sig-name descname"><span class="pre">UniVariable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_init</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#UniVariable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.UniVariable" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Scalar variable evaluated on midpoints <cite>zm</cite>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="composition_variables.UniVariable.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_init</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#UniVariable.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.UniVariable.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v_init</strong> (<em>dict</em>) – Initial value, 1D array of shape (<cite>nz</cite> - 1,).</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>mid</strong> (<em>1D array</em>) – Variable evaluated on midpoints, shape (<cite>nz</cite> - 1,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="composition_variables.UniVariable.nod">
+<span class="sig-name descname"><span class="pre">nod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#UniVariable.nod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.UniVariable.nod" title="Link to this definition"></a></dt>
+<dd><p>Evaluate on nodes (<cite>z</cite>) by interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>1D array</em>) – Node positions, shape (<cite>nz</cite>,).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Variable evaluated on nodes, shape (<cite>nz</cite>,).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="composition_variables.CompositionVariables">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">composition_variables.</span></span><span class="sig-name descname"><span class="pre">CompositionVariables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yVa_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V_partial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#CompositionVariables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.CompositionVariables" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Contain and organize composition variables.</p>
+<p>This describes the composition of a system with one metal phase and one
+pore phase.</p>
+<p>The system composition is initialized with metal atom fractions. Once all
+variables are built, the reference variable is the system concentration
+(in mol/m3). Only the system concentration will be updated in the
+calculations. The other variables will derive from the system
+concentrations — the other variables are ‘read-only’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>2D array</em>) – Metal atom fractions.</p></li>
+<li><p><strong>y</strong> (<em>2D array</em>) – Metal site fractions.</p></li>
+<li><p><strong>V</strong> (<em>1D array</em>) – Average system molar volume.</p></li>
+<li><p><strong>Vm</strong> (<em>1D array</em>) – Average metal molar volume.</p></li>
+<li><p><strong>fm</strong> (<em>1D array</em>) – Metal volume fraction.</p></li>
+<li><p><strong>fp</strong> (<em>1D array</em>) – Pore volume fraction.</p></li>
+<li><p><strong>c</strong> (<em>2D array</em>) – System concentrations.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="composition_variables.CompositionVariables.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yVa_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V_partial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/composition_variables.html#CompositionVariables.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#composition_variables.CompositionVariables.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<div class="line-block">
+<div class="line">Build metal atom fractions.</div>
+<div class="line">Build metal site fractions.</div>
+<div class="line">Build average molar volume of metal (<cite>Vm</cite>), then of system (<cite>V</cite>).</div>
+<div class="line">Build system concentration.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comps</strong> (<em>list</em><em> of </em><em>str</em>) – System constituents, ordered: [‘Va’] + inds + [dep].</p></li>
+<li><p><strong>x_init</strong> (<em>dict</em>) – Initial atom fractions, dict of 1D arrays of shape (<cite>nz</cite> - 1,).</p></li>
+<li><p><strong>yVa_init</strong> (<em>1D array</em>) – Initial vacancy site fraction, shape (<cite>nz</cite> - 1,).</p></li>
+<li><p><strong>V_partial</strong> (<em>dict</em>) – Partial molar volumes.</p></li>
+<li><p><strong>fm</strong> (<em>1D array</em>) – Initial metal volume fraction, shape (<cite>nz</cite> - 1,).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="composition_variables.CompositionVariables.x">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#composition_variables.CompositionVariables.x" title="Link to this definition"></a></dt>
+<dd><p>Atom fractions evaluated on midpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Shape (<cite>ninds</cite> + 1, <cite>nz</cite> - 1).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>2D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="composition_variables.CompositionVariables.y">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#composition_variables.CompositionVariables.y" title="Link to this definition"></a></dt>
+<dd><p>Site fractions of all metal constituents evaluated on midpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>Shape (<cite>ninds</cite> + 2, <cite>nz</cite> - 1).</p>
+<div class="line-block">
+<div class="line">Order of rows:</div>
+<div class="line-block">
+<div class="line">0 : vacancies</div>
+<div class="line">1.. : independent atom constituents</div>
+<div class="line">n : dependent constituent</div>
+</div>
+</div>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>2D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="composition_variables.CompositionVariables.V">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">V</span></span><a class="headerlink" href="#composition_variables.CompositionVariables.V" title="Link to this definition"></a></dt>
+<dd><p>Average molar volume of the system, 1D array of shape (<cite>nz</cite> - 1).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="composition_variables.CompositionVariables.Vm">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vm</span></span><a class="headerlink" href="#composition_variables.CompositionVariables.Vm" title="Link to this definition"></a></dt>
+<dd><p>Average molar volume of the metal, 1D array of shape (<cite>nz</cite> - 1).</p>
+<p>Choice of two definitions depending on whether the vacancy molar volume
+is independent or that of the local environment.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="composition_variables.CompositionVariables.fm">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fm</span></span><a class="headerlink" href="#composition_variables.CompositionVariables.fm" title="Link to this definition"></a></dt>
+<dd><p>Metal volume fraction, 1D array of shape (<cite>nz</cite> - 1).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="composition_variables.CompositionVariables.fp">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fp</span></span><a class="headerlink" href="#composition_variables.CompositionVariables.fp" title="Link to this definition"></a></dt>
+<dd><p>Pore volume fraction, 1D array of shape (<cite>nz</cite> - 1).</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="alloy_system.html" class="btn btn-neutral float-left" title="alloy_system" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="constants.html" class="btn btn-neutral float-right" title="constants" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>meshing &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="para_io" href="para_io.html" />
+    <link rel="prev" title="log_utils" href="log_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#meshing.geo_grid"><code class="docutils literal notranslate"><span class="pre">geo_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#meshing.make_step_profile"><code class="docutils literal notranslate"><span class="pre">make_step_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#meshing.make_smooth_step_profile"><code class="docutils literal notranslate"><span class="pre">make_smooth_step_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#meshing.make_x_full"><code class="docutils literal notranslate"><span class="pre">make_x_full()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#meshing.make_xtab"><code class="docutils literal notranslate"><span class="pre">make_xtab()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/meshing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-meshing">
+<span id="meshing"></span><h1><a class="reference internal" href="#module-meshing" title="meshing"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a><a class="headerlink" href="#module-meshing" title="Link to this heading"></a></h1>
+<p>Define space grids and composition profiles.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="meshing.geo_grid">
+<span class="sig-prename descclassname"><span class="pre">meshing.</span></span><span class="sig-name descname"><span class="pre">geo_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/meshing.html#geo_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#meshing.geo_grid" title="Link to this definition"></a></dt>
+<dd><p>Make space grid according to geometric progression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zmin</strong> (<em>float</em>) – Start position.</p></li>
+<li><p><strong>zmax</strong> (<em>float</em>) – End position.</p></li>
+<li><p><strong>nz</strong> (<em>int</em>) – Number of elements.</p></li>
+<li><p><strong>q</strong> (<em>float</em>) – Common ratio.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Geometric grid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="meshing.make_step_profile">
+<span class="sig-prename descclassname"><span class="pre">meshing.</span></span><span class="sig-name descname"><span class="pre">make_step_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zstep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/meshing.html#make_step_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#meshing.make_step_profile" title="Link to this definition"></a></dt>
+<dd><p>Make step profiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>1D array</em>) – Node positions, shape (<cite>nz</cite>,).</p></li>
+<li><p><strong>zstep</strong> (<em>float</em>) – Position of the step. If <cite>zstep</cite> falls on the <cite>z</cite> grid, the value at
+<cite>zstep</cite> is the average of the end-values.</p></li>
+<li><p><strong>x_left</strong> (<em>dict</em><em> of </em><em>floats</em>) – Atom fractions on the left-hand side.</p></li>
+<li><p><strong>x_right</strong> (<em>dict</em><em> of </em><em>floats</em>) – Atom fractions on the right-hand side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> – Atom fraction profiles on <cite>z</cite> grid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict of 1D arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="meshing.make_smooth_step_profile">
+<span class="sig-prename descclassname"><span class="pre">meshing.</span></span><span class="sig-name descname"><span class="pre">make_smooth_step_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zstep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/meshing.html#make_smooth_step_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#meshing.make_smooth_step_profile" title="Link to this definition"></a></dt>
+<dd><p>Make smooth step profiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>1D array</em>) – Node positions, shape (<cite>nz</cite>,).</p></li>
+<li><p><strong>zstep</strong> (<em>float</em>) – Position of the step. If <cite>zstep</cite> falls on the <cite>z</cite> grid, the value at
+<cite>zstep</cite> is the average of the end-values.</p></li>
+<li><p><strong>x_left</strong> (<em>dict</em><em> of </em><em>floats</em>) – Atom fractions on the left-hand side.</p></li>
+<li><p><strong>x_right</strong> (<em>dict</em><em> of </em><em>floats</em>) – Atom fractions on the right-hand side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> – Atom fraction profiles on <cite>z</cite> grid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict of 1D arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="meshing.make_x_full">
+<span class="sig-prename descclassname"><span class="pre">meshing.</span></span><span class="sig-name descname"><span class="pre">make_x_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_sides</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/meshing.html#make_x_full"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#meshing.make_x_full" title="Link to this definition"></a></dt>
+<dd><p>Map the composition space.</p>
+<p>Only supports binary and ternary systems.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_sides</strong> (<em>dict</em><em> of </em><em>dicts</em>) – End values of the atom fractions of each constituent.</p></li>
+<li><p><strong>nx</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of steps in each dimension of the composition grid. The default
+is 20.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If the system contains more than two independent constituents.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x_full</strong> – Atom fraction grid, shape (<cite>n_inds</cite>, <cite>nx**n_inds</cite>).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>2D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="meshing.make_xtab">
+<span class="sig-prename descclassname"><span class="pre">meshing.</span></span><span class="sig-name descname"><span class="pre">make_xtab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/meshing.html#make_xtab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#meshing.make_xtab" title="Link to this definition"></a></dt>
+<dd><p>Make 2D array from dict of 1D arrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – <cite>n_inds</cite> composition arrays, shape (<cite>nx_i</cite>,).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>points</strong> – Composition array, shape (<cite>product(nx_i)</cite>, <cite>n_inds</cite>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>2D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="log_utils.html" class="btn btn-neutral float-left" title="log_utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="para_io.html" class="btn btn-neutral float-right" title="para_io" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>constants &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="data_io" href="data_io.html" />
+    <link rel="prev" title="composition_variables" href="composition_variables.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#constants.R"><code class="docutils literal notranslate"><span class="pre">R</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants.EV"><code class="docutils literal notranslate"><span class="pre">EV</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants.NA"><code class="docutils literal notranslate"><span class="pre">NA</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants.KB"><code class="docutils literal notranslate"><span class="pre">KB</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants.GV0"><code class="docutils literal notranslate"><span class="pre">GV0</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants.factory_default_parameters"><code class="docutils literal notranslate"><span class="pre">factory_default_parameters</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/constants.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-constants">
+<span id="constants"></span><h1><a class="reference internal" href="#module-constants" title="constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a><a class="headerlink" href="#module-constants" title="Link to this heading"></a></h1>
+<p>Constants.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.R">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">R</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8.314</span></em><a class="headerlink" href="#constants.R" title="Link to this definition"></a></dt>
+<dd><p>Ideal gas constant in J K-1 mol-1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.EV">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">EV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.602e-19</span></em><a class="headerlink" href="#constants.EV" title="Link to this definition"></a></dt>
+<dd><p>Electronvolt in J/eV.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.NA">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">NA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6.022e+23</span></em><a class="headerlink" href="#constants.NA" title="Link to this definition"></a></dt>
+<dd><p>Avogadro number in mol-1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.KB">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">KB</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8.617e-05</span></em><a class="headerlink" href="#constants.KB" title="Link to this definition"></a></dt>
+<dd><p>Boltzmann constant in eV/K.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.GV0">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">GV0</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">np.float64(18633.37978773849)</span></em><a class="headerlink" href="#constants.GV0" title="Link to this definition"></a></dt>
+<dd><p>Energy of vacancy end-member in J/mol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.factory_default_parameters">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">factory_default_parameters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Fourier_number':</span> <span class="pre">0.4,</span> <span class="pre">'common_ratio':</span> <span class="pre">1.02,</span> <span class="pre">'geometry':</span> <span class="pre">'planar',</span> <span class="pre">'grid':</span> <span class="pre">'linear',</span> <span class="pre">'min_atom_fraction':</span> <span class="pre">1e-09,</span> <span class="pre">'min_number_time_steps':</span> <span class="pre">20,</span> <span class="pre">'num_out':</span> <span class="pre">2,</span> <span class="pre">'number_space_steps':</span> <span class="pre">51,</span> <span class="pre">'partial_molar_volume':</span> <span class="pre">1e-05,</span> <span class="pre">'stencil':</span> <span class="pre">'A',</span> <span class="pre">'vacancy_db':</span> <span class="pre">'standard',</span> <span class="pre">'vacancy_formation_energy':</span> <span class="pre">[2,</span> <span class="pre">0.0003],</span> <span class="pre">'volume_db':</span> <span class="pre">'standard'}</span></em><a class="headerlink" href="#constants.factory_default_parameters" title="Link to this definition"></a></dt>
+<dd><p>Factory default parameters.</p>
+<dl class="simple">
+<dt>‘min_atom_fraction’<span class="classifier">str</span></dt><dd><p>Minimum atom fraction accepted in initial profiles and boundary conditions.</p>
+</dd>
+<dt>‘min_number_time_steps’<span class="classifier">int</span></dt><dd><p>Minimum number of time steps.</p>
+</dd>
+<dt>‘num_out’<span class="classifier">int</span></dt><dd><p>Number of saved time steps (see <a class="reference internal" href="../basic_use.html#simulation-conditions"><span class="std std-ref">Simulation conditions</span></a>).</p>
+</dd>
+<dt>‘grid’: str</dt><dd><p>Type of space grid (see <a class="reference internal" href="../basic_use.html#initial-space-grid"><span class="std std-ref">Initial space grid</span></a>).</p>
+</dd>
+<dt>‘number_space_steps’<span class="classifier">int</span></dt><dd><p>Number of space steps (nz in input file, see <a class="reference internal" href="../basic_use.html#initial-space-grid"><span class="std std-ref">Initial space grid</span></a>).</p>
+</dd>
+<dt>‘common_ratio’<span class="classifier">float</span></dt><dd><p>Common ratio for geometric grid (q in input file, see
+<a class="reference internal" href="../basic_use.html#initial-space-grid"><span class="std std-ref">Initial space grid</span></a>).</p>
+</dd>
+<dt>‘Fourier_number’<span class="classifier">float</span></dt><dd><p>Fourier number (see <a class="reference internal" href="../advanced_use.html#time-step"><span class="std std-ref">Time step</span></a>).</p>
+</dd>
+<dt>‘geometry’<span class="classifier">str</span></dt><dd><p>Domain geometry (see <a class="reference internal" href="../basic_use.html#domain-geometry"><span class="std std-ref">Domain geometry</span></a>).</p>
+</dd>
+<dt>‘stencil’<span class="classifier">str</span></dt><dd><p>Space discretization stencil (see <a class="reference internal" href="../advanced_use.html#stencil"><span class="std std-ref">Stencil</span></a>).</p>
+</dd>
+<dt>‘volume_db’<span class="classifier">str</span></dt><dd><p>Partial molar volume database.</p>
+</dd>
+<dt>‘partial_molar_volume’<span class="classifier">float</span></dt><dd><p>Partial molar volume in m3/mol.</p>
+</dd>
+<dt>‘vacancy_db’<span class="classifier">str</span></dt><dd><p>Vacancy formation energy database.</p>
+</dd>
+<dt>‘vacancy_formation_energy’<span class="classifier">list of floats</span></dt><dd><p>Vacancy formation energy, GfV = HfV - T*SfV with [HfV, SfV] in [eV, eV/K]</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="composition_variables.html" class="btn btn-neutral float-left" title="composition_variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data_io.html" class="btn btn-neutral float-right" title="data_io" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

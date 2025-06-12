@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lattice &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">lattice</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for lattice</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Compute variables describing the evolution of the crystal lattice.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">div</span><span class="p">,</span> <span class="n">integrate</span>
+
+
+<div class="viewcode-block" id="compute_alpha_nonideal">
+<a class="viewcode-back" href="../modules/lattice.html#lattice.compute_alpha_nonideal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_alpha_nonideal</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">yVa</span><span class="p">,</span> <span class="n">yVa_eq</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Vp</span><span class="p">,</span> <span class="n">fm</span><span class="p">,</span>
+                           <span class="n">k_dislo</span><span class="p">,</span> <span class="n">k_pores</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute lattice sink rate in non-ideal case.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dt : float</span>
+<span class="sd">        Time step.</span>
+<span class="sd">    yVa : 1D array</span>
+<span class="sd">        Vacancy site fraction, shape (`nz` - 1,).</span>
+<span class="sd">    yVa_eq : 1D array</span>
+<span class="sd">        Equilibrium vacancy site fraction, shape (`nz` - 1,).</span>
+<span class="sd">    V : 1D array</span>
+<span class="sd">        System average molar volume, shape (`nz` - 1,).</span>
+<span class="sd">    Vp : dict of floats</span>
+<span class="sd">        Partial molar volumes.</span>
+<span class="sd">    fm : 1D array</span>
+<span class="sd">        Metal volume fraction, shape (`nz` - 1,).</span>
+<span class="sd">    k_dislo : 1D array</span>
+<span class="sd">        Sink strength associated with dislocation climb, shape (`nz` - 1,).</span>
+<span class="sd">    k_pores : 1D array</span>
+<span class="sd">        Sink strength associated with pore growth, shape (`nz` - 1,).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    alpha_d : 1D array</span>
+<span class="sd">        Sink term associated with dislocation climb, shape (`nz` - 1,).</span>
+<span class="sd">    alpha_p : 1D array</span>
+<span class="sd">        Sink term associated with pore growth, shape (`nz` - 1,).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y_xs</span> <span class="o">=</span> <span class="n">yVa</span> <span class="o">-</span> <span class="n">yVa_eq</span>
+
+    <span class="c1"># Creation/annihilation via bulk lattice activity</span>
+    <span class="n">alpha_d</span> <span class="o">=</span> <span class="o">-</span><span class="n">k_dislo</span><span class="o">*</span><span class="n">y_xs</span>
+
+    <span class="c1"># Creation/annihilation via exchange with pores</span>
+    <span class="n">sursat</span> <span class="o">=</span> <span class="n">y_xs</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">fm</span>
+    <span class="n">inpore</span> <span class="o">=</span> <span class="n">fp</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">contribute_to_fp</span> <span class="o">=</span> <span class="n">sursat</span> <span class="o">|</span> <span class="n">inpore</span>
+    <span class="n">alpha_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">contribute_to_fp</span><span class="p">,</span> <span class="o">-</span><span class="n">k_pores</span><span class="o">*</span><span class="n">y_xs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># This is used to prevent fp &lt; 0</span>
+    <span class="c1"># Negative fp can occur because of small oscillations in fp: in regions</span>
+    <span class="c1"># with y_xs &lt; 0, if fp is slightly positive instead of 0, contribute_to_fp</span>
+    <span class="c1"># will be True and the positive alpha_p will lead to a decrease of fp,</span>
+    <span class="c1"># possibly below 0.</span>
+    <span class="c1"># The expression for alpha_p_max is an approximation: it neglects</span>
+    <span class="c1"># V/Vp*div(fp*v), which cannot be evaluated because v is not known (but</span>
+    <span class="c1"># this term is small).</span>
+    <span class="n">alpha_p_max</span> <span class="o">=</span> <span class="n">V</span><span class="o">/</span><span class="n">Vp</span><span class="o">*</span><span class="n">fp</span><span class="o">/</span><span class="n">dt</span>
+    <span class="n">alpha_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">alpha_p</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">alpha_p_max</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">alpha_d</span><span class="p">,</span> <span class="n">alpha_p</span></div>
+
+
+
+<div class="viewcode-block" id="compute_gamma">
+<a class="viewcode-back" href="../modules/lattice.html#lattice.compute_gamma">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_gamma</span><span class="p">(</span><span class="n">Jlat</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Vp</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">alpha_d</span><span class="p">,</span> <span class="n">alpha_p</span><span class="p">,</span> <span class="n">y_Va</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute relative volume variation rate.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Jlat : 1D array</span>
+<span class="sd">        Fluxes in the lattice frame, shape (`ninds` + 1, `nz`).</span>
+<span class="sd">    z : 1D array</span>
+<span class="sd">        Node positions, shape (`nz`,).</span>
+<span class="sd">    Vk : 1D array</span>
+<span class="sd">        Partial molar volumes.</span>
+<span class="sd">    V0 : float or 1D array</span>
+<span class="sd">        Partial molar volume of the vacancy.</span>
+<span class="sd">    Vp : float or 1D array</span>
+<span class="sd">        Partial molar volume of the pore.</span>
+<span class="sd">    V : 1D array</span>
+<span class="sd">        System average molar volume, shape (`nz` - 1,).</span>
+<span class="sd">    alpha_d : 1D array</span>
+<span class="sd">        Sink term associated with dislocation climb, shape (`nz` - 1,).</span>
+<span class="sd">    alpha_p : 1D array</span>
+<span class="sd">        Sink term associated with pore growth, shape (`nz` - 1,).</span>
+<span class="sd">    y_Va : 1D array</span>
+<span class="sd">        Vacancy site fraction, shape (`nz` - 1,).</span>
+<span class="sd">    geometry : str</span>
+<span class="sd">        Domain geometry (planar, cylindrical or spherical).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gamma : 1D array</span>
+<span class="sd">        Relative volume variation rate, shape (`nz` - 1,).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TIP: this function is not used anywhere</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha_d</span> <span class="o">+</span> <span class="n">alpha_p</span>
+    <span class="n">sum_V_divJ</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">V0</span> <span class="o">-</span> <span class="n">Vk</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">*</span><span class="n">div</span><span class="p">(</span><span class="n">Jlat</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">geometry</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">V0</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">sum_V_divJ</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y_Va</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">alpha</span><span class="o">*</span><span class="n">V0</span> <span class="o">-</span> <span class="n">alpha_p</span><span class="o">*</span><span class="n">Vp</span><span class="p">)</span><span class="o">/</span><span class="n">V</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">sum_V_divJ</span> <span class="o">+</span> <span class="p">(</span><span class="n">alpha</span><span class="o">*</span><span class="n">V0</span> <span class="o">-</span> <span class="n">alpha_p</span><span class="o">*</span><span class="n">Vp</span><span class="p">)</span><span class="o">/</span><span class="n">V</span>
+    <span class="k">return</span> <span class="n">gamma</span></div>
+
+
+
+<div class="viewcode-block" id="compute_gamma_V">
+<a class="viewcode-back" href="../modules/lattice.html#lattice.compute_gamma_V">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_gamma_V</span><span class="p">(</span><span class="n">Jlat</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Vm</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">y_Va</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute relative volume variation rate due to molar volume variation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Jlat : 1D array</span>
+<span class="sd">        Fluxes in the lattice frame, shape (`ninds` + 1, `nz`).</span>
+<span class="sd">    z : 1D array</span>
+<span class="sd">        Node positions, shape (`nz`,).</span>
+<span class="sd">    Vk : 1D array</span>
+<span class="sd">        Partial molar volumes.</span>
+<span class="sd">    V0 : float or 1D array</span>
+<span class="sd">        Partial molar volume of the vacancy.</span>
+<span class="sd">    Vm : 1D array</span>
+<span class="sd">        Average molar volume of the metal phase, shape (`nz` - 1,).</span>
+<span class="sd">    V : 1D array</span>
+<span class="sd">        System average molar volume, shape (`nz` - 1,).</span>
+<span class="sd">    y_Va : 1D array</span>
+<span class="sd">        Vacancy site fraction, shape (`nz` - 1,).</span>
+<span class="sd">    alpha : 1D array</span>
+<span class="sd">        Sink term, shape (`nz` - 1,).</span>
+<span class="sd">    geometry : str</span>
+<span class="sd">        Domain geometry (planar, cylindrical or spherical).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gamma_V : 1D array</span>
+<span class="sd">        Relative volume variation rate due to molar volume variation, shape</span>
+<span class="sd">        (`nz` - 1,).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sum_V_divJ</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">V0</span> <span class="o">-</span> <span class="n">Vk</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">*</span><span class="n">div</span><span class="p">(</span><span class="n">Jlat</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">geometry</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">V0</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">gamma_V</span> <span class="o">=</span> <span class="n">sum_V_divJ</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y_Va</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gamma_V</span> <span class="o">=</span> <span class="n">sum_V_divJ</span> <span class="o">+</span> <span class="n">alpha</span><span class="o">*</span><span class="p">(</span><span class="n">V0</span> <span class="o">-</span> <span class="n">Vm</span><span class="p">)</span><span class="o">/</span><span class="n">V</span>
+    <span class="k">return</span> <span class="n">gamma_V</span></div>
+
+
+
+<div class="viewcode-block" id="compute_velocity">
+<a class="viewcode-back" href="../modules/lattice.html#lattice.compute_velocity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_velocity</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Jlat</span><span class="p">,</span> <span class="n">yVa</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute velocity field of the lattice in the laboratory frame.</span>
+
+<span class="sd">    `v` is calculated via an integral from 0 to `z` -&gt; need to add value at 0.</span>
+<span class="sd">    `v_left` is obtained assuming ideal lattice activity on left boundary</span>
+<span class="sd">    (and neglecting the gradient of `Vm/(1 - yVa)` in getting the primitive).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gamma : 1D array</span>
+<span class="sd">        Relative volume variation rate, shape (`nz` - 1,).</span>
+<span class="sd">    z : 1D array</span>
+<span class="sd">        Node positions, shape (`nz`,).</span>
+<span class="sd">    Vk : 1D array</span>
+<span class="sd">        Partial molar volumes.</span>
+<span class="sd">    V0 : float or 1D array</span>
+<span class="sd">        Partial molar volume of the vacancy.</span>
+<span class="sd">    Jlat : 1D array</span>
+<span class="sd">        Fluxes in the lattice frame, shape (`ninds` + 1, `nz`).</span>
+<span class="sd">    yVa : 1D array</span>
+<span class="sd">        Vacancy site fraction, shape (`nz` - 1,).</span>
+<span class="sd">    geometry : str</span>
+<span class="sd">        Domain geometry (planar, cylindrical or spherical).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    v : 1D array</span>
+<span class="sd">        Lattice velocity, shape (`nz`,)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">V0_left</span> <span class="o">=</span> <span class="n">V0</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">V0</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="n">V0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">v_left</span> <span class="o">=</span> <span class="o">-</span><span class="nb">sum</span><span class="p">((</span><span class="n">Vk</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">V0_left</span><span class="o">*</span><span class="n">yVa</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">yVa</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">*</span><span class="n">Jlat</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">v_left</span> <span class="o">=</span> <span class="n">v_left</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">v_left</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">v</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

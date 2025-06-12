@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>plots &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="results" href="results.html" />
+    <link rel="prev" title="paths" href="paths.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plots.process_xaxis_unit"><code class="docutils literal notranslate"><span class="pre">process_xaxis_unit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plots.process_yaxis_unit"><code class="docutils literal notranslate"><span class="pre">process_yaxis_unit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plots.plot_profile_single"><code class="docutils literal notranslate"><span class="pre">plot_profile_single()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plots.add_profile"><code class="docutils literal notranslate"><span class="pre">add_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plots.plot_profile_quartet"><code class="docutils literal notranslate"><span class="pre">plot_profile_quartet()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plots.StaticProfile"><code class="docutils literal notranslate"><span class="pre">StaticProfile</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plots.StaticProfile.single"><code class="docutils literal notranslate"><span class="pre">StaticProfile.single()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plots.StaticProfile.quartet"><code class="docutils literal notranslate"><span class="pre">StaticProfile.quartet()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#plots.calculate_view_limits"><code class="docutils literal notranslate"><span class="pre">calculate_view_limits()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plots.InteractivePlot"><code class="docutils literal notranslate"><span class="pre">InteractivePlot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plots.InteractivePlot.setup_plot"><code class="docutils literal notranslate"><span class="pre">InteractivePlot.setup_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plots.InteractivePlot.on_scroll"><code class="docutils literal notranslate"><span class="pre">InteractivePlot.on_scroll()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plots.InteractivePlot.update_slider"><code class="docutils literal notranslate"><span class="pre">InteractivePlot.update_slider()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plots.InteractivePlot.update"><code class="docutils literal notranslate"><span class="pre">InteractivePlot.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#plots.InteractivePlotQuartet"><code class="docutils literal notranslate"><span class="pre">InteractivePlotQuartet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plots.InteractivePlotQuartet.setup_plot"><code class="docutils literal notranslate"><span class="pre">InteractivePlotQuartet.setup_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plots.InteractivePlotQuartet.on_scroll"><code class="docutils literal notranslate"><span class="pre">InteractivePlotQuartet.on_scroll()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plots.InteractivePlotQuartet.update_slider"><code class="docutils literal notranslate"><span class="pre">InteractivePlotQuartet.update_slider()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plots.InteractivePlotQuartet.update"><code class="docutils literal notranslate"><span class="pre">InteractivePlotQuartet.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#plots.plot_mass_balance"><code class="docutils literal notranslate"><span class="pre">plot_mass_balance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/plots.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-plots">
+<span id="plots"></span><h1><a class="reference internal" href="#module-plots" title="plots"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a><a class="headerlink" href="#module-plots" title="Link to this heading"></a></h1>
+<p>Generate plots.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.process_xaxis_unit">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">process_xaxis_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zunit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#process_xaxis_unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.process_xaxis_unit" title="Link to this definition"></a></dt>
+<dd><p>Convert x-axis unit label to plotting-ready form and make multiplier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>zunit</strong> (<em>str</em>) – Unit in which distance is to be plotted on x axis.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>zunit</strong> (<em>str</em>) – Unit in which distance is to be plotted on x axis.</p></li>
+<li><p><strong>zmult</strong> (<em>float</em>) – Factor by which distance (x axis) will be multiplied before plotting.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.process_yaxis_unit">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">process_yaxis_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#process_yaxis_unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.process_yaxis_unit" title="Link to this definition"></a></dt>
+<dd><p>Pre-process info to be used on y axis.</p>
+<p>Convert y-axis variable name to plotting-ready form and make y-axis unit
+label and multiplier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zunit</strong> (<em>str</em>) – Unit in which distance is to be plotted.</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – Name of variable to be plotted on y axis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>varname</strong> (<em>str</em>) – Name of variable to be plotted on y axis.</p></li>
+<li><p><strong>varunit</strong> (<em>float</em>) – Unit of y-axis variable.</p></li>
+<li><p><strong>varmult</strong> (<em>float</em>) – Factor by which y-axis variable will be multiplied before plotting.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.plot_profile_single">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">plot_profile_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zunit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'um'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#plot_profile_single"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.plot_profile_single" title="Link to this definition"></a></dt>
+<dd><p>Plot variable as a function of distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>1D array</em>) – Positions to be used on x axis. Can be either node positions (size
+<cite>nz</cite>) or midpoint positions (size <cite>nz</cite> - 1) depending on the y-axis
+variable.</p></li>
+<li><p><strong>var</strong> (<em>1D array</em><em> or </em><em>dict</em><em> of </em><em>1D arrays</em>) – Quantity to be plotted on y-axis.</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – Name of y-axis variable.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Plot title.</p></li>
+<li><p><strong>zunit</strong> (<em>str</em><em>, </em><em>optional</em>) – x-axis unit. The default is ‘um’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib figure and axis</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.add_profile">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">add_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zunit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'um'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#add_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.add_profile" title="Link to this definition"></a></dt>
+<dd><p>Add set of profiles to existing plot.</p>
+<p>If extra_legend arg is provided, a legend entry is added with a black
+symbol, which applies to all added profiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>1D array</em>) – Positions to be used on x axis. Can be either node positions (size
+<cite>nz</cite>) or midpoint positions (size <cite>nz</cite> - 1) depending on the y-axis
+variable.</p></li>
+<li><p><strong>var</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – Quantities to be added to y-axis.</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – Name of y-axis variable.</p></li>
+<li><p><strong>zunit</strong> (<em>str</em><em>, </em><em>optional</em>) – x-axis unit. The default is ‘um’.</p></li>
+<li><p><strong>extra_legend</strong> (<em>str</em><em>, </em><em>optional</em>) – Common legend to all added profiles. The default is None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.plot_profile_quartet">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">plot_profile_quartet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suptitle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zunit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'um'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_dep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#plot_profile_quartet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.plot_profile_quartet" title="Link to this definition"></a></dt>
+<dd><p>Plot composition and flux profiles.</p>
+<p>Produce a 2 x 2 grid of subplots with the following variables:</p>
+<ul class="simple">
+<li><p>Atom fraction</p></li>
+<li><p>Relative difference between simulated and equilibrium vacancy site
+fraction</p></li>
+<li><p>Flux in the lattice-fixed frame</p></li>
+<li><p>Volume fraction of pores.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>result</strong> (<a class="reference internal" href="results.html#results.UnitResult" title="results.UnitResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.UnitResult</span></code></a>) – Simulation results at given time step.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Axis title.</p></li>
+<li><p><strong>suptitle</strong> (<em>str</em>) – Plot title.</p></li>
+<li><p><strong>zunit</strong> (<em>str</em><em>, </em><em>optional</em>) – x-axis unit. The default is ‘um’.</p></li>
+<li><p><strong>ylim</strong> (<em>dict</em><em>, </em><em>optional</em>) – Lower and upper limits of the y-axis of the four subplots. Four keys
+are recognized: ‘x’, ‘y0’, ‘J’, ‘fp’. The values are to be given as a
+tuple or list of two floats. The default is None.</p></li>
+<li><p><strong>exclude_dep</strong> (<em>bool</em><em>, </em><em>optional</em>) – Exclude the dependent constituent from the atom fraction subplots. The
+default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – Figure.</p></li>
+<li><p><strong>axes</strong> (<em>list of matplotlib.axes._subplots.AxesSubplot</em>) – Axes.</p></li>
+<li><p><strong>lines</strong> (<em>list of lists of matplotlib.lines.Line2D</em>) – Lines.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="plots.StaticProfile">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">StaticProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">th</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#StaticProfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.StaticProfile" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Static plot of composition and/or flux profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>res</strong> (<a class="reference internal" href="results.html#results.UnitResult" title="results.UnitResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.UnitResult</span></code></a>) – Simulation results at one time step.</p></li>
+<li><p><strong>step</strong> (<em>int</em>) – Time step.</p></li>
+<li><p><strong>th</strong> (<em>float</em>) – Time (h).</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Default plot title.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.StaticProfile.single">
+<span class="sig-name descname"><span class="pre">single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_dep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#StaticProfile.single"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.StaticProfile.single" title="Link to this definition"></a></dt>
+<dd><p>Plot profile at given time step.</p>
+<p>Call <a class="reference internal" href="#plots.plot_profile_single" title="plots.plot_profile_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">plots.plot_profile_single()</span></code></a>.
+The plotted variable can be multivalued (dict) or univalued (1D array).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>varname</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of variable to be plotted. The default is <cite>x</cite>.</p></li>
+<li><p><strong>plot_dep</strong> (<em>bool</em>) – Whether to include dependent constituent in <cite>x</cite> and <cite>y</cite> plots.</p></li>
+<li><p><strong>kwargs</strong> – Optional arguments passed to <a class="reference internal" href="#plots.plot_profile_single" title="plots.plot_profile_single"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_profile_single()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib figure and axis</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If variable is not recognized.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.StaticProfile.quartet">
+<span class="sig-name descname"><span class="pre">quartet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#StaticProfile.quartet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.StaticProfile.quartet" title="Link to this definition"></a></dt>
+<dd><p>Plot composition and flux profiles at given time step.</p>
+<p>Call <a class="reference internal" href="#plots.plot_profile_quartet" title="plots.plot_profile_quartet"><code class="xref py py-func docutils literal notranslate"><span class="pre">plots.plot_profile_quartet()</span></code></a>. Plot x, yVa, Jlat, fp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – Optional arguments passed to <a class="reference internal" href="#plots.plot_profile_quartet" title="plots.plot_profile_quartet"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_profile_quartet()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, axes, lines</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib figure, axes and lines</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.calculate_view_limits">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">calculate_view_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#calculate_view_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.calculate_view_limits" title="Link to this definition"></a></dt>
+<dd><p>Compute y-axis limits adapted to results at all time steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results</strong> (dict of <code class="xref py py-class docutils literal notranslate"><span class="pre">results.UnitStep</span></code>) – Contains simulation results with time steps as keys.</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – Name of variable of interest.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ylim</strong> – y-axis view limits for variable of interest.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict of lists</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="plots.InteractivePlot">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">InteractivePlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saved_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saved_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlot" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Interactive plot of simulation results.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.InteractivePlot.setup_plot">
+<span class="sig-name descname"><span class="pre">setup_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlot.setup_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlot.setup_plot" title="Link to this definition"></a></dt>
+<dd><p>Make figure with empty lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>str</em>) – Figure title.</p></li>
+<li><p><strong>xlim</strong> (<em>list</em><em> of </em><em>floats</em>) – x-axis view limits.</p></li>
+<li><p><strong>ylim</strong> (<em>dict</em><em> of </em><em>lists</em>) – y-axis view limits.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – Figure.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes._subplots.AxesSubplot</em>) – Axis.</p></li>
+<li><p><strong>lines</strong> (<em>list of matplotlib.lines.Line2D</em>) – Lines.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.InteractivePlot.on_scroll">
+<span class="sig-name descname"><span class="pre">on_scroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlot.on_scroll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlot.on_scroll" title="Link to this definition"></a></dt>
+<dd><p>Define callback used on scrolling.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.InteractivePlot.update_slider">
+<span class="sig-name descname"><span class="pre">update_slider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlot.update_slider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlot.update_slider" title="Link to this definition"></a></dt>
+<dd><p>Set slider to given position (time step) and update the figure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.InteractivePlot.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlot.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlot.update" title="Link to this definition"></a></dt>
+<dd><p>Update and draw the figure.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="plots.InteractivePlotQuartet">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">InteractivePlotQuartet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saved_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saved_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlotQuartet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlotQuartet" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Interactive plot of composition and flux profiles.</p>
+<p>The layout and quantities plotted are the same as in
+<code class="xref py py-func docutils literal notranslate"><span class="pre">plot_profiles_and_fluxes()</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.InteractivePlotQuartet.setup_plot">
+<span class="sig-name descname"><span class="pre">setup_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlotQuartet.setup_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlotQuartet.setup_plot" title="Link to this definition"></a></dt>
+<dd><p>Make figure with empty lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>str</em>) – Figure title.</p></li>
+<li><p><strong>xlim</strong> (<em>list</em><em> of </em><em>floats</em>) – x-axis view limits.</p></li>
+<li><p><strong>ylim</strong> (<em>dict</em><em> of </em><em>lists</em>) – y-axis view limits (see <code class="xref py py-func docutils literal notranslate"><span class="pre">plot_profiles_and_fluxes()</span></code> for keys).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – Figure.</p></li>
+<li><p><strong>axes</strong> (<em>list of matplotlib.axes._subplots.AxesSubplot</em>) – Axes.</p></li>
+<li><p><strong>lines</strong> (<em>list of lists of matplotlib.lines.Line2D</em>) – Lines.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.InteractivePlotQuartet.on_scroll">
+<span class="sig-name descname"><span class="pre">on_scroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlotQuartet.on_scroll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlotQuartet.on_scroll" title="Link to this definition"></a></dt>
+<dd><p>Define callback used on scrolling.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.InteractivePlotQuartet.update_slider">
+<span class="sig-name descname"><span class="pre">update_slider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlotQuartet.update_slider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlotQuartet.update_slider" title="Link to this definition"></a></dt>
+<dd><p>Set slider to given position (time step) and update the figure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="plots.InteractivePlotQuartet.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#InteractivePlotQuartet.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.InteractivePlotQuartet.update" title="Link to this definition"></a></dt>
+<dd><p>Update and draw the figure.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.plot_mass_balance">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">plot_mass_balance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/plots.html#plot_mass_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.plot_mass_balance" title="Link to this definition"></a></dt>
+<dd><p>Plot mass balance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>results</strong> (<a class="reference internal" href="results.html#results.SimulationResults" title="results.SimulationResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.SimulationResults</span></code></a>) – Simulation results.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib figure and axis</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="paths.html" class="btn btn-neutral float-left" title="paths" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="results.html" class="btn btn-neutral float-right" title="results" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

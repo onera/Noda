@@ -1,0 +1,425 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>results &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="results_io" href="results_io.html" />
+    <link rel="prev" title="plots" href="plots.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#results.SimulationResults"><code class="docutils literal notranslate"><span class="pre">SimulationResults</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#results.SimulationResults.__init__"><code class="docutils literal notranslate"><span class="pre">SimulationResults.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.SimulationResults.add_results"><code class="docutils literal notranslate"><span class="pre">SimulationResults.add_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.SimulationResults.result"><code class="docutils literal notranslate"><span class="pre">SimulationResults.result()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.SimulationResults.plot"><code class="docutils literal notranslate"><span class="pre">SimulationResults.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.SimulationResults.plot_quartet"><code class="docutils literal notranslate"><span class="pre">SimulationResults.plot_quartet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.SimulationResults.interactive_plot"><code class="docutils literal notranslate"><span class="pre">SimulationResults.interactive_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.SimulationResults.add_mass_balance"><code class="docutils literal notranslate"><span class="pre">SimulationResults.add_mass_balance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.SimulationResults.plot_mass_balance"><code class="docutils literal notranslate"><span class="pre">SimulationResults.plot_mass_balance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#results.UnitResult"><code class="docutils literal notranslate"><span class="pre">UnitResult</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#results.UnitResult.__init__"><code class="docutils literal notranslate"><span class="pre">UnitResult.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.UnitResult.to_nod"><code class="docutils literal notranslate"><span class="pre">UnitResult.to_nod()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.UnitResult.make_nod_attributes"><code class="docutils literal notranslate"><span class="pre">UnitResult.make_nod_attributes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.UnitResult.make_shorthands"><code class="docutils literal notranslate"><span class="pre">UnitResult.make_shorthands()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.UnitResult.compute_Vm"><code class="docutils literal notranslate"><span class="pre">UnitResult.compute_Vm()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.UnitResult.compute_L_nod"><code class="docutils literal notranslate"><span class="pre">UnitResult.compute_L_nod()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.UnitResult.plot"><code class="docutils literal notranslate"><span class="pre">UnitResult.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results.UnitResult.plot_quartet"><code class="docutils literal notranslate"><span class="pre">UnitResult.plot_quartet()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/results.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-results">
+<span id="results"></span><h1><a class="reference internal" href="#module-results" title="results"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a><a class="headerlink" href="#module-results" title="Link to this heading"></a></h1>
+<p>Organize simulation results.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="results.SimulationResults">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">results.</span></span><span class="sig-name descname"><span class="pre">SimulationResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simu_parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#SimulationResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.SimulationResults" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Organize composition variables from a simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>saved_steps</strong> (<em>list</em>) – Steps for which simulation results are stored in resdict.</p></li>
+<li><p><strong>saved_times</strong> (<em>1D array</em>) – Times in h (rounded) that correspond to the saved steps.</p></li>
+<li><p><strong>comps</strong> (<em>list</em><em> of </em><em>str</em>) – System constituents, with ‘Va’ first and dependent constituent
+last.</p></li>
+<li><p><strong>inds</strong> (<em>list</em><em> of </em><em>str</em>) – Independent constituents, with ‘Va’ first.</p></li>
+<li><p><strong>V_partial</strong> (<em>dict</em>) – Partial molar volumes.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Default plot title.</p></li>
+<li><p><strong>results</strong> (<em>dict</em>) – Simulation results stored as <a class="reference internal" href="#results.UnitResult" title="results.UnitResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnitResult</span></code></a> instances.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="results.SimulationResults.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simu_parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#SimulationResults.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.SimulationResults.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resdict</strong> (<em>dict</em>) – Simulation results (dict).</p></li>
+<li><p><strong>simu_parameters</strong> (<em>dict</em>) – Simulation parameters, see class attributes.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.SimulationResults.add_results">
+<span class="sig-name descname"><span class="pre">add_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resdict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#SimulationResults.add_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.SimulationResults.add_results" title="Link to this definition"></a></dt>
+<dd><p>Populate results dictionary.</p>
+<p>Generate <a class="reference internal" href="#results.UnitResult" title="results.UnitResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnitResult</span></code></a> instances and set up their
+<a class="reference internal" href="plots.html#plots.StaticProfile" title="plots.StaticProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">plots.StaticProfile</span></code></a> attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.SimulationResults.result">
+<span class="sig-name descname"><span class="pre">result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#SimulationResults.result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.SimulationResults.result" title="Link to this definition"></a></dt>
+<dd><p>Access results at required step index or nearest to asked time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_index</strong> (<em>int</em>) – Index of required time step in saved_steps/saved_times.</p></li>
+<li><p><strong>th</strong> (<em>float</em>) – Required time in hour.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Simulation results.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#results.UnitResult" title="results.UnitResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnitResult</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If the user specifies both step_index and th.
+    If step_index is not an integer or is out of range.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.SimulationResults.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#SimulationResults.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.SimulationResults.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot profile of variable varname at required time.</p>
+<p>Select results at time step with <a class="reference internal" href="#results.SimulationResults.result" title="results.SimulationResults.result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">result()</span></code></a> (see doc of
+<a class="reference internal" href="#results.SimulationResults.result" title="results.SimulationResults.result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">result()</span></code></a> for handling of step_index and th). Then call
+<a class="reference internal" href="#results.UnitResult.plot" title="results.UnitResult.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">UnitResult.plot()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>varname</strong> (<em>str</em>) – Name of variable to be plotted.</p></li>
+<li><p><strong>step_index</strong> (<em>int</em>) – Index of required time step in saved_steps/saved_times.</p></li>
+<li><p><strong>th</strong> (<em>float</em>) – Required time in hour.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, ax</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib figure and axis</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.SimulationResults.plot_quartet">
+<span class="sig-name descname"><span class="pre">plot_quartet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#SimulationResults.plot_quartet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.SimulationResults.plot_quartet" title="Link to this definition"></a></dt>
+<dd><p>Plot 2x2 subplots with profiles of simulation results.</p>
+<p>Select results at time step with <a class="reference internal" href="#results.SimulationResults.result" title="results.SimulationResults.result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">result()</span></code></a> (see doc of
+<a class="reference internal" href="#results.SimulationResults.result" title="results.SimulationResults.result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">result()</span></code></a> for handling of step_index and th). Then call
+<a class="reference internal" href="#results.UnitResult.plot_quartet" title="results.UnitResult.plot_quartet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">UnitResult.plot_quartet()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_index</strong> (<em>int</em>) – Index of required time step in saved_steps/saved_times.</p></li>
+<li><p><strong>th</strong> (<em>float</em>) – Required time in hour.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig, axes, lines</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib figure, axes and lines</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.SimulationResults.interactive_plot">
+<span class="sig-name descname"><span class="pre">interactive_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#SimulationResults.interactive_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.SimulationResults.interactive_plot" title="Link to this definition"></a></dt>
+<dd><p>Interactive plot (call <a class="reference internal" href="plots.html#plots.InteractivePlot" title="plots.InteractivePlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">plots.InteractivePlot</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.SimulationResults.add_mass_balance">
+<span class="sig-name descname"><span class="pre">add_mass_balance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#SimulationResults.add_mass_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.SimulationResults.add_mass_balance" title="Link to this definition"></a></dt>
+<dd><p>Add mass balance.</p>
+<p>For each time step in steps, integrate concentrations and volume along
+profile, and compute difference with initial values.</p>
+<p>Variables:</p>
+<ul class="simple">
+<li><p>N : amount of vacancies and atom species</p></li>
+<li><p>Np : amount of pores</p></li>
+<li><p>NW : amount of vacancies annihilated due to volume variation since
+initial step.</p></li>
+<li><p>Nv : amount of vacancies in simulation box, in solution and in
+pores, plus amount annihilated due to volume variations.</p></li>
+</ul>
+<p>Type of operation:</p>
+<ul class="simple">
+<li><p>INx : integral amount in mol/m2</p></li>
+<li><p>dINx : difference with initial value, mol/m2</p></li>
+<li><p>rdINx : relative difference with initial value</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.SimulationResults.plot_mass_balance">
+<span class="sig-name descname"><span class="pre">plot_mass_balance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#SimulationResults.plot_mass_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.SimulationResults.plot_mass_balance" title="Link to this definition"></a></dt>
+<dd><p>Call <a class="reference internal" href="plots.html#plots.plot_mass_balance" title="plots.plot_mass_balance"><code class="xref py py-func docutils literal notranslate"><span class="pre">plots.plot_mass_balance()</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="results.UnitResult">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">results.</span></span><span class="sig-name descname"><span class="pre">UnitResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V_partial</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#UnitResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.UnitResult" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Gather composition variables from one time step of a simulation.</p>
+<p>Most attributes below are available in three versions:
+* x_mid: variable x evaluated on mid points
+* x_nod: variable x evaluated on nodes
+* x: shorthand for x_nod</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z_nod</strong> (<em>1D array</em>) – Node positions.</p></li>
+<li><p><strong>z_mid</strong> (<em>1D array</em>) – Midpoint positions.</p></li>
+<li><p><strong>c</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – System concentrations.</p></li>
+<li><p><strong>V</strong> (<em>1D array</em>) – Average molar volume of system.</p></li>
+<li><p><strong>y</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – Metal site fractions.</p></li>
+<li><p><strong>yVa_eq</strong> (<em>1D array</em>) – Equilibrium vacancy site fraction.</p></li>
+<li><p><strong>dyVa</strong> (<em>1D array</em>) – Difference between actual and equilibrium vacancy fraction.</p></li>
+<li><p><strong>ryVa</strong> (<em>1D array</em>) – Relative difference between actual and eq. vacancy fraction.</p></li>
+<li><p><strong>x</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – Metal atom fractions.</p></li>
+<li><p><strong>Vm</strong> (<em>1D array</em>) – Average molar volume of metal.</p></li>
+<li><p><strong>mu</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – Chemical potentials.</p></li>
+<li><p><strong>Jlat</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – Fluxes in lattice-fixed frame.</p></li>
+<li><p><strong>v</strong> (<em>1D array</em>) – Velocity field of lattice relative to laboratory frame.</p></li>
+<li><p><strong>Jref</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – Fluxes in laboratory frame.</p></li>
+<li><p><strong>alpha_dislo</strong> (<em>1D array</em>) – Lattice sink rate due to dislocations.</p></li>
+<li><p><strong>alpha_pores</strong> (<em>1D array</em>) – Lattice sink rate due to pore growth.</p></li>
+<li><p><strong>alpha</strong> (<em>1D array</em>) – Total lattice sink rate.</p></li>
+<li><p><strong>L</strong> (<em>2D array</em>) – Onsager coefficients.</p></li>
+<li><p><strong>fm</strong> (<em>1D array</em>) – Metal volume fraction.</p></li>
+<li><p><strong>fp</strong> (<em>1D array</em>) – Pore volume fraction.</p></li>
+<li><p><strong>gamma_V</strong> (<em>1D array</em>) – Relative volume variation rate due to molar volume variations.</p></li>
+<li><p><strong>gamma_N</strong> (<em>1D array</em>) – Relative volume variation rate due to variations in the number of
+lattice sites.</p></li>
+<li><p><strong>gamma_p</strong> (<em>1D array</em>) – Relative volume variation rate due to pore growth.</p></li>
+<li><p><strong>gamma</strong> (<em>1D array</em>) – Total relative volume variation.</p></li>
+<li><p><strong>deformation</strong> (<em>1D array</em>) – Relative length variation.</p></li>
+<li><p><strong>static_prof</strong> (<a class="reference internal" href="plots.html#plots.StaticProfile" title="plots.StaticProfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">plots.StaticProfile</span></code></a>) – Configure and plot static profiles.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="results.UnitResult.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V_partial</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#UnitResult.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.UnitResult.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comps</strong> (<em>list</em><em> of </em><em>str</em>) – System constituents, list with ‘Va’ first and dependent constituent
+last.</p></li>
+<li><p><strong>result</strong> (<em>dict</em>) – Simulation results at one time step.</p></li>
+<li><p><strong>V_partial</strong> (<em>dict</em>) – Partial molar volumes.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.UnitResult.to_nod">
+<span class="sig-name descname"><span class="pre">to_nod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#UnitResult.to_nod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.UnitResult.to_nod" title="Link to this definition"></a></dt>
+<dd><p>Interpolate vector on nodes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.UnitResult.make_nod_attributes">
+<span class="sig-name descname"><span class="pre">make_nod_attributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#UnitResult.make_nod_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.UnitResult.make_nod_attributes" title="Link to this definition"></a></dt>
+<dd><p>Make attributes on nodes.</p>
+<p>For every variable x in the list, create attribute x_nod by
+interpolating x_mid on nodes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.UnitResult.make_shorthands">
+<span class="sig-name descname"><span class="pre">make_shorthands</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#UnitResult.make_shorthands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.UnitResult.make_shorthands" title="Link to this definition"></a></dt>
+<dd><p>Make attribute shorthands.</p>
+<p>For every variable x in the list, create attribute with shorthand x and
+assign existing x_nod value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.UnitResult.compute_Vm">
+<span class="sig-name descname"><span class="pre">compute_Vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">V_partial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_mid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_mid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#UnitResult.compute_Vm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.UnitResult.compute_Vm" title="Link to this definition"></a></dt>
+<dd><p>Compute average molar volume of the metal phase.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.UnitResult.compute_L_nod">
+<span class="sig-name descname"><span class="pre">compute_L_nod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L_mid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#UnitResult.compute_L_nod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.UnitResult.compute_L_nod" title="Link to this definition"></a></dt>
+<dd><p>Interpolate Onsager coefficients on nodes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.UnitResult.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#UnitResult.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.UnitResult.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot profile of variable varname.</p>
+<p>Call <a class="reference internal" href="plots.html#plots.StaticProfile.single" title="plots.StaticProfile.single"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plots.StaticProfile.single()</span></code></a>. See list of variable names in
+class documentation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="results.UnitResult.plot_quartet">
+<span class="sig-name descname"><span class="pre">plot_quartet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/results.html#UnitResult.plot_quartet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#results.UnitResult.plot_quartet" title="Link to this definition"></a></dt>
+<dd><p>Plot 2x2 grid plot with profiles of simulation results.</p>
+<p>Call <a class="reference internal" href="plots.html#plots.StaticProfile.quartet" title="plots.StaticProfile.quartet"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plots.StaticProfile.quartet()</span></code></a>. Plot x, yVa, Jlat, fp.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="plots.html" class="btn btn-neutral float-left" title="plots" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="results_io.html" class="btn btn-neutral float-right" title="results_io" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
