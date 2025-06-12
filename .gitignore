@@ -1,0 +1,10 @@
+_build
+__pycache__
+*.script
+*.json
+*.nod
+*.pdf
+*.lnk
+make_html.bat
+.spyproject
+/.VSCodeCounter

@@ -83,12 +83,12 @@ Domain geometry
 Noda solves the diffusion problem along one space coordinate, in either of three
 geometric configurations:
 
-    * planar - 1D: this represents a slab of given thickness in one direction
+    * planar : a slab of given thickness in one direction
       and translational symmetry in the two other directions, described in
-      cartesian coordinates.
-    * cylindrical - 2D radial: a cylinder with translational and rotational
+      Cartesian coordinates.
+    * cylindrical : a cylinder with translational and rotational
       symmetry with respect to its axis, described in cylindrical coordinates.
-    * spherical - 3D radial: a sphere with rotational symmetry with respect
+    * spherical : a sphere with rotational symmetry with respect
       to its center, described in spherical coordinates.
 
 The ``geometry`` parameter takes either argument ('planar', 'cylindrical' or
@@ -96,9 +96,9 @@ The ``geometry`` parameter takes either argument ('planar', 'cylindrical' or
 
 .. note::
 
-   In the cylindrical and spherical geometries, the simulation domain represents
-   only part of the solid. This has implications regarding the choice of the
-   domain boundary positions and boundary conditions (see below).
+   The rotational symmetry in the cylindrical and spherical geometries has
+   implications regarding the choice of the domain boundary positions and
+   boundary conditions (see :ref:`initial_space_grid`).
 
 .. _initial_space_grid:
 
