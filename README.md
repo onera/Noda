@@ -13,8 +13,9 @@ Required dependencies:
 * Python 3.11+
 * numpy, scipy, pandas, matplotlib, odfpy, numdifftools
 
-The documentation contains installation instructions, tutorials and
-the package reference.
+The documentation is available at
+[onera.github.io/Noda](https://onera.github.io/Noda); it contains
+installation instructions, tutorials and the package reference.
 
 Citing
 ------

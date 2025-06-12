@@ -15,7 +15,7 @@ alloys.
 Noda uses thermodynamic and mobility data to solve the diffusion problem with
 prescribed initial composition and boundary conditions, using the finite
 difference method. This version is limited to single-phase systems, isothermal
-conditions, one space coordinate (1D planar, 2D cylindrical, 3D spherical).
+conditions, one space coordinate (planar, cylindrical or spherical geometry).
 
 .. toctree::
    :caption: User guide

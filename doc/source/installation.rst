@@ -150,16 +150,6 @@ databases) will be located.
    variables window, choose "New", then in Variable name, type NODA_HOME, and in
    Variable value, choose the path you want.
 
-Optional dependencies
----------------------
-
-Thermodynamic and mobility data used in Noda are stored in spreadsheets in
-either *ods* or *xslx* format (see :ref:`thermokin_database_files`). The
-package provides made-up database files in *ods* format for testing purposes.
-Users who would like to use database files in *xlsx* format need to install the
-openpyxl package (or any package Pandas' ``read_excel`` method will use to open an
-*xlsx* file, see https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html).
-
 Uninstalling Noda
 -----------------
 
