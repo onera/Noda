@@ -3,8 +3,9 @@
 Credits and reference papers
 ============================
 
-Noda is developped by Thomas Gheno at ONERA, with advice from Clara Desgranges
-(Safran Tech / CEA) and Daniel Monceau (CIRIMAT).
+Noda is developped by Thomas Gheno at ONERA, with advice (conceptualization,
+methodology) from Clara Desgranges (Safran Tech / CEA) and Daniel Monceau
+(CIRIMAT).
 
 If you use Noda, please cite the following paper:
 
