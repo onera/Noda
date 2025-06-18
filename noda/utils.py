@@ -186,11 +186,8 @@ def integrate(f, u, F0, geometry):
     """
     Compute radial vector field from its divergence.
 
-    The field must fall in either of 3 geometric configurations:
-
-        * 1D (planar)
-        * 2D with only a radial component (cylindrical)
-        * 3D with only a radial component (spherical)
+    The field is evaluated along one space coordinate, in either of 3 geometric
+    configurations (planar, cylindrical, spherical).
 
     The `f` values are evaluated at midpoints of the `u` array.
     Ensures minimum error when composed with :func:`div`.
@@ -237,11 +234,8 @@ def div(F, u, geometry):
     """
     Compute the divergence of a radial vector field.
 
-    The field must fall in either of 3 geometric configurations:
-
-        * 1D (planar)
-        * 2D with only a radial component (cylindrical)
-        * 3D with only a radial component (spherical)
+    The field is evaluated along one space coordinate, in either of 3 geometric
+    configurations (planar, cylindrical, spherical).
 
     Ensures minimum error when composed with :func:`integrate`.
 

@@ -515,8 +515,8 @@ composition-independent molar volume and diffusivity have analytical solutions.
 Some typical initial distributions and boundary conditions are illustrated
 below.
 
-Diffusion couple (1D planar)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Diffusion couple (planar geometry)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the case of an infinitely-thick planar diffusion couple:
 
@@ -548,8 +548,8 @@ This is compared with the Noda simulation in the example named "couple_AB":
 
 |
 
-Constant surface concentration (1D planar)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Constant surface concentration (planar geometry)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the case of a semi-infinite planar solid initially at a uniform concentration
 :math:`x_B^\mathrm{bulk}`, with its left-hand surface maintained at a constant
@@ -583,8 +583,8 @@ the Dirichlet boundary condition:
 
 |
 
-Constant surface concentration (3D spherical)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Constant surface concentration (spherical geometry)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If a sphere of radius :math:`R` is initially at a uniform concentration
 :math:`x_B^\mathrm{bulk}`, and its surface is maintained at a constant

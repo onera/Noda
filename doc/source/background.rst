@@ -666,13 +666,13 @@ implementation in :func:`utils.div` and :func:`utils.integrate`.
 
 .. table:: Divergence operator and its reciprocal in the three supported geometries. :math:`F` is a vector field, :math:`f` is its divergence.
 
-   ======================= ====================================================================== =====================================================
+   ============= ====================================================================== =====================================================
    Geometry                Divergence                                                             Reciprocal
-   ======================= ====================================================================== =====================================================
-   Planar - 1D             :math:`\nabla F = \frac{\partial F}{\partial z}`                       :math:`F = \int f\mathrm{d}u`
-   Cylindrical - 2D radial :math:`\nabla F = \frac{1}{\rho}\frac{\partial \rho F}{\partial \rho}` :math:`F = \frac{1}{\rho} \int \rho f \mathrm{d}\rho`
-   Spherical - 3D radial   :math:`\nabla F = \frac{1}{r^2}\frac{\partial r^2 F}{\partial r}`      :math:`F = \frac{1}{r^2} \int r^2 f \mathrm{d}r`
-   ======================= ====================================================================== =====================================================
+   ============= ====================================================================== =====================================================
+   Planar        :math:`\nabla F = \frac{\partial F}{\partial z}`                       :math:`F = \int f\mathrm{d}u`
+   Cylindrical   :math:`\nabla F = \frac{1}{\rho}\frac{\partial \rho F}{\partial \rho}` :math:`F = \frac{1}{\rho} \int \rho f \mathrm{d}\rho`
+   Spherical     :math:`\nabla F = \frac{1}{r^2}\frac{\partial r^2 F}{\partial r}`      :math:`F = \frac{1}{r^2} \int r^2 f \mathrm{d}r`
+   ============= ====================================================================== =====================================================
 
 The velocity field is then used to compute the time derivatives in Eq.
 :eq:`continuity`. The :math:`n + 1` concentrations are related through the
