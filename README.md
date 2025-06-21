@@ -8,14 +8,23 @@ using Noda or other inquiries, please contact the maintainer by email.
 
 Noda is distributed under the GPLv3 license (see LICENSE.txt).
 
-Required dependencies:
+Dependencies:
 
 * Python 3.11+
-* numpy, scipy, pandas, matplotlib, odfpy, numdifftools
+* numpy, scipy, pandas, matplotlib, odfpy, openpyxl, numdifftools
 
 The documentation is available at
 [onera.github.io/Noda](https://onera.github.io/Noda); it contains
 installation instructions, tutorials and the package reference.
+
+Quick install
+-------------
+
+```
+git clone https://github.com/onera/Noda.git
+cd Noda
+pip install .
+```
 
 Citing
 ------
