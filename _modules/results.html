@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>results &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">results</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for results</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Organize simulation results.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">plots</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.composition_variables</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+
+
+<div class="viewcode-block" id="SimulationResults">
+<a class="viewcode-back" href="../modules/results.html#results.SimulationResults">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimulationResults</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Organize composition variables from a simulation.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    saved_steps : list</span>
+<span class="sd">        Steps for which simulation results are stored in resdict.</span>
+<span class="sd">    saved_times : 1D array</span>
+<span class="sd">        Times in h (rounded) that correspond to the saved steps.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents, with &#39;Va&#39; first and dependent constituent</span>
+<span class="sd">        last.</span>
+<span class="sd">    inds : list of str</span>
+<span class="sd">        Independent constituents, with &#39;Va&#39; first.</span>
+<span class="sd">    V_partial : dict</span>
+<span class="sd">        Partial molar volumes.</span>
+<span class="sd">    title : str</span>
+<span class="sd">        Default plot title.</span>
+<span class="sd">    results : dict</span>
+<span class="sd">        Simulation results stored as :class:`UnitResult` instances.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SimulationResults.__init__">
+<a class="viewcode-back" href="../modules/results.html#results.SimulationResults.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simu_parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        resdict : dict</span>
+<span class="sd">            Simulation results (dict).</span>
+<span class="sd">        simu_parameters : dict</span>
+<span class="sd">            Simulation parameters, see class attributes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span> <span class="o">=</span> <span class="n">simu_parameters</span><span class="p">[</span><span class="s1">&#39;saved_times&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps</span> <span class="o">=</span> <span class="n">simu_parameters</span><span class="p">[</span><span class="s1">&#39;comps&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span> <span class="o">=</span> <span class="n">simu_parameters</span><span class="p">[</span><span class="s1">&#39;V_partial&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">simu_parameters</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="SimulationResults.add_results">
+<a class="viewcode-back" href="../modules/results.html#results.SimulationResults.add_results">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resdict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Populate results dictionary.</span>
+
+<span class="sd">        Generate :class:`UnitResult` instances and set up their</span>
+<span class="sd">        :class:`plots.StaticProfile` attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">resdict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">UnitResult</span><span class="p">(</span><span class="n">resdict</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">)</span>
+            <span class="n">th</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">static_prof</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">StaticProfile</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="SimulationResults.result">
+<a class="viewcode-back" href="../modules/results.html#results.SimulationResults.result">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_index</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">th</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Access results at required step index or nearest to asked time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_index : int</span>
+<span class="sd">            Index of required time step in saved_steps/saved_times.</span>
+<span class="sd">        th : float</span>
+<span class="sd">            Required time in hour.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`UnitResult`</span>
+<span class="sd">            Simulation results.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        Exception</span>
+<span class="sd">            If the user specifies both step_index and th.</span>
+<span class="sd">            If step_index is not an integer or is out of range.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;The results cannot be accessed because the simulation has &quot;</span>
+                   <span class="s2">&quot;not been run or read.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">ResultsError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">th</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">step_index</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot specify both &#39;th&#39; and &#39;step&#39;.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">ResultsError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;step_index&#39; must be an integer.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">ResultsError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">th</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span> <span class="o">-</span> <span class="n">th</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="p">[</span><span class="n">step_index</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;step_index&#39; is out of range.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Must be lower than len of saved_steps &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="p">)</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">ResultsError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">step</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SimulationResults.plot">
+<a class="viewcode-back" href="../modules/results.html#results.SimulationResults.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varname</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">step_index</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">th</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot profile of variable varname at required time.</span>
+
+<span class="sd">        Select results at time step with :meth:`result` (see doc of</span>
+<span class="sd">        :meth:`result` for handling of step_index and th). Then call</span>
+<span class="sd">        :meth:`UnitResult.plot`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        varname : str</span>
+<span class="sd">            Name of variable to be plotted.</span>
+<span class="sd">        step_index : int</span>
+<span class="sd">            Index of required time step in saved_steps/saved_times.</span>
+<span class="sd">        th : float</span>
+<span class="sd">            Required time in hour.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fig, ax : matplotlib figure and axis</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">step_index</span><span class="o">=</span><span class="n">step_index</span><span class="p">,</span> <span class="n">th</span><span class="o">=</span><span class="n">th</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">varname</span><span class="o">=</span><span class="n">varname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="SimulationResults.plot_quartet">
+<a class="viewcode-back" href="../modules/results.html#results.SimulationResults.plot_quartet">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_quartet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_index</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">th</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot 2x2 subplots with profiles of simulation results.</span>
+
+<span class="sd">        Select results at time step with :meth:`result` (see doc of</span>
+<span class="sd">        :meth:`result` for handling of step_index and th). Then call</span>
+<span class="sd">        :meth:`UnitResult.plot_quartet`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_index : int</span>
+<span class="sd">            Index of required time step in saved_steps/saved_times.</span>
+<span class="sd">        th : float</span>
+<span class="sd">            Required time in hour.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fig, axes, lines : matplotlib figure, axes and lines</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">step_index</span><span class="o">=</span><span class="n">step_index</span><span class="p">,</span> <span class="n">th</span><span class="o">=</span><span class="n">th</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">lines</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">plot_quartet</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">lines</span></div>
+
+
+<div class="viewcode-block" id="SimulationResults.interactive_plot">
+<a class="viewcode-back" href="../modules/results.html#results.SimulationResults.interactive_plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interactive_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interactive plot (call :class:`plots.InteractivePlot`).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">variable</span> <span class="o">==</span> <span class="s1">&#39;quartet&#39;</span><span class="p">:</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">InteractivePlotQuartet</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">InteractivePlot</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">saved_times</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_steps</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ip</span></div>
+
+
+<div class="viewcode-block" id="SimulationResults.add_mass_balance">
+<a class="viewcode-back" href="../modules/results.html#results.SimulationResults.add_mass_balance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_mass_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add mass balance.</span>
+
+<span class="sd">        For each time step in steps, integrate concentrations and volume along</span>
+<span class="sd">        profile, and compute difference with initial values.</span>
+
+<span class="sd">        Variables:</span>
+
+<span class="sd">        * N : amount of vacancies and atom species</span>
+<span class="sd">        * Np : amount of pores</span>
+<span class="sd">        * NW : amount of vacancies annihilated due to volume variation since</span>
+<span class="sd">          initial step.</span>
+<span class="sd">        * Nv : amount of vacancies in simulation box, in solution and in</span>
+<span class="sd">          pores, plus amount annihilated due to volume variations.</span>
+
+<span class="sd">        Type of operation:</span>
+
+<span class="sd">        * INx : integral amount in mol/m2</span>
+<span class="sd">        * dINx : difference with initial value, mol/m2</span>
+<span class="sd">        * rdINx : relative difference with initial value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">L0</span> <span class="o">=</span> <span class="n">r0</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">r0</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">V0</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;local&#39;</span>
+                  <span class="k">else</span> <span class="n">r</span><span class="o">.</span><span class="n">Vm_mid</span><span class="p">)</span>
+            <span class="n">Vp</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">[</span><span class="s1">&#39;pore&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">[</span><span class="s1">&#39;pore&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;local&#39;</span>
+                  <span class="k">else</span> <span class="n">r</span><span class="o">.</span><span class="n">Vm_mid</span><span class="p">)</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">IN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">c_mid_arr</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">INp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">fp_mid</span><span class="o">/</span><span class="n">Vp</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">INW</span> <span class="o">=</span> <span class="p">(</span><span class="n">L0</span> <span class="o">-</span> <span class="n">L</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">V0</span><span class="p">)</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">INv</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">IN</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">INp</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">INW</span>
+
+            <span class="n">r</span><span class="o">.</span><span class="n">dIN</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">IN</span> <span class="o">-</span> <span class="n">r0</span><span class="o">.</span><span class="n">IN</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">dINp</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">INp</span> <span class="o">-</span> <span class="n">r0</span><span class="o">.</span><span class="n">INp</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">dINW</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">INW</span> <span class="o">-</span> <span class="n">r0</span><span class="o">.</span><span class="n">INW</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">dINv</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">INv</span> <span class="o">-</span> <span class="n">r0</span><span class="o">.</span><span class="n">INv</span>
+
+            <span class="n">r</span><span class="o">.</span><span class="n">rdIN</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">dIN</span><span class="o">/</span><span class="n">r0</span><span class="o">.</span><span class="n">IN</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">rdINv</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">dINv</span><span class="o">/</span><span class="n">r0</span><span class="o">.</span><span class="n">INv</span></div>
+
+
+<div class="viewcode-block" id="SimulationResults.plot_mass_balance">
+<a class="viewcode-back" href="../modules/results.html#results.SimulationResults.plot_mass_balance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_mass_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call :func:`plots.plot_mass_balance`.&quot;&quot;&quot;</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">plot_mass_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="UnitResult">
+<a class="viewcode-back" href="../modules/results.html#results.UnitResult">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnitResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gather composition variables from one time step of a simulation.</span>
+<span class="sd">    </span>
+<span class="sd">    Most attributes below are available in three versions:</span>
+<span class="sd">    * x_mid: variable x evaluated on mid points</span>
+<span class="sd">    * x_nod: variable x evaluated on nodes</span>
+<span class="sd">    * x: shorthand for x_nod</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z_nod : 1D array</span>
+<span class="sd">        Node positions.</span>
+<span class="sd">    z_mid : 1D array</span>
+<span class="sd">        Midpoint positions.</span>
+<span class="sd">    c : dict of 1D arrays</span>
+<span class="sd">        System concentrations.</span>
+<span class="sd">    V : 1D array</span>
+<span class="sd">        Average molar volume of system.</span>
+<span class="sd">    y : dict of 1D arrays</span>
+<span class="sd">        Metal site fractions.</span>
+<span class="sd">    yVa_eq : 1D array</span>
+<span class="sd">        Equilibrium vacancy site fraction.</span>
+<span class="sd">    dyVa : 1D array</span>
+<span class="sd">        Difference between actual and equilibrium vacancy fraction.</span>
+<span class="sd">    ryVa : 1D array</span>
+<span class="sd">        Relative difference between actual and eq. vacancy fraction.</span>
+<span class="sd">    x : dict of 1D arrays</span>
+<span class="sd">        Metal atom fractions.</span>
+<span class="sd">    Vm : 1D array</span>
+<span class="sd">        Average molar volume of metal.</span>
+<span class="sd">    mu : dict of 1D arrays</span>
+<span class="sd">        Chemical potentials.</span>
+<span class="sd">    Jlat : dict of 1D arrays</span>
+<span class="sd">        Fluxes in lattice-fixed frame.</span>
+<span class="sd">    v : 1D array</span>
+<span class="sd">        Velocity field of lattice relative to laboratory frame.</span>
+<span class="sd">    Jref : dict of 1D arrays</span>
+<span class="sd">        Fluxes in laboratory frame.</span>
+<span class="sd">    alpha_dislo : 1D array</span>
+<span class="sd">        Lattice sink rate due to dislocations.</span>
+<span class="sd">    alpha_pores : 1D array</span>
+<span class="sd">        Lattice sink rate due to pore growth.</span>
+<span class="sd">    alpha : 1D array</span>
+<span class="sd">        Total lattice sink rate.</span>
+<span class="sd">    L : 2D array</span>
+<span class="sd">        Onsager coefficients.</span>
+<span class="sd">    fm : 1D array</span>
+<span class="sd">        Metal volume fraction.</span>
+<span class="sd">    fp : 1D array</span>
+<span class="sd">        Pore volume fraction.</span>
+<span class="sd">    gamma_V : 1D array</span>
+<span class="sd">        Relative volume variation rate due to molar volume variations.</span>
+<span class="sd">    gamma_N : 1D array</span>
+<span class="sd">        Relative volume variation rate due to variations in the number of</span>
+<span class="sd">        lattice sites.</span>
+<span class="sd">    gamma_p : 1D array</span>
+<span class="sd">        Relative volume variation rate due to pore growth.</span>
+<span class="sd">    gamma : 1D array</span>
+<span class="sd">        Total relative volume variation.</span>
+<span class="sd">    deformation : 1D array</span>
+<span class="sd">        Relative length variation.</span>
+<span class="sd">    static_prof : :class:`plots.StaticProfile`</span>
+<span class="sd">        Configure and plot static profiles.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="UnitResult.__init__">
+<a class="viewcode-back" href="../modules/results.html#results.UnitResult.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">V_partial</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        comps : list of str</span>
+<span class="sd">            System constituents, list with &#39;Va&#39; first and dependent constituent</span>
+<span class="sd">            last.</span>
+<span class="sd">        result : dict</span>
+<span class="sd">            Simulation results at one time step.</span>
+<span class="sd">        V_partial : dict</span>
+<span class="sd">            Partial molar volumes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">comps</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">V_partial</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;pore&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">comps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Va&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps</span> <span class="o">=</span> <span class="n">comps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_nod</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_mid</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_nod</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_nod</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_nod</span>
+
+        <span class="n">c_mid_arr</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_mid_arr</span> <span class="o">=</span> <span class="n">c_mid_arr</span>  <span class="c1"># Record for use in mass balance</span>
+        <span class="n">c_nod_arr</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">arr_to_nod</span><span class="p">(</span><span class="n">c_mid_arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_mid</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">c_mid_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comps</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_nod</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">c_nod_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comps</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V_mid</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c_mid_arr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_mid</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_mid</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">V_mid</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_nod</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_nod</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_mid</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yVa_eq_mid</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;yVa_eq&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dyVa_mid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_mid</span><span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa_eq_mid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ryVa_mid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dyVa_mid</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa_eq_mid</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_mid</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_mid</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_mid</span><span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">])</span>
+                      <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_nod</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_nod</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_mid</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Vm_mid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_Vm</span><span class="p">(</span><span class="n">V_partial</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_mid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_mid</span><span class="p">)</span>
+
+        <span class="n">mu_arr</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;mu&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu_mid</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">mu_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comps</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu_nod</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_nod</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_mid</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="n">Jlat_atoms</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;Jlat&#39;</span><span class="p">]</span>
+        <span class="n">Jlat_Va</span> <span class="o">=</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">Jlat_atoms</span><span class="p">)</span>
+        <span class="n">Jlat_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">Jlat_Va</span><span class="p">,</span> <span class="n">Jlat_atoms</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Jlat</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">Jlat_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comps</span><span class="p">)}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span>
+        <span class="n">Jref_arr</span> <span class="o">=</span> <span class="n">Jlat_arr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="o">*</span><span class="n">c_nod_arr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Jref</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">Jref_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comps</span><span class="p">)}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpha_dislo_mid</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;alpha_d&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpha_dislo_mid</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;alpha_h&#39;</span><span class="p">]</span>  <span class="c1"># for back-compatibility</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha_pores_mid</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;alpha_p&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha_mid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_dislo_mid</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_pores_mid</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">L_mid</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">L_nod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_L_nod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L_mid</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fm_mid</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;fm&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fp_mid</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fm_mid</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_V_mid</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamma_V&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_N_mid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_mid</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">fm_mid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_p_mid</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamma_p&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma_mid</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_V_mid</span>
+                              <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_N_mid</span>
+                              <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_p_mid</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma_mid</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># for backward compatibility</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">deformation_mid</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;deformation&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_nod_attributes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_shorthands</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">static_prof</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="UnitResult.to_nod">
+<a class="viewcode-back" href="../modules/results.html#results.UnitResult.to_nod">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_nod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vec</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interpolate vector on nodes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cv</span><span class="o">.</span><span class="n">vec_to_nod</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UnitResult.make_nod_attributes">
+<a class="viewcode-back" href="../modules/results.html#results.UnitResult.make_nod_attributes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_nod_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make attributes on nodes.</span>
+
+<span class="sd">        For every variable x in the list, create attribute x_nod by</span>
+<span class="sd">        interpolating x_mid on nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;yVa_eq&#39;</span><span class="p">,</span> <span class="s1">&#39;dyVa&#39;</span><span class="p">,</span> <span class="s1">&#39;ryVa&#39;</span><span class="p">,</span> <span class="s1">&#39;Vm&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha_dislo&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;alpha_pores&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;fm&#39;</span><span class="p">,</span> <span class="s1">&#39;fp&#39;</span><span class="p">,</span> <span class="s1">&#39;gamma_N&#39;</span><span class="p">,</span> <span class="s1">&#39;gamma_V&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;gamma_p&#39;</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="s1">&#39;deformation&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;_mid&#39;</span><span class="p">):</span>
+                <span class="n">on_mid</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;_mid&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">on_mid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">on_nod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_nod</span><span class="p">(</span><span class="n">on_mid</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;_nod&#39;</span><span class="p">,</span> <span class="n">on_nod</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UnitResult.make_shorthands">
+<a class="viewcode-back" href="../modules/results.html#results.UnitResult.make_shorthands">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_shorthands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make attribute shorthands.</span>
+
+<span class="sd">        For every variable x in the list, create attribute with shorthand x and</span>
+<span class="sd">        assign existing x_nod value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;yVa_eq&#39;</span><span class="p">,</span> <span class="s1">&#39;dyVa&#39;</span><span class="p">,</span> <span class="s1">&#39;ryVa&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;Vm&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;alpha_dislo&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha_pores&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;fm&#39;</span><span class="p">,</span> <span class="s1">&#39;fp&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;gamma_N&#39;</span><span class="p">,</span> <span class="s1">&#39;gamma_V&#39;</span><span class="p">,</span> <span class="s1">&#39;gamma_p&#39;</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="s1">&#39;deformation&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;_nod&#39;</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;_nod&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="UnitResult.compute_Vm">
+<a class="viewcode-back" href="../modules/results.html#results.UnitResult.compute_Vm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_Vm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">V_partial</span><span class="p">,</span> <span class="n">x_mid</span><span class="p">,</span> <span class="n">y_mid</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute average molar volume of the metal phase.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">V_partial</span><span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;local&#39;</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">V_partial</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
+            <span class="n">Vk_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">arr</span><span class="p">))</span>
+            <span class="n">Vk_arr</span> <span class="o">=</span> <span class="n">Vk_arr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">x_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">x_mid</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="n">Vm</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x_arr</span><span class="o">*</span><span class="n">Vk_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Vk_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">V_partial</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">])</span>
+            <span class="n">Vk_arr</span> <span class="o">=</span> <span class="n">Vk_arr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">y_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">y_mid</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="n">Vm</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y_arr</span><span class="o">*</span><span class="n">Vk_arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Vm</span></div>
+
+
+<div class="viewcode-block" id="UnitResult.compute_L_nod">
+<a class="viewcode-back" href="../modules/results.html#results.UnitResult.compute_L_nod">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_L_nod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">L_mid</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interpolate Onsager coefficients on nodes.&quot;&quot;&quot;</span>
+        <span class="n">nind</span> <span class="o">=</span> <span class="n">L_mid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">L_nod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nind</span><span class="p">,</span> <span class="n">nind</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_nod</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">L_mid</span><span class="p">):</span>
+            <span class="n">L_nod</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">arr_to_nod</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_nod</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">L_nod</span></div>
+
+
+<div class="viewcode-block" id="UnitResult.plot">
+<a class="viewcode-back" href="../modules/results.html#results.UnitResult.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varname</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot profile of variable varname.</span>
+
+<span class="sd">        Call :meth:`plots.StaticProfile.single`. See list of variable names in</span>
+<span class="sd">        class documentation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_prof</span><span class="o">.</span><span class="n">single</span><span class="p">(</span><span class="n">varname</span><span class="o">=</span><span class="n">varname</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="UnitResult.plot_quartet">
+<a class="viewcode-back" href="../modules/results.html#results.UnitResult.plot_quartet">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_quartet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot 2x2 grid plot with profiles of simulation results.</span>
+
+<span class="sd">        Call :meth:`plots.StaticProfile.quartet`. Plot x, yVa, Jlat, fp.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_prof</span><span class="o">.</span><span class="n">quartet</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">lines</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

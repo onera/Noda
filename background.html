@@ -1,0 +1,746 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Background &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=fee868cc" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/tabs.js?v=3ee01567"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Credits and reference papers" href="credits.html" />
+    <link rel="prev" title="Advanced use" href="advanced_use.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            noda
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Background</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#models">Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#composition-variables">Composition variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermodynamics-of-the-metal-phase">Thermodynamics of the metal phase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mobility">Mobility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diffusion">Diffusion</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mass-balance">Mass balance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lattice-velocity">Lattice velocity</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#limiting-case-ideal-lattice">Limiting case: ideal lattice</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation">Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#thermodynamics">Thermodynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">Mobility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implementation-diffusion">Diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implementation-ideal-lattice">Limiting case: ideal lattice</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Background</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/background.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="background">
+<span id="id1"></span><h1>Background<a class="headerlink" href="#background" title="Link to this heading"></a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#models" id="id21">Models</a></p>
+<ul>
+<li><p><a class="reference internal" href="#composition-variables" id="id22">Composition variables</a></p></li>
+<li><p><a class="reference internal" href="#thermodynamics-of-the-metal-phase" id="id23">Thermodynamics of the metal phase</a></p></li>
+<li><p><a class="reference internal" href="#mobility" id="id24">Mobility</a></p></li>
+<li><p><a class="reference internal" href="#diffusion" id="id25">Diffusion</a></p>
+<ul>
+<li><p><a class="reference internal" href="#mass-balance" id="id26">Mass balance</a></p></li>
+<li><p><a class="reference internal" href="#lattice-velocity" id="id27">Lattice velocity</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#limiting-case-ideal-lattice" id="id28">Limiting case: ideal lattice</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#implementation" id="id29">Implementation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#thermodynamics" id="id30">Thermodynamics</a></p></li>
+<li><p><a class="reference internal" href="#id15" id="id31">Mobility</a></p></li>
+<li><p><a class="reference internal" href="#implementation-diffusion" id="id32">Diffusion</a></p></li>
+<li><p><a class="reference internal" href="#implementation-ideal-lattice" id="id33">Limiting case: ideal lattice</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="models">
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">Models</a><a class="headerlink" href="#models" title="Link to this heading"></a></h2>
+<p>This section describes the models used in Noda. Additionnal information is
+available in <a class="reference internal" href="#gheno-2022" id="id2"><span>[Gheno_2022]</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Noda has been developped in part to study the porosity stemming from the
+Kirkendall effect. This requires explicitely solving a particular
+(non-conserved) continuity equation for vacancies, with <em>finite sink strengths</em>,
+and considering a pore phase separate from the metal. In many cases, one is
+not interested in the Kirkendall porosity, and one wants to solve the diffusion
+equation for the atom species, assuming vacancies remain at equilibrium, and
+no pore forms. This is the default behavior. Vacancies may depart from
+equilibrium (and porosity develop) only if sink strengths are specified in the
+input file, see <a class="reference internal" href="advanced_use.html#non-ideal"><span class="std std-ref">Non-ideal lattice</span></a>.</p>
+</div>
+<section id="composition-variables">
+<span id="id3"></span><h3><a class="toc-backref" href="#id22" role="doc-backlink">Composition variables</a><a class="headerlink" href="#composition-variables" title="Link to this heading"></a></h3>
+<p>This version of Noda is restricted to systems with one metal phase and (possibly)
+one pore phase. Let <span class="math notranslate nohighlight">\(W\)</span> be a representative volume comprising some metal
+and some pores:</p>
+<div class="math notranslate nohighlight" id="equation-w-sum">
+<span class="eqno">(1)<a class="headerlink" href="#equation-w-sum" title="Link to this equation"></a></span>\[W = W_\mathrm{m} + W_\mathrm{p}.\]</div>
+<p>Within <span class="math notranslate nohighlight">\(W\)</span>, metal and pores are not spatially resolved; we consider the
+average properties of the volume.</p>
+<p>The metal is a cristalline, disordered solid solution, with a single sublattice
+(interstitial species may be represented as substitutional species with a
+partial molar volume equal to zero). It contains <span class="math notranslate nohighlight">\(N\)</span> mol of lattice sites,
+occupied by atoms and vacancies. The pore contains no site. The overall system
+composition is described using the variables gathered in
+<a class="reference internal" href="#compvar"><span class="std std-numref">Table 1</span></a>, where index 0 represents vacancies and indices
+1 to <span class="math notranslate nohighlight">\(n\)</span> represent atoms.</p>
+<span id="compvar"></span><table class="docutils align-default" id="id18">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">System-wide composition variables</span><a class="headerlink" href="#id18" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Definition</p></th>
+<th class="head"><p>Species</p></th>
+<th class="head"><p>Unit</p></th>
+<th class="head"><p>Closure</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Amount</p></td>
+<td><p><span class="math notranslate nohighlight">\(N_{k}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k \in \left\lbrack 0,n \right\rbrack\)</span></p></td>
+<td><p>mol</p></td>
+<td><p><span class="math notranslate nohighlight">\(\sum_{k = 0}^{n}N_{k} = N\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Site fraction</p></td>
+<td><p><span class="math notranslate nohighlight">\(y_k = \frac{N_{k}}{N}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k \in \left\lbrack 0,n \right\rbrack\)</span></p></td>
+<td><p>-</p></td>
+<td><p><span class="math notranslate nohighlight">\(\sum_{k = 0}^{n}y_k = 1\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Atom fraction</p></td>
+<td><p><span class="math notranslate nohighlight">\(x_k = \frac{y_k}{1 - y_0}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k \in \left\lbrack 1,n \right\rbrack\)</span></p></td>
+<td><p>-</p></td>
+<td><p><span class="math notranslate nohighlight">\(\sum_{k = 1}^{n}x_k = 1\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Concentration</p></td>
+<td><p><span class="math notranslate nohighlight">\(c_k = \frac{y_k}{\Omega}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k \in \left\lbrack 0,n \right\rbrack\)</span></p></td>
+<td><p>mol/m<sup>3</sup></p></td>
+<td><p><span class="math notranslate nohighlight">\(\sum_{k = 0}^{n}c_k = \frac{1}{\Omega}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>Concentrations in the metal phase are defined as:</p>
+<div class="math notranslate nohighlight" id="equation-conc-m">
+<span class="eqno">(2)<a class="headerlink" href="#equation-conc-m" title="Link to this equation"></a></span>\[c_k^\mathrm{m} = \frac{y_k}{\Omega_\mathrm{m}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Omega_\mathrm{m}\)</span> is the molar volume of the metal. The latter is
+defined as:</p>
+<div class="math notranslate nohighlight" id="equation-omega-my">
+<span class="eqno">(3)<a class="headerlink" href="#equation-omega-my" title="Link to this equation"></a></span>\[\Omega_\mathrm{m} = \sum_{k = 0}^{n}{y_k\Omega_k\ },\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Omega_k\)</span> is the partial molar volume of species <span class="math notranslate nohighlight">\(k\)</span> in the
+metal phase, assumed to be constant. The partial molar volume of vacancies,
+<span class="math notranslate nohighlight">\(\Omega_0\)</span>, can be assigned either an independent value, or the local
+metal molar volume (see <a class="reference internal" href="#svoboda-2006" id="id4"><span>[Svoboda_2006]</span></a>). In the latter case,</p>
+<div class="math notranslate nohighlight" id="equation-omega-mx">
+<span class="eqno">(4)<a class="headerlink" href="#equation-omega-mx" title="Link to this equation"></a></span>\[\Omega_\mathrm{m} = \sum_{k = 1}^{n}{x_k\Omega_k}.\]</div>
+<p>The volume occupied by the metal is</p>
+<div class="math notranslate nohighlight" id="equation-w-m">
+<span class="eqno">(5)<a class="headerlink" href="#equation-w-m" title="Link to this equation"></a></span>\[ W_\mathrm{m} = N \Omega_\mathrm{m}.\]</div>
+<p>The global molar volume <span class="math notranslate nohighlight">\(\Omega\)</span> is defined such that:</p>
+<div class="math notranslate nohighlight" id="equation-omega">
+<span class="eqno">(6)<a class="headerlink" href="#equation-omega" title="Link to this equation"></a></span>\[W = N \Omega.\]</div>
+<p>Volume fractions are defined as</p>
+<div class="math notranslate nohighlight" id="equation-volume-fractions">
+<span class="eqno">(7)<a class="headerlink" href="#equation-volume-fractions" title="Link to this equation"></a></span>\[f_{i} = \frac{W_{i}}{W},\ \ \ i = \mathrm{m\ or\ p}.\]</div>
+<p>The global and metal molar volumes are related through:</p>
+<div class="math notranslate nohighlight" id="equation-omega-omega">
+<span class="eqno">(8)<a class="headerlink" href="#equation-omega-omega" title="Link to this equation"></a></span>\[\Omega = \frac{\Omega_\mathrm{m}}{f_\mathrm{m}}.\]</div>
+<p>Concentrations are related through:</p>
+<div class="math notranslate nohighlight" id="equation-conc-conc">
+<span class="eqno">(9)<a class="headerlink" href="#equation-conc-conc" title="Link to this equation"></a></span>\[c_k = c_k^\mathrm{m} f_\mathrm{m}.\]</div>
+</section>
+<section id="thermodynamics-of-the-metal-phase">
+<span id="thermo"></span><h3><a class="toc-backref" href="#id23" role="doc-backlink">Thermodynamics of the metal phase</a><a class="headerlink" href="#thermodynamics-of-the-metal-phase" title="Link to this heading"></a></h3>
+<p>The thermodynamic properties of the metal phase are modeled according to the
+Calphad method. The Gibbs free energy per mole of lattice site is written
+<a class="reference internal" href="#saunders-1998" id="id5"><span>[Saunders_1998]</span></a> <a class="reference internal" href="#lukas-2007" id="id6"><span>[Lukas_2007]</span></a>:</p>
+<div class="math notranslate nohighlight" id="equation-g-m">
+<span class="eqno">(10)<a class="headerlink" href="#equation-g-m" title="Link to this equation"></a></span>\[G_\mathrm{M} = \sum_{i = 0}^{n}{y_i G_{i}} + RT\sum_{i = 0}^{n}{y_i \ln y_i} +_{}^{\mathrm{xs}}G_\mathrm{M},\]</div>
+<p>where <span class="math notranslate nohighlight">\(G_{i}\)</span> is the Gibbs energy of endmember <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(R\)</span>
+and <span class="math notranslate nohighlight">\(T\)</span> have their usual meaning and <span class="math notranslate nohighlight">\(_{}^{\mathrm{xs}}G_\mathrm{M}\)</span>
+is the excess term. The latter is modeled using a Redlich-Kister
+polynomial, with binary interactions of order 1 and, in systems with 3 or more
+elements, ternary interactions of order 0:</p>
+<div class="math notranslate nohighlight" id="equation-g-xs">
+<span class="eqno">(11)<a class="headerlink" href="#equation-g-xs" title="Link to this equation"></a></span>\[_{}^{\mathrm{xs}}G_\mathrm{M} = \sum_{i = 0}^{n - 1}{\sum_{j = i + 1}^{n}{y_i y_j\sum_{\nu = 0}^{1}{_{}^{\nu}\Lambda_{ij}}\left(y_i - y_j\right)^{\nu}}}
+                                + \sum_{i = 0}^{n - 2}{\sum_{j = i + 1}^{n - 1}{\sum_{k = j + 1}^{n}{y_i y_j y_k\Lambda_{ijk}}}}.\]</div>
+<p>The binary and ternary interaction terms, <span class="math notranslate nohighlight">\(_{}^{\nu}\Lambda_{ij}\)</span>
+and <span class="math notranslate nohighlight">\(\Lambda_{ijk}\)</span>, are expressed in the form <span class="math notranslate nohighlight">\(A + B \cdot T\)</span>.</p>
+<p>Chemical potentials are defined as:</p>
+<div class="math notranslate nohighlight" id="equation-mu">
+<span class="eqno">(12)<a class="headerlink" href="#equation-mu" title="Link to this equation"></a></span>\[\mu_k = \frac{\partial G}{\partial N_{k}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(G\)</span> is the total Gibbs free energy, <span class="math notranslate nohighlight">\(G = N \cdot G_\mathrm{M}\)</span>.</p>
+<p>While the Gibbs energies of metals can readily be calculated from parameters
+in the literature, the Gibbs energy of the vacancy has no trivial definition.
+A common practice is to choose a value arbitrarily to ensure the existence and
+uniqueness of an equilibrium state between the alloy and a vacancy phase
+(a pore). Here we follow the recommendation of <a class="reference internal" href="#franke-2014" id="id7"><span>[Franke_2014]</span></a> and use
+<span class="math notranslate nohighlight">\(G_{\mathrm{Va}} = RT(\ln 2\ –\ 1/2)\)</span>. The value of
+<span class="math notranslate nohighlight">\(G_{\mathrm{Va}}\)</span> has no significant impact on the simulation
+results.</p>
+<p>Likewise, atom-vacancy interaction parameters are not generally known.
+Following <a class="reference internal" href="#abe-2018" id="id8"><span>[Abe_2018]</span></a>, we assume 0-order binary interactions (i.e.,
+<span class="math notranslate nohighlight">\(_{}^{1}\Lambda_{0i} = 0\ \forall\ i\)</span> and
+<span class="math notranslate nohighlight">\(\Lambda_{0ij} = 0\ \forall\ (i,j)\)</span>), and
+the interaction parameters are determined based on the vacancy formation
+energy in pure metals</p>
+<div class="math notranslate nohighlight" id="equation-vacancy-interaction-parameters">
+<span class="eqno">(13)<a class="headerlink" href="#equation-vacancy-interaction-parameters" title="Link to this equation"></a></span>\[\Lambda_{0k} = G_\mathrm{f, Va}^{k} - G_{\mathrm{Va}}.\]</div>
+<p>The equilibrium vacancy fraction is obtained by solving <span class="math notranslate nohighlight">\(\mu_0 = 0\)</span>.
+This yields an expression for <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span>, which can
+be written:</p>
+<div class="math notranslate nohighlight" id="equation-y0-eq">
+<span class="eqno">(14)<a class="headerlink" href="#equation-y0-eq" title="Link to this equation"></a></span>\[y_0^{\mathrm{eq}} = \exp{\left( - \frac{G_\mathrm{f, Va}^{\mathrm{alloy}}}{RT} \right)},\]</div>
+<p>where <span class="math notranslate nohighlight">\(G_\mathrm{f, Va}^{\mathrm{alloy}}\)</span> is the vacancy formation energy in the
+alloy. The analytical form of <span class="math notranslate nohighlight">\(G_\mathrm{f, Va}^{\mathrm{alloy}}\)</span> depends on the
+model chosen for <span class="math notranslate nohighlight">\(_{}^{\mathrm{xs}}G_\mathrm{M}\)</span>. The chemical potential of
+vacancies can be written in the form:</p>
+<div class="math notranslate nohighlight" id="equation-mu-0">
+<span class="eqno">(15)<a class="headerlink" href="#equation-mu-0" title="Link to this equation"></a></span>\[\mu_0 = RT \cdot \ln\left( \frac{y_0}{y_0^{\mathrm{eq}}} \right).\]</div>
+</section>
+<section id="mobility">
+<span id="id9"></span><h3><a class="toc-backref" href="#id24" role="doc-backlink">Mobility</a><a class="headerlink" href="#mobility" title="Link to this heading"></a></h3>
+<p>Flux densities are described using two reference frames: (i) the lattice
+reference frame, based on a local coordinate system attached to inert
+markers in the lattice, and (ii) the laboratory reference frame, based
+on a global coordinate system that coincides with the lattice reference
+frame at <span class="math notranslate nohighlight">\(t = 0\)</span> but does not deform thereafter. The lattice moves
+with respect to the laboratory reference frame with a velocity field
+<span class="math notranslate nohighlight">\(v\)</span>. The fluxes of species <span class="math notranslate nohighlight">\(k\)</span> in the lattice and
+laboratory reference frames, <span class="math notranslate nohighlight">\(J_k^{\mathrm{lat}}\)</span> and
+<span class="math notranslate nohighlight">\(J_k^{\mathrm{lab}}\)</span>, are related by:</p>
+<div class="math notranslate nohighlight" id="equation-change-frame">
+<span class="eqno">(16)<a class="headerlink" href="#equation-change-frame" title="Link to this equation"></a></span>\[J_k^{\mathrm{lab}} = J_k^{\mathrm{lat}} + c_k \cdot v\ ,\]</div>
+<p>where we recognize diffusive (<span class="math notranslate nohighlight">\(J_k^{\mathrm{lat}}\)</span>) and advective
+(<span class="math notranslate nohighlight">\(c_k \cdot v\)</span>) contributions. <span class="math notranslate nohighlight">\(J_k^{\mathrm{lat}}\)</span> is written
+<a class="reference internal" href="#philibert-1991" id="id10"><span>[Philibert_1991]</span></a>:</p>
+<div class="math notranslate nohighlight" id="equation-jlat-full">
+<span class="eqno">(17)<a class="headerlink" href="#equation-jlat-full" title="Link to this equation"></a></span>\[J_k^{\mathrm{lat}} = - \sum_{i = 0}^{n}{L_{ki}\ \nabla\mu_i\ },\]</div>
+<p>where the <span class="math notranslate nohighlight">\(L_{ki}\)</span> are the Onsager coefficients, which form a
+symmetric matrix. Lattice sites are conserved by substitutional diffusion:</p>
+<div class="math notranslate nohighlight" id="equation-jlat-closure">
+<span class="eqno">(18)<a class="headerlink" href="#equation-jlat-closure" title="Link to this equation"></a></span>\[\sum_{k = 0}^{n}J_k^{\mathrm{lat}} = 0.\]</div>
+<p>This allows the vacancy flux to be expressed as a function of <span class="math notranslate nohighlight">\(n\)</span>
+independent atom fluxes, and all <span class="math notranslate nohighlight">\(L_{k0}\)</span> to be expressed as a function
+of the atom transport coefficients, which are related to measurable mobilities.
+After some manipulation one obtains:</p>
+<div class="math notranslate nohighlight" id="equation-jlat-novac">
+<span class="eqno">(19)<a class="headerlink" href="#equation-jlat-novac" title="Link to this equation"></a></span>\[J_k^{\mathrm{lat}} = - \sum_{i = 1}^{n}{L_{ki}\ \nabla{\tilde{\mu}}_i}\ ,\]</div>
+<p>where <span class="math notranslate nohighlight">\({\tilde{\mu}}_i\)</span> is the diffusion potential,
+defined as <span class="math notranslate nohighlight">\({\tilde{\mu}}_i = \mu_i - \mu_0\)</span>.</p>
+<p>The <span class="math notranslate nohighlight">\(L_{ki}\)</span> reflect diffusional transport in the {metal + pore} system,
+and we assume these can be expressed as a weighted average of transport
+coefficients in the metal and in the pore:</p>
+<div class="math notranslate nohighlight" id="equation-lki-full">
+<span class="eqno">(20)<a class="headerlink" href="#equation-lki-full" title="Link to this equation"></a></span>\[L_{ki} = f_\mathrm{m}L_{ki}^\mathrm{m} + f_\mathrm{p}L_{ki}^\mathrm{p}.\]</div>
+<p>We further assume <span class="math notranslate nohighlight">\(L_{ki}^\mathrm{p} = 0\ \ \forall(k,i)\)</span>, i.e.,
+no diffusion in the pores. This yields:</p>
+<div class="math notranslate nohighlight" id="equation-lki">
+<span class="eqno">(21)<a class="headerlink" href="#equation-lki" title="Link to this equation"></a></span>\[L_{ki} = f_\mathrm{m}L_{ki}^\mathrm{m}\]</div>
+<p>where <span class="math notranslate nohighlight">\(L_{ki}^\mathrm{m}\)</span> are the transport coefficients in the metal.</p>
+<p>Following Ågren <a class="reference internal" href="#agren-1982" id="id11"><span>[Agren_1982]</span></a>, we consider the vacancy-exchange
+mechanism, in which diffusion occurs by atoms jumping into neighboring
+vacant sites, and vacant sites are distributed randomly. The transport
+coefficients are expressed as:</p>
+<div class="math notranslate nohighlight" id="equation-onsager-coefficients">
+<span class="eqno">(22)<a class="headerlink" href="#equation-onsager-coefficients" title="Link to this equation"></a></span>\[\begin{split}\left\{
+\begin{array}{l}
+L_{kk}^\mathrm{m} = c_k^\mathrm{m}y_0 M_{k0}\\
+L_{ki}^\mathrm{m} = 0\quad\quad\quad\quad \mathrm{for}\ k \neq i,
+\end{array}
+\right.\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(M_{k0}\)</span> is a kinetic parameter representing the rate of exchange
+between a <span class="math notranslate nohighlight">\(k\)</span> atom and a neighboring vacancy. The mobility of species
+<span class="math notranslate nohighlight">\(k\)</span> is <a class="reference internal" href="#andersson-1992" id="id12"><span>[Andersson_1992]</span></a>:</p>
+<div class="math notranslate nohighlight" id="equation-mobility">
+<span class="eqno">(23)<a class="headerlink" href="#equation-mobility" title="Link to this equation"></a></span>\[M_k = y_0 M_{k0}.\]</div>
+<p>The mobility is related to the tracer diffusion coefficient <span class="math notranslate nohighlight">\(D_k^*\)</span>
+by Einstein relation:</p>
+<div class="math notranslate nohighlight" id="equation-einstein">
+<span class="eqno">(24)<a class="headerlink" href="#equation-einstein" title="Link to this equation"></a></span>\[M_k = \frac{D_k^*}{RT}.\]</div>
+<p>Mobilities evaluated from tracer diffusion coefficients are considered
+equilibrium mobilities, i.e.,</p>
+<div class="math notranslate nohighlight" id="equation-einstein-equilibrium">
+<span class="eqno">(25)<a class="headerlink" href="#equation-einstein-equilibrium" title="Link to this equation"></a></span>\[\frac{D_k^*}{RT} = M_k^{\mathrm{eq}} = y_0^{\mathrm{eq}}M_{k0}.\]</div>
+<p>Consequently, the mobility can be written with the general form:</p>
+<div class="math notranslate nohighlight" id="equation-mobility2">
+<span class="eqno">(26)<a class="headerlink" href="#equation-mobility2" title="Link to this equation"></a></span>\[M_k = \frac{y_0}{y_0^{\mathrm{eq}}}M_k^{\mathrm{eq}}.\]</div>
+<p>Using Eqs. <a class="reference internal" href="#equation-jlat-novac">(19)</a>-<a class="reference internal" href="#equation-mobility2">(26)</a>, the fluxes are finally written:</p>
+<div class="math notranslate nohighlight" id="equation-jlat-reduced">
+<span class="eqno">(27)<a class="headerlink" href="#equation-jlat-reduced" title="Link to this equation"></a></span>\[J_k^{\mathrm{lat}} = - L_{kk}\ \nabla {\tilde{\mu}}_{k},\]</div>
+<p>with</p>
+<div class="math notranslate nohighlight" id="equation-lkk">
+<span class="eqno">(28)<a class="headerlink" href="#equation-lkk" title="Link to this equation"></a></span>\[\begin{split}L_{kk} &amp;= f_\mathrm{m}c_k^\mathrm{m}\frac{y_0}{y_0^{\mathrm{eq}}}\frac{D_k^*}{RT}\\
+       &amp;= c_k\frac{y_0}{y_0^{\mathrm{eq}}}\frac{D_k^*}{RT}.\end{split}\]</div>
+<p>The temperature dependence of tracer diffusion coefficients is described with
+the Arrhenius relation:</p>
+<div class="math notranslate nohighlight" id="equation-arrhenius">
+<span class="eqno">(29)<a class="headerlink" href="#equation-arrhenius" title="Link to this equation"></a></span>\[D_k^* = D_k^{0}\exp{\left( - \frac{Q_{k}}{RT} \right)\ }\]</div>
+<p>where <span class="math notranslate nohighlight">\(D_k^{0}\)</span> is the preexponential factor and <span class="math notranslate nohighlight">\(Q_{k}\)</span> the
+activation energy. Following a common practice in the mobility literature, Eq.
+<a class="reference internal" href="#equation-arrhenius">(29)</a> is expressed:</p>
+<div class="math notranslate nohighlight" id="equation-lndt">
+<span class="eqno">(30)<a class="headerlink" href="#equation-lndt" title="Link to this equation"></a></span>\[\ln D_k^* = \frac{\phi_k}{RT},\]</div>
+<p>with <span class="math notranslate nohighlight">\(\phi_k = RT\ln D_k^{0} - Q_{k}\)</span>. The composition dependence is
+then given by expanding <span class="math notranslate nohighlight">\(\phi_k\)</span> with a Redlich-Kister polynomial, with
+binary and ternary interactions of order 0:</p>
+<div class="math notranslate nohighlight" id="equation-lndt-rk">
+<span class="eqno">(31)<a class="headerlink" href="#equation-lndt-rk" title="Link to this equation"></a></span>\[\phi_k = \sum_{i = 1}^{n}{x_i \phi_k^i}
+         + \sum_{i = 1}^{n - 1}{\sum_{j = i + 1}^{n}{x_i x_j\Lambda_{ij}}}
+         + \sum_{i = 1}^{n - 2}{\sum_{j = i + 1}^{n - 1}{\sum_{k = j + 1}^{n}{x_i x_j x_k\Lambda_{ijk}}}}.\]</div>
+<p>The binary and ternary interaction terms, <span class="math notranslate nohighlight">\(\Lambda_{ij}\)</span> and
+<span class="math notranslate nohighlight">\(\Lambda_{ijk}\)</span>, are expressed in the form <span class="math notranslate nohighlight">\(A + B \cdot T\)</span>.</p>
+</section>
+<section id="diffusion">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Diffusion</a><a class="headerlink" href="#diffusion" title="Link to this heading"></a></h3>
+<section id="mass-balance">
+<h4><a class="toc-backref" href="#id26" role="doc-backlink">Mass balance</a><a class="headerlink" href="#mass-balance" title="Link to this heading"></a></h4>
+<p>Following <a class="reference internal" href="#svoboda-2006" id="id13"><span>[Svoboda_2006]</span></a>, the mass balance in the lattice reference frame is:</p>
+<div class="math notranslate nohighlight" id="equation-n-dot">
+<span class="eqno">(32)<a class="headerlink" href="#equation-n-dot" title="Link to this equation"></a></span>\[\begin{split}\left\{
+\begin{array}{l}
+{\dot{N}}_{k} = - W\ \nabla\cdot J_k^{\mathrm{lat}},\quad\quad\quad\quad k \in \left\lbrack 1,n \right\rbrack\\
+{\dot{N}}_{0} = - W\ \nabla\cdot J_{0}^{\mathrm{lat}} + \dot{N}.
+\end{array}
+\right.\end{split}\]</div>
+<p>Using <a class="reference internal" href="#compvar"><span class="std std-numref">Table 1</span></a>, this is expressed in terms of site fractions:</p>
+<div class="math notranslate nohighlight" id="equation-y-dot">
+<span class="eqno">(33)<a class="headerlink" href="#equation-y-dot" title="Link to this equation"></a></span>\[\begin{split}\left\{
+\begin{array}{l}
+\displaystyle{\dot{y}}_{k} = - \Omega\ \nabla\cdot J_k^{\mathrm{lat}} - y_k\frac{\dot{N}}{N},\quad\quad\quad\quad k \in \left\lbrack 1,n \right\rbrack\\
+\displaystyle{\dot{y}}_{0} = - \Omega\ \nabla\cdot J_{0}^{\mathrm{lat}} - y_0\frac{\dot{N}}{N} + \frac{\dot{N}}{N},
+\end{array}
+\right.\end{split}\]</div>
+<p>and then concentrations:</p>
+<div class="math notranslate nohighlight" id="equation-c-dot">
+<span class="eqno">(34)<a class="headerlink" href="#equation-c-dot" title="Link to this equation"></a></span>\[\begin{split}\left\{
+\begin{array}{l}
+\displaystyle{\dot{c}}_{k} = - \nabla\cdot J_k^{\mathrm{lat}} - c_k\frac{\dot{W}}{W},\quad\quad\quad\quad k \in \left\lbrack 1,n \right\rbrack\\
+\displaystyle{\dot{c}}_{0} = - \nabla\cdot J_{0}^{\mathrm{lat}} - c_{0}\frac{\dot{W}}{W} + \frac{1}{\Omega}\frac{\dot{N}}{N}.
+\end{array}
+\right.\end{split}\]</div>
+<p>In deriving Eq. <a class="reference internal" href="#equation-c-dot">(34)</a>, we have also used the following relation:</p>
+<div class="math notranslate nohighlight" id="equation-w-dot-w">
+<span class="eqno">(35)<a class="headerlink" href="#equation-w-dot-w" title="Link to this equation"></a></span>\[\frac{\dot{W}}{W} = \frac{\dot{N}}{N} + \frac{\dot{\Omega}}{\Omega},\]</div>
+<p>which derives from Eq. <a class="reference internal" href="#equation-omega">(6)</a> and reflects the fact that volume variations
+are due to variations in the number of lattice sites and in the molar volume.
+The rate of volume variation can be expressed as the divergence of the lattice
+velocity:</p>
+<div class="math notranslate nohighlight" id="equation-w-div-v">
+<span class="eqno">(36)<a class="headerlink" href="#equation-w-div-v" title="Link to this equation"></a></span>\[\frac{\dot{W}}{W} = \nabla\cdot v.\]</div>
+<p>The time derivatives in Eqs. <a class="reference internal" href="#equation-c-dot">(34)</a> are material (or total) derivatives:</p>
+<div class="math notranslate nohighlight" id="equation-total-derivatives">
+<span class="eqno">(37)<a class="headerlink" href="#equation-total-derivatives" title="Link to this equation"></a></span>\[{\dot{c}}_{k} = \frac{\partial c_k}{\partial t} + v\ \nabla c_k.\]</div>
+<p>Introducing Eq. <a class="reference internal" href="#equation-total-derivatives">(37)</a> in Eqs. <a class="reference internal" href="#equation-c-dot">(34)</a> and making use of Eq.
+<a class="reference internal" href="#equation-w-div-v">(36)</a> yields the system of continuity equations in the laboratory
+reference frame:</p>
+<div class="math notranslate nohighlight" id="equation-continuity">
+<span class="eqno">(38)<a class="headerlink" href="#equation-continuity" title="Link to this equation"></a></span>\[\begin{split}\left\{
+\begin{array}{l}
+\displaystyle\frac{\partial c_k}{\partial t} = - \nabla\cdot\left( J_k^{\mathrm{lat}} + c_kv \right),\quad\quad\quad\quad k \in \left\lbrack 1,n \right\rbrack\\
+\displaystyle\frac{\partial c_{0}}{\partial t} = - \nabla\cdot\left( J_{0}^{\mathrm{lat}} + c_{0}v \right) + \frac{1}{\Omega}\frac{\dot{N}}{N}
+\end{array}
+\right.\end{split}\]</div>
+<p>Equation <a class="reference internal" href="#equation-continuity">(38)</a> reflects the fact that atom concentrations vary
+because of diffusion and advection, while the vacancy concentration may
+additionally change due to the sink term <span class="math notranslate nohighlight">\(\dot{N}/N\)</span>.</p>
+</section>
+<section id="lattice-velocity">
+<span id="id14"></span><h4><a class="toc-backref" href="#id27" role="doc-backlink">Lattice velocity</a><a class="headerlink" href="#lattice-velocity" title="Link to this heading"></a></h4>
+<p>The divergence of the velocity field is evaluated from the rate of volume
+variation through Eqs. <a class="reference internal" href="#equation-w-div-v">(36)</a> and <a class="reference internal" href="#equation-w-dot-w">(35)</a>. The term
+<span class="math notranslate nohighlight">\(\dot{\Omega}/\Omega\)</span> in Eq. <a class="reference internal" href="#equation-w-dot-w">(35)</a> cannot be directly evaluated.
+Instead, we note that combining Eqs. <a class="reference internal" href="#equation-w-sum">(1)</a> and <a class="reference internal" href="#equation-w-m">(5)</a>, the rate of
+volume variations can be decomposed into contributions from the metal and the
+pore, which are more easily accessed:</p>
+<div class="math notranslate nohighlight" id="equation-div-v">
+<span class="eqno">(39)<a class="headerlink" href="#equation-div-v" title="Link to this equation"></a></span>\[\nabla\cdot v = f_\mathrm{m}\left( \frac{\dot{N}}{N} + \frac{{\dot{\Omega}}_\mathrm{m}}{\Omega_\mathrm{m}} \right) + f_\mathrm{p}\frac{{\dot{W}}_\mathrm{p}}{W_\mathrm{p}}.\]</div>
+<p>Evaluating <span class="math notranslate nohighlight">\(\nabla\cdot v\)</span> requires a model for the sink term,
+<span class="math notranslate nohighlight">\(\alpha = \dot{N}/N\)</span>. We use a linearized form and assume <span class="math notranslate nohighlight">\(\alpha\)</span>
+is proportional to the vacancy supersaturation,
+<span class="math notranslate nohighlight">\(y_0 - y_0^{\mathrm{eq}}\)</span>. We further postulate that
+<span class="math notranslate nohighlight">\(\alpha\)</span> can be expressed as the sum of two contributions, due to
+lattice sinks and pores:</p>
+<div class="math notranslate nohighlight" id="equation-sink-term">
+<span class="eqno">(40)<a class="headerlink" href="#equation-sink-term" title="Link to this equation"></a></span>\[\begin{split}\left\{
+\begin{array}{l}
+\dfrac{\dot{N}}{N} = \alpha = \alpha_\mathrm{d} + \alpha_\mathrm{p},\\
+\alpha_\mathrm{d} = - k_\mathrm{d}\left( y_0 - y_0^{\mathrm{eq}} \right),\\
+\alpha_\mathrm{p} = - k_\mathrm{p}\left( y_0 - y_0^{\mathrm{eq}} \right).
+\end{array}
+\right.\end{split}\]</div>
+<p>In Eq. <a class="reference internal" href="#equation-sink-term">(40)</a>, <span class="math notranslate nohighlight">\(k_\mathrm{d}\)</span> and <span class="math notranslate nohighlight">\(k_\mathrm{p}\)</span> (unit
+<span class="math notranslate nohighlight">\(s^{-1}\)</span>) are the sink strengths and reflect both the sink
+densities and the frequency at which they operate; these parameters may
+depend on alloy composition and microstructure. The index <span class="math notranslate nohighlight">\(\mathrm{d}\)</span>
+refers to dislocations: <span class="math notranslate nohighlight">\(\alpha_\mathrm{d}\)</span>
+produces the Kirkendall shift. The index <span class="math notranslate nohighlight">\(\mathrm{p}\)</span> refers to pores.</p>
+<p>The rate of pore volume variation is written:</p>
+<div class="math notranslate nohighlight" id="equation-w-p-dot">
+<span class="eqno">(41)<a class="headerlink" href="#equation-w-p-dot" title="Link to this equation"></a></span>\[{\dot{W}}_\mathrm{p} = - N\alpha_\mathrm{p}\Omega_\mathrm{p}.\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Omega_\mathrm{p}\)</span> is the partial molar volume of vacancies in the
+pore. Like <span class="math notranslate nohighlight">\(\Omega_0\)</span>, <span class="math notranslate nohighlight">\(\Omega_\mathrm{p}\)</span> can be assigned either an
+independent value or the local metal molar volume. The relative rate of pore
+volume variation is:</p>
+<div class="math notranslate nohighlight" id="equation-w-p-dot-w-p">
+<span class="eqno">(42)<a class="headerlink" href="#equation-w-p-dot-w-p" title="Link to this equation"></a></span>\[\frac{{\dot{W}}_\mathrm{p}}{W_\mathrm{p}} = - \frac{f_\mathrm{m}}{f_\mathrm{p}}\frac{\Omega_\mathrm{p}}{\Omega_\mathrm{m}}\alpha_\mathrm{p}.\]</div>
+<p>The analytical expression of
+<span class="math notranslate nohighlight">\(\frac{{\dot{\Omega}}_\mathrm{m}}{\Omega_\mathrm{m}}\)</span> depends on the choice
+made for <span class="math notranslate nohighlight">\(\Omega_0\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-omega-m-dot-omega-m">
+<span class="eqno">(43)<a class="headerlink" href="#equation-omega-m-dot-omega-m" title="Link to this equation"></a></span>\[\begin{split}\frac{{\dot{\Omega}}_\mathrm{m}}{\Omega_\mathrm{m}} = \left\{
+\begin{array}{ll}
+ \displaystyle\frac{1}{f_\mathrm{m}(1 - y_0)}\sum_{k = 1}^{n}{\left(\Omega_\mathrm{m} - \Omega_k \right)\nabla\cdot J_k^{\mathrm{lat}}} &amp; \mathrm{if}\ \Omega_0=\Omega_\mathrm{m},\\
+ \displaystyle\frac{1}{f_\mathrm{m}}\sum_{k = 1}^{n}{(\Omega_0 - \Omega_k)\mathrm{div}\,J_k^\mathrm{lat}} + \alpha \frac{\Omega_0 - \Omega_\mathrm{m}}{\Omega_\mathrm{m}} &amp; \mathrm{otherwise.}
+\end{array}
+\right.\end{split}\]</div>
+<p>Finally, the divergence of the velocity field is:</p>
+<div class="math notranslate nohighlight" id="equation-div-v-detailed">
+<span class="eqno">(44)<a class="headerlink" href="#equation-div-v-detailed" title="Link to this equation"></a></span>\[\begin{split}\nabla\cdot v = \left\{
+\begin{array}{ll}
+ \displaystyle f_\mathrm{m}\left(\alpha_\mathrm{d} + \alpha_\mathrm{p}\frac{\Omega_\mathrm{m} - \Omega_\mathrm{p}}{\Omega_\mathrm{m}}\right) + \frac{1}{1 - y_0}\sum_{k = 1}^{n}{\left( \Omega_\mathrm{m} - \Omega_k \right)\nabla\cdot J_k^{\mathrm{lat}}} &amp; \mathrm{if}\ \Omega_0=\Omega_\mathrm{m},\\
+ \displaystyle f_\mathrm{m}\left(\alpha_\mathrm{d} \frac{\Omega_0}{\Omega_\mathrm{m}} + \alpha_\mathrm{p} \frac{\Omega_0 - \Omega_\mathrm{p}}{\Omega_\mathrm{m}}\right) + \sum_{k = 1}^{n}{(\Omega_0 - \Omega_k)\mathrm{div}\,J_k^\mathrm{lat}} &amp; \mathrm{otherwise.}
+\end{array}
+\right.\end{split}\]</div>
+</section>
+</section>
+<section id="limiting-case-ideal-lattice">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Limiting case: ideal lattice</a><a class="headerlink" href="#limiting-case-ideal-lattice" title="Link to this heading"></a></h3>
+<p>The ideal lattice refers to a situation where vacancies are maintained at
+equilibrium, everywhere and at all times, through the action of dislocations (no
+pores are formed). This may be represented by <span class="math notranslate nohighlight">\(k_\mathrm{d} = + \infty\)</span>.
+If <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> is composition-independent, and assuming that
+initially <span class="math notranslate nohighlight">\(y_0 = y_0^{\mathrm{eq}}\)</span>, the corresponding sink rate, noted
+<span class="math notranslate nohighlight">\(\alpha_{\infty}\)</span>, can be obtained analytically by solving
+<span class="math notranslate nohighlight">\({\dot{y}}_{0} = 0\)</span>. Using Eq. <a class="reference internal" href="#equation-y-dot">(33)</a>, this yields:</p>
+<div class="math notranslate nohighlight" id="equation-alpha-ideal">
+<span class="eqno">(45)<a class="headerlink" href="#equation-alpha-ideal" title="Link to this equation"></a></span>\[\alpha_{\infty} = \frac{\Omega}{1 - y_0^{\mathrm{eq}}}\nabla\cdot J_{0}^{\mathrm{lat}}.\]</div>
+<p>If <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> depends on the local composition, however,
+<span class="math notranslate nohighlight">\(\alpha_{\infty}\)</span> cannot be found by solving <span class="math notranslate nohighlight">\({\dot{y}}_{0} = 0\)</span>,
+since <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> changes over time due to composition variations.
+In this case, <span class="math notranslate nohighlight">\(\alpha_{\infty}\)</span> is obtained by iteration, as shown in
+<a class="reference internal" href="#implementation-ideal-lattice"><span class="std std-ref">Limiting case: ideal lattice</span></a>.</p>
+</section>
+</section>
+<section id="implementation">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">Implementation</a><a class="headerlink" href="#implementation" title="Link to this heading"></a></h2>
+<section id="thermodynamics">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">Thermodynamics</a><a class="headerlink" href="#thermodynamics" title="Link to this heading"></a></h3>
+<p>Gibbs energies of pure metals and atom-atom interaction parameters are to be
+obtained from assessed descriptions of the relevant systems published in
+the literature. These are typically available as functions of atom fractions,
+not site fractions, i.e., instead of <a class="reference internal" href="#equation-g-m">(10)</a>, the data are based on:</p>
+<div class="math notranslate nohighlight" id="equation-g-m-x">
+<span class="eqno">(46)<a class="headerlink" href="#equation-g-m-x" title="Link to this equation"></a></span>\[G_\mathrm{M}\left( \ldots x_{i}\ldots \right) = \sum_{i = 1}^{n}{x_{i}G_{i}} + RT\sum_{i = 1}^{n}{x_{i}\ln x_{i}} +_{}^{\mathrm{xs}}G_\mathrm{M}\left( \ldots x_{i}\ldots \right).\]</div>
+<p>In principle, a conversion is required from the {atoms} description,
+<span class="math notranslate nohighlight">\(G_\mathrm{M}(\ldots x_{i}\ldots)\)</span>, to the {atoms + vacancy}
+description of Eq. <a class="reference internal" href="#equation-g-m">(10)</a>, <span class="math notranslate nohighlight">\(G_\mathrm{M}(\ldots y_i\ldots)\)</span>.
+We assume <span class="math notranslate nohighlight">\(y_0 \ll 1\)</span>, and
+therefore <span class="math notranslate nohighlight">\(y_k \cong x_k\)</span>. Consequently, we use Eq. <a class="reference internal" href="#equation-g-m-x">(46)</a> to
+obtain interaction parameters, and assume these would be the same as
+those obtained with Eq. <a class="reference internal" href="#equation-g-m">(10)</a>, i.e., we use these parameters in
+Eq. <a class="reference internal" href="#equation-g-m">(10)</a> to compute equilibrium vacancy fractions and chemical potentials.</p>
+<p>Similarly, calculating the equilibrium vacancy fraction using Eqs. <a class="reference internal" href="#equation-y0-eq">(14)</a>
+requires the system composition to be described in terms of
+site fractions. Most often, however, one needs to calculate
+<span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> in a metal whose composition is known as mole
+fractions of the metal species, not site fractions. Obtaining
+<span class="math notranslate nohighlight">\(y_k\)</span> from <span class="math notranslate nohighlight">\(x_k\)</span> requires <span class="math notranslate nohighlight">\(y_0\)</span>, which is the
+unknown quantity. However, the assumption <span class="math notranslate nohighlight">\(y_0 \ll 1\)</span> implies
+<span class="math notranslate nohighlight">\(y_k \cong x_k,\ \ k \in \left\lbrack 1,n \right\rbrack\)</span>. It
+follows that <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> can be directly computed from
+atom fractions, without the need for an iterative scheme to solve Eq.
+<a class="reference internal" href="#equation-y0-eq">(14)</a>.</p>
+</section>
+<section id="id15">
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">Mobility</a><a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<p>The parameters describing the composition dependence of <span class="math notranslate nohighlight">\(\phi_k\)</span>
+in Eq. <a class="reference internal" href="#equation-lndt-rk">(31)</a> are to be obtained from the literature. These are
+typically available in terms of atom fractions:
+<span class="math notranslate nohighlight">\(\phi_k = \phi_k(\ldots x_{i}\ldots)\)</span>. They are directly used to
+calculate tracer diffusion coefficients with Eqs. <a class="reference internal" href="#equation-lndt">(30)</a> and <a class="reference internal" href="#equation-lndt-rk">(31)</a>.
+Non-equilibrium vacancy fractions are taken into account when calculating
+<span class="math notranslate nohighlight">\(L_{\mathrm{kk}}\)</span> via Eq. <a class="reference internal" href="#equation-lkk">(28)</a>.</p>
+</section>
+<section id="implementation-diffusion">
+<span id="id16"></span><h3><a class="toc-backref" href="#id32" role="doc-backlink">Diffusion</a><a class="headerlink" href="#implementation-diffusion" title="Link to this heading"></a></h3>
+<p>The time evolution of the system composition is described by Eq.
+<a class="reference internal" href="#equation-continuity">(38)</a>. This is solved using an explicit (forward Euler) finite
+difference scheme, in one dimension of space. The total length is
+divided into segments of size <span class="math notranslate nohighlight">\(\Delta z_{i}\)</span> separated by grid
+points at positions <span class="math notranslate nohighlight">\(z_{i}\)</span>. The composition variables
+(<span class="math notranslate nohighlight">\(x_k,\ y_k,\ c_k,\ \Omega_{m},\ \Omega,\ f_{m},\mu_k\)</span>)
+are associated with positions
+<span class="math notranslate nohighlight">\(z_i^\mathrm{m}=z_i + \Delta z_i/2\)</span>, and
+represent the average system composition in the <span class="math notranslate nohighlight">\(\Delta z_{i}\)</span>
+segments. The fluxes (and the velocity field) are evaluated on grid
+points <span class="math notranslate nohighlight">\(z_{i}\)</span>; <span class="math notranslate nohighlight">\(J_{i}^{\mathrm{lat}}\)</span> represents a flux
+between segments <span class="math notranslate nohighlight">\(\Delta z_{i - 1}\)</span> and
+<span class="math notranslate nohighlight">\(\Delta z_{i}\)</span>. The discretization is illustrated in
+<a class="reference internal" href="#grid"><span class="std std-numref">Figure 1</span></a>.</p>
+<figure class="align-center" id="id19">
+<span id="grid"></span><a class="reference internal image-reference" href="_images/grid.png"><img alt="_images/grid.png" src="_images/grid.png" style="width: 300px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Space discretization.</span><a class="headerlink" href="#id19" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Fluxes are discretized using local averages of the volume size and Onsager
+coefficients. This is done via the concept of the local diffusion resistance.
+The continuous form:</p>
+<div class="math notranslate nohighlight" id="equation-jlat-1d">
+<span class="eqno">(47)<a class="headerlink" href="#equation-jlat-1d" title="Link to this equation"></a></span>\[J^{\mathrm{lat}} = - L\ \nabla \mu = - L\ \frac{\partial \mu}{\partial z}\]</div>
+<p>is discretized into:</p>
+<div class="math notranslate nohighlight" id="equation-jlat-discrete">
+<span class="eqno">(48)<a class="headerlink" href="#equation-jlat-discrete" title="Link to this equation"></a></span>\[J^{\mathrm{lat}}_i = - \frac{\mu_i - \mu_{i - 1}}{R_i},\]</div>
+<p>where <span class="math notranslate nohighlight">\(R_i\)</span> is the resistance between volumes <span class="math notranslate nohighlight">\(i - 1\)</span> and <span class="math notranslate nohighlight">\(i\)</span>.
+(In Eq. <a class="reference internal" href="#equation-jlat-discrete">(48)</a>, indices refer to positions on the grid, not chemical
+species.) Noda provides several ways to compute <span class="math notranslate nohighlight">\(R_i\)</span> from neighboring
+<span class="math notranslate nohighlight">\(\Delta z\)</span> and <span class="math notranslate nohighlight">\(L\)</span> values, see <a class="reference internal" href="advanced_use.html#stencil"><span class="std std-ref">Stencil</span></a>.</p>
+<p>The initial conditions comprise profiles of the atom fractions <span class="math notranslate nohighlight">\(x_k\)</span>,
+vacancy site fraction <span class="math notranslate nohighlight">\(y_0\)</span> and metal volume fraction <span class="math notranslate nohighlight">\(f_{m}\)</span>.
+These are used to compute <span class="math notranslate nohighlight">\(y_k\)</span>, <span class="math notranslate nohighlight">\(\Omega_{m}\)</span>, and then
+<span class="math notranslate nohighlight">\(\Omega\)</span> and <span class="math notranslate nohighlight">\(c_k\)</span> through the composition relationships in
+<a class="reference internal" href="#composition-variables"><span class="std std-ref">Composition variables</span></a>.</p>
+<p>The divergence of the velocity field is determined via Eq. <a class="reference internal" href="#equation-div-v-detailed">(44)</a>.
+The velocity is obtained by integrating <span class="math notranslate nohighlight">\(\nabla v\)</span> along the space
+dimension, where the integration constant <span class="math notranslate nohighlight">\(v(z_{\min})\)</span> depends on the
+boundary condition. The divergence operator and its reciprocal depend on the
+geometry, see definitions in <a class="reference internal" href="#divergence-geometries"><span class="std std-numref">Table 2</span></a> and
+implementation in <a class="reference internal" href="modules/utils.html#utils.div" title="utils.div"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.div()</span></code></a> and <a class="reference internal" href="modules/utils.html#utils.integrate" title="utils.integrate"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.integrate()</span></code></a>.</p>
+<span id="divergence-geometries"></span><table class="docutils align-default" id="id20">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">Divergence operator and its reciprocal in the three supported geometries. <span class="math notranslate nohighlight">\(F\)</span> is a vector field, <span class="math notranslate nohighlight">\(f\)</span> is its divergence.</span><a class="headerlink" href="#id20" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Geometry</p></th>
+<th class="head"><p>Divergence</p></th>
+<th class="head"><p>Reciprocal</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Planar</p></td>
+<td><p><span class="math notranslate nohighlight">\(\nabla F = \frac{\partial F}{\partial z}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(F = \int f\mathrm{d}u\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Cylindrical</p></td>
+<td><p><span class="math notranslate nohighlight">\(\nabla F = \frac{1}{\rho}\frac{\partial \rho F}{\partial \rho}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(F = \frac{1}{\rho} \int \rho f \mathrm{d}\rho\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Spherical</p></td>
+<td><p><span class="math notranslate nohighlight">\(\nabla F = \frac{1}{r^2}\frac{\partial r^2 F}{\partial r}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(F = \frac{1}{r^2} \int r^2 f \mathrm{d}r\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>The velocity field is then used to compute the time derivatives in Eq.
+<a class="reference internal" href="#equation-continuity">(38)</a>. The <span class="math notranslate nohighlight">\(n + 1\)</span> concentrations are related through the
+closure relationship:</p>
+<div class="math notranslate nohighlight" id="equation-closure-concentration">
+<span class="eqno">(49)<a class="headerlink" href="#equation-closure-concentration" title="Link to this equation"></a></span>\[\sum_{k = 0}^{n}c_k = \frac{1}{\Omega},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Omega\)</span> is the molar volume (see <a class="reference internal" href="#composition-variables"><span class="std std-ref">Composition variables</span></a>).
+However, <span class="math notranslate nohighlight">\(\Omega\)</span> may vary over time, due to the variation of the metal molar
+volume and volume fraction (see <a class="reference internal" href="#composition-variables"><span class="std std-ref">Composition variables</span></a>). Obtaining one
+of the concentrations through the <span class="math notranslate nohighlight">\(n\)</span> others and <span class="math notranslate nohighlight">\(\Omega\)</span> would
+therefore require that the time evolution of <span class="math notranslate nohighlight">\(\Omega\)</span> be determined
+independently. Alternatively, we solve Eq. <a class="reference internal" href="#equation-continuity">(38)</a> for all
+<span class="math notranslate nohighlight">\(n + 1\)</span> concentrations, and then use Eq. <a class="reference internal" href="#equation-closure-concentration">(49)</a> to
+obtain <span class="math notranslate nohighlight">\(\Omega\)</span>. The <span class="math notranslate nohighlight">\(c_k\)</span> and <span class="math notranslate nohighlight">\(\Omega\)</span> values are then
+used to compute <span class="math notranslate nohighlight">\(y_k\)</span>, then <span class="math notranslate nohighlight">\(\Omega_{m}\)</span> and <span class="math notranslate nohighlight">\(f_{m}\)</span>.</p>
+</section>
+<section id="implementation-ideal-lattice">
+<span id="id17"></span><h3><a class="toc-backref" href="#id33" role="doc-backlink">Limiting case: ideal lattice</a><a class="headerlink" href="#implementation-ideal-lattice" title="Link to this heading"></a></h3>
+<p>The ideal lattice configuration, represented
+here by <span class="math notranslate nohighlight">\(k_\mathrm{d} = + \infty\)</span>, is of particular interest for comparison
+with the literature. This is readily implemented if
+<span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> is constant, using Eq. <a class="reference internal" href="#equation-alpha-ideal">(45)</a> instead of Eq.
+<a class="reference internal" href="#equation-sink-term">(40)</a> to compute <span class="math notranslate nohighlight">\(\alpha\)</span>. In Noda,
+however, <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> is derived from the Gibbs free
+energy of the metal, and is in general composition-dependent (see <a class="reference internal" href="#thermo"><span class="std std-ref">Thermodynamics of the metal phase</span></a>).
+An alternative method must therefore be implemented to compute
+<span class="math notranslate nohighlight">\(\alpha\)</span>. The solution retained here is to first assume
+that <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> is constant, compute
+<span class="math notranslate nohighlight">\(\alpha\)</span> via Eq. <a class="reference internal" href="#equation-alpha-ideal">(45)</a>, and solve the continuity equation
+on this basis, to obtain a virtual <span class="math notranslate nohighlight">\(c_k^{n + 1}\)</span>. Then, a
+virtual <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> is calculated from this
+<span class="math notranslate nohighlight">\(c_k^{n + 1}\)</span>, and a corrected <span class="math notranslate nohighlight">\(\alpha\)</span> is calculated
+such that
+<span class="math notranslate nohighlight">\(y_0^{n} + \Delta t \cdot {\dot{y}}_{0} = y_0^{\mathrm{eq}}\)</span>.
+The continuity equation is then solved using the corrected
+<span class="math notranslate nohighlight">\(\alpha\)</span>. The new <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span> will necessarily
+differ from the one calculated in the virtual step; however, the method
+produces values of <span class="math notranslate nohighlight">\(y_0\)</span> typically within
+<span class="math notranslate nohighlight">\(10^{- 13} - 10^{- 14}\)</span> of <span class="math notranslate nohighlight">\(y_0^{\mathrm{eq}}\)</span>, which
+is a satisfying approximation.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="agren-1982" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">Agren_1982</a><span class="fn-bracket">]</span></span>
+<p>J. Ågren, Journal of Physics and Chemistry of Solids 43 (1982) 421–430,
+<a class="reference external" href="https://doi.org/10.1016/0022-3697(82)90152-4">DOI: 10.1016/0022-3697(82)90152-4</a></p>
+</div>
+<div class="citation" id="philibert-1991" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">Philibert_1991</a><span class="fn-bracket">]</span></span>
+<p>J. Philibert, Atom movements - Diffusion and mass transport in solids,
+Les Editions de Physique, 1991.</p>
+</div>
+<div class="citation" id="andersson-1992" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">Andersson_1992</a><span class="fn-bracket">]</span></span>
+<p>J.-O. Andersson, J. Ågren, Journal of Applied Physics 72 (1992) 1350–1355,
+<a class="reference external" href="https://doi.org/10.1063/1.351745">DOI: 10.1063/1.351745</a></p>
+</div>
+<div class="citation" id="saunders-1998" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">Saunders_1998</a><span class="fn-bracket">]</span></span>
+<p>N. Saunders, A.P. Miodownik, CALPHAD (Calculation of Phase Diagrams): A Comprehensive Guide,
+Pergamon Press, 1998.</p>
+</div>
+<div class="citation" id="svoboda-2006" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Svoboda_2006<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id13">2</a>)</span>
+<p>J. Svoboda, F.D. Fischer, P. Fratzl, Acta Materialia 54 (11) (2006) 3043–3053,
+<a class="reference external" href="https://doi.org/10.1016/j.actamat.2006.02.041">DOI: 10.1016/j.actamat.2006.02.041</a></p>
+</div>
+<div class="citation" id="lukas-2007" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">Lukas_2007</a><span class="fn-bracket">]</span></span>
+<p>H. Lukas, S.G. Fries, B. Sundman, Computational Thermodynamics - The Calphad Method,
+Cambridge University Press, 2007.</p>
+</div>
+<div class="citation" id="franke-2014" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">Franke_2014</a><span class="fn-bracket">]</span></span>
+<p>P. Franke, J. Phase Equilib. Diffus. 35 (2014) 780–787,
+<a class="reference external" href="https://doi.org/10.1007/s11669-014-0348-0">DOI: 10.1007/s11669-014-0348-0</a></p>
+</div>
+<div class="citation" id="abe-2018" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">Abe_2018</a><span class="fn-bracket">]</span></span>
+<p>T. Abe, K. Hashimoto, M. Shimono, Materials Transactions 59 (2018) 580–584,
+<a class="reference external" href="https://doi.org/10.2320/matertrans.M2017328">DOI: 10.2320/matertrans.M2017328</a></p>
+</div>
+<div class="citation" id="gheno-2022" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">Gheno_2022</a><span class="fn-bracket">]</span></span>
+<p>T. Gheno, V. Szczepan, C. Salsi, C. Desgranges, D. Monceau,
+Computational Materials Science 215 (2022) 111785,
+<a class="reference external" href="https://doi.org/10.1016/j.commatsci.2022.111785">DOI: 10.1016/j.commatsci.2022.111785</a></p>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="advanced_use.html" class="btn btn-neutral float-left" title="Advanced use" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="credits.html" class="btn btn-neutral float-right" title="Credits and reference papers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

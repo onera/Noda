@@ -1,0 +1,459 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>thermo_functions &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="thermo_wrappers" href="thermo_wrappers.html" />
+    <link rel="prev" title="solvers" href="solvers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.Gmag_fun"><code class="docutils literal notranslate"><span class="pre">Gmag_fun()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.G0_fun"><code class="docutils literal notranslate"><span class="pre">G0_fun()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.G_model"><code class="docutils literal notranslate"><span class="pre">G_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.partial_derivative"><code class="docutils literal notranslate"><span class="pre">partial_derivative()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.MU_model"><code class="docutils literal notranslate"><span class="pre">MU_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.LkV_fun"><code class="docutils literal notranslate"><span class="pre">LkV_fun()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.yVa_model"><code class="docutils literal notranslate"><span class="pre">yVa_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.make_DVa_fun"><code class="docutils literal notranslate"><span class="pre">make_DVa_fun()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.make_Lfun"><code class="docutils literal notranslate"><span class="pre">make_Lfun()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.RK_pol"><code class="docutils literal notranslate"><span class="pre">RK_pol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.lnDT_model"><code class="docutils literal notranslate"><span class="pre">lnDT_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thermo_functions.unit_lnDT"><code class="docutils literal notranslate"><span class="pre">unit_lnDT()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/thermo_functions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-thermo_functions">
+<span id="thermo-functions"></span><h1><a class="reference internal" href="#module-thermo_functions" title="thermo_functions"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a><a class="headerlink" href="#module-thermo_functions" title="Link to this heading"></a></h1>
+<p>Functions related to thermodynamics and mobility models.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.Gmag_fun">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">Gmag_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tcritical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#Gmag_fun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.Gmag_fun" title="Link to this definition"></a></dt>
+<dd><p>Compute magnetic part of Gibbs free energy.</p>
+<p>See Dinsdale 1991 <a class="footnote-reference brackets" href="#dinsdale-1991" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.G0_fun">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">G0_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Gpara</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#G0_fun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.G0_fun" title="Link to this definition"></a></dt>
+<dd><p>Compute Gibbs free energy in pure metal.</p>
+<p>Data in the form of G - H_SER. See Dinsdale 1991 <a class="footnote-reference brackets" href="#dinsdale-1991" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.G_model">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">G_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#G_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.G_model" title="Link to this definition"></a></dt>
+<dd><p>Compute molar Gibbs free energy at given composition.</p>
+<p>Use excess term with binary interactions of order 0 and 1, and ternary
+interactions of order 0.</p>
+<p>Interactions are represented with a Redlich-Kister polynomial:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}&amp;G_{m} = \sum_{i = 1}^{n}{x_{i}G_{i}}
+         + RT\sum_{i = 1}^{n}{x_{i}\ln x_{i}}
+         + ^{xs}G_{m}\\&amp;_{}^{xs}G_{m} = \sum_{i = 1}^{n - 1}{
+                   \sum_{j = i + 1\ }^{n}{
+                 x_{i}x_{j}\left(^0L_{ij} + ^1L_{ij}(x_i - x_j)\right)}}
++ \sum_{i = 1}^{n - 2}{
+    \sum_{j = i + 1\ }^{n - 1}{
+        \sum_{k = j + 1\ }^{n}{x_{i}x_{j}x_{k}L_{ijk}}}}\end{aligned}\end{align} \]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>2D array</em>) – Atom fraction of the independent constituents, shape (<cite>ninds</cite>, <cite>nz</cite>).</p></li>
+<li><p><strong>G0</strong> (<em>list</em><em> of </em><em>floats</em>) – Gibbs free energy of the endmembers, len <cite>ncomps</cite>.</p></li>
+<li><p><strong>L</strong> (<em>1D array</em>) – <p>Interaction parameters, given as a flat array.</p>
+<div class="line-block">
+<div class="line">Number of terms in a n-component system:</div>
+<div class="line">binary  : 2*C(n, 2) = n*(n - 1)</div>
+<div class="line">ternary : C(n, 3) = n*(n - 1)*(n - 2)/6</div>
+<div class="line"><br /></div>
+<div class="line">In a 2-comp. system, <span class="math notranslate nohighlight">\(L = [L_{12}]\)</span></div>
+<div class="line">In a 3-comp. system, <span class="math notranslate nohighlight">\(L = [L_{12}, L_{13}, L_{23}, L_{123}]\)</span></div>
+<div class="line">where binary terms are couples <span class="math notranslate nohighlight">\(L_{ij} = (^0L_{ij}, ^1L_{ij})\)</span></div>
+</div>
+</p></li>
+<li><p><strong>T</strong> (<em>float</em><em> or </em><em>int</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Gibbs free energy.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.partial_derivative">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">partial_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#partial_derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.partial_derivative" title="Link to this definition"></a></dt>
+<dd><p>Compute the derivative of fun with respect to i-th row of x.</p>
+<p>Adapted from <a class="reference external" href="https://stackoverflow.com/a/20708578">https://stackoverflow.com/a/20708578</a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.MU_model">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">MU_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#MU_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.MU_model" title="Link to this definition"></a></dt>
+<dd><p>Compute chemical potentials.</p>
+<div class="math notranslate nohighlight">
+\[\mu_k = G + \frac{\partial G}{\partial x_k}
+- \sum_{i=0}^n {x_i \frac{\partial G}{\partial x_i}}\]</div>
+<p>The G model uses excess term with binary interactions of order 0 and 1 and
+ternary interactions of order 0 (see <a class="reference internal" href="#thermo_functions.G_model" title="thermo_functions.G_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">G_model()</span></code></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>2D array</em>) – Atom fraction of the independent constituents, shape (<cite>ninds</cite>, <cite>nz</cite>).</p></li>
+<li><p><strong>p</strong> (<em>list</em><em> of </em><em>floats</em>) – Thermodynamic parameters.</p></li>
+<li><p><strong>TK</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>MU</strong> – Chemical potentials, shape (<cite>ncomps</cite>, <cite>nz</cite>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>2D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.LkV_fun">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">LkV_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">GfV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#LkV_fun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.LkV_fun" title="Link to this definition"></a></dt>
+<dd><p>Compute thermodynamic interaction parameter between vacancy and atom k.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>GfV</strong> (<em>dict</em><em> of </em><em>lists</em>) – <p>Gibbs free energy of vacancy formation in pure metals.</p>
+<p><code class="docutils literal notranslate"><span class="pre">{k:</span> <span class="pre">[enthalpy,</span> <span class="pre">entropy]</span> <span class="pre">for</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">comps}</span></code></p>
+</p></li>
+<li><p><strong>k</strong> (<em>str</em>) – Atom.</p></li>
+<li><p><strong>TK</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Interaction parameter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.yVa_model">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">yVa_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#yVa_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.yVa_model" title="Link to this definition"></a></dt>
+<dd><p>Compute composition-dependent equilibrium vacancy fractions.</p>
+<p>Use a Redlich-Kister expansion with binary interactions of order 0 and 1
+and ternary interactions of order 0:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}&amp;y_{0}^{eq} = \exp \left( - \frac{G_{f,Va}^{\text{alloy}}}{RT} \right)\\&amp;G_{f,Va}^{\text{alloy}} = G_{0}
++ \sum_{i = 1}^{n}{y_i \left(^0L_{0i} - y_i\ ^1L_{0i} \right)}
+- \sum_{i = 1}^{n - 1}{
+    \sum_{j = i + 1\ }^{n}{
+        y_iy_j \left(^0L_{ij} + 2\ ^1L_{ij}(y_i - y_j) \right)}}\\&amp;\qquad{}+ \sum_{i = 1}^{n - 1}{\sum_{j = i + 1\ }^{n}{y_i y_j L_{0ij}}}
+        - 2 \sum_{i = 1}^{n - 2}{
+              \sum_{j = i + 1\ }^{n - 1}{
+                \sum_{k = j + 1\ }^{n}{y_i y_j y_k L_{ijk}}}}\end{aligned}\end{align} \]</div>
+<p>See Gheno 2022 <a class="footnote-reference brackets" href="#gheno-2022" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>2D array</em>) – Atom fraction of the independent constituents, shape (<cite>ninds</cite>, <cite>nz</cite>).</p></li>
+<li><p><strong>G0</strong> (<em>list</em><em> of </em><em>floats</em>) – Gibbs free energy of the endmembers, len <cite>ncomps</cite>.</p></li>
+<li><p><strong>L</strong> (<em>1D array</em>) – <p>Interaction parameters, given as a flat array.</p>
+<div class="line-block">
+<div class="line">Number of terms in a n-component system:</div>
+<div class="line">binary  : 2*C(n, 2) = n*(n - 1)</div>
+<div class="line">ternary : C(n, 3) = n*(n - 1)*(n - 2)/6</div>
+<div class="line"><br /></div>
+<div class="line">In a 2-comp. system, <span class="math notranslate nohighlight">\(L = [L_{12}]\)</span></div>
+<div class="line">In a 3-comp. system, <span class="math notranslate nohighlight">\(L = [L_{12}, L_{13}, L_{23}, L_{123}]\)</span></div>
+<div class="line">where binary terms are couples <span class="math notranslate nohighlight">\(L_{ij} = (^0L_{ij}, ^1L_{ij})\)</span></div>
+</div>
+</p></li>
+<li><p><strong>T</strong> (<em>float</em><em> or </em><em>int</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Equilibrium vacancy site fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.make_DVa_fun">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">make_DVa_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DT_fun</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#make_DVa_fun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.make_DVa_fun" title="Link to this definition"></a></dt>
+<dd><p>Make function to compute vacancy tracer diffusion coefficient.</p>
+<div class="math notranslate nohighlight">
+\[D_{0}^{*} = \frac{1}{y_{0}}\sum_{k = 1}^{n}{y_{k}D_{k}^{*}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>DT_fun</strong> (<em>function</em>) – Compute tracer diffusion coefficient of atom constituents.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Compute vacancy tracer diffusion coefficient.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.make_Lfun">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">make_Lfun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DT_fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#make_Lfun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.make_Lfun" title="Link to this definition"></a></dt>
+<dd><p>Generate function to evaluate Onsager coefficients.</p>
+<p>See background in Andersson 1992 <a class="footnote-reference brackets" href="#andersson-1992" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DT_fun</strong> (<em>function</em>) – Function evaluating tracer diffusion coefficients on composition array.</p></li>
+<li><p><strong>TK</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Function that takes composition array (typical shape (<cite>n_comps</cite>, <cite>nz</cite>))
+as argument, and returns array (shape (<cite>n_comps</cite>, <cite>n_comps</cite>, <cite>nz</cite>)) of
+phenomenological coefficients evaluated on this array (ex:
+<code class="docutils literal notranslate"><span class="pre">L[i,</span> <span class="pre">j,</span> <span class="pre">k]</span></code>, where component i diffuses in a gradient of j, and k is
+a space index).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.RK_pol">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">RK_pol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#RK_pol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.RK_pol" title="Link to this definition"></a></dt>
+<dd><p>Redlich-Kister polynomial with binary and ternary interactions of order 0.</p>
+<div class="math notranslate nohighlight">
+\[MQ = \sum_{i = 1}^{n}{x_{i}L_{i}}
++ \sum_{i = 1}^{n - 1}{
+    \sum_{j = i + 1\ }^{n}{x_{i}x_{j}L_{ij}}}
++ \sum_{i = 1}^{n - 2}{
+    \sum_{j = i + 1\ }^{n - 1}{
+      \sum_{k = j + 1\ }^{n}{x_{i}x_{j}x_{k}L_{ijk}}}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>2D array</em>) – Atom fraction of the independent constituents, shape (<cite>ninds</cite>, <cite>nz</cite>).</p></li>
+<li><p><strong>p</strong> (<em>1D array</em>) – <div class="line-block">
+<div class="line">Parameters of the polynomial, given as a flat array.</div>
+<div class="line">Number of terms in a n-component system:</div>
+<div class="line">unary   : C(n, 1) = n</div>
+<div class="line">binary  : C(n, 2) = n*(n - 1)/2</div>
+<div class="line">ternary : C(n, 3) = n*(n - 1)*(n - 2)/6</div>
+<div class="line"><br /></div>
+<div class="line">In a 2-component system, <span class="math notranslate nohighlight">\(L = [L_1, L_2, L_{12}]\)</span></div>
+<div class="line">In a 3-component system, <span class="math notranslate nohighlight">\(L = [L_1, L_2, L_3, L_{12}, L_{13},
+L_{23}, L_{123}]\)</span></div>
+</div>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Polynomial evaluated along composition profile, shape (<cite>nz</cite>,).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.lnDT_model">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">lnDT_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#lnDT_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.lnDT_model" title="Link to this definition"></a></dt>
+<dd><p>Compute log of tracer diffusion coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>2D array</em>) – Atom fraction of the independent constituents, shape (<cite>ninds</cite>, <cite>nz</cite>).</p></li>
+<li><p><strong>p</strong> (<em>list</em><em> of </em><em>floats</em>) – Mobility parameters.</p></li>
+<li><p><strong>TK</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Log of DT, shape (<cite>ncomps</cite>, <cite>nz</cite>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>2D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="thermo_functions.unit_lnDT">
+<span class="sig-prename descclassname"><span class="pre">thermo_functions.</span></span><span class="sig-name descname"><span class="pre">unit_lnDT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/thermo_functions.html#unit_lnDT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#thermo_functions.unit_lnDT" title="Link to this definition"></a></dt>
+<dd><p>Compute log of tracer diffusion coefficient of one component.</p>
+<p>Use Redlich-Kister polynomial with binary and ternary interactions of order
+0 (see <a class="reference internal" href="#thermo_functions.RK_pol" title="thermo_functions.RK_pol"><code class="xref py py-func docutils literal notranslate"><span class="pre">RK_pol()</span></code></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>2D array</em>) – Atom fraction of the independent constituents, shape (<cite>ninds</cite>, <cite>nz</cite>).</p></li>
+<li><p><strong>p</strong> (<em>list</em><em> of </em><em>floats</em>) – Mobility parameters.</p></li>
+<li><p><strong>TK</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Log of DT, shape (<cite>nz</cite>,).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="andersson-1992" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">1</a><span class="fn-bracket">]</span></span>
+<p>J.-O. Andersson and J. Agren, Journal of Applied Physics 72 (1992) 1350-1355, <a class="reference external" href="https://doi.org/10.1063/1.351745">DOI: 10.1063/1.351745</a></p>
+</aside>
+<aside class="footnote brackets" id="dinsdale-1991" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
+<p>A.T. Dinsdale, Calphad 15 (1991) 317-425, <a class="reference external" href="https://doi.org/10.1016/0364-5916(91)90030-N">DOI: 10.1016/0364-5916(91)90030-N</a></p>
+</aside>
+<aside class="footnote brackets" id="gheno-2022" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<ol class="upperalpha simple" start="20">
+<li><p>Gheno, V. Szczepan, C. Salsi, C. Desgranges, D. Monceau, Computational Materials Science 215 (2022) 111785, <a class="reference external" href="https://doi.org/10.1016/j.commatsci.2022.111785">DOI: 10.1016/j.commatsci.2022.111785</a></p></li>
+</ol>
+</aside>
+</aside>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="solvers.html" class="btn btn-neutral float-left" title="solvers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="thermo_wrappers.html" class="btn btn-neutral float-right" title="thermo_wrappers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

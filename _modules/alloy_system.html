@@ -1,0 +1,561 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>alloy_system &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">alloy_system</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for alloy_system</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Define thermodynamic and mobility properties of alloy system.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.log_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_and_log</span><span class="p">,</span> <span class="n">CustomLogger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.data_io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">da</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.para_io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.thermo_functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tfu</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.thermo_wrappers</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">wrap</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">co</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">paths</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+
+
+<div class="viewcode-block" id="AlloySystem">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AlloySystem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Thermodynamic and mobility properties of alloy system.</span>
+
+<span class="sd">    This class mainly serves as a base class for :class:`simu.Simulation`. It</span>
+<span class="sd">    can also be used on its own to examine thermodynamics and mobility data.</span>
+
+<span class="sd">    This is an isothermal, single-phase version.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ref: str</span>
+<span class="sd">        System reference, name of sub-directory with input and output files.</span>
+<span class="sd">    work_dir: pathlib.Path</span>
+<span class="sd">        Path to directory with system-related input and output files.</span>
+<span class="sd">    database_register : dict</span>
+<span class="sd">        Register of available thermodynamic and mobility databases.</span>
+<span class="sd">    volume_databases : dict</span>
+<span class="sd">        Available molar volume data.</span>
+<span class="sd">    vacancy_databases : dict</span>
+<span class="sd">        Available vacancy formation energy data.</span>
+<span class="sd">    pstring : str</span>
+<span class="sd">        Content of system input file, set of user-defined parameters.</span>
+<span class="sd">    params: dict</span>
+<span class="sd">        Set of system parameters, processed by</span>
+<span class="sd">        :func:`para_io.read_parameter_string` from pstring.</span>
+<span class="sd">    inds: list</span>
+<span class="sd">        Independent constituents.</span>
+<span class="sd">    dep: str</span>
+<span class="sd">        Dependent constituent.</span>
+<span class="sd">    comps: list</span>
+<span class="sd">        Conservative (atomic) species, with dependent constituent at the end.</span>
+<span class="sd">    phase: str</span>
+<span class="sd">        Name of phase.</span>
+<span class="sd">    thermo_db: str</span>
+<span class="sd">        Name of thermodynamic database.</span>
+<span class="sd">    mob_db: str</span>
+<span class="sd">        Name of mobility database.</span>
+<span class="sd">    TC: float</span>
+<span class="sd">        Temperature in Celsius.</span>
+<span class="sd">    TK: float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+<span class="sd">    alloy: str</span>
+<span class="sd">        Alloy system str representation, with dependent constituent first.</span>
+<span class="sd">    stamp: str</span>
+<span class="sd">        Label with syntax phase-alloy-TC.</span>
+<span class="sd">    volume_db : str</span>
+<span class="sd">        Name of partial molar volume database.</span>
+<span class="sd">    V_partial : dict</span>
+<span class="sd">        Partial molar volumes. See See :func:`data_io.get_volume_data`.</span>
+<span class="sd">    vacancy_db : str</span>
+<span class="sd">        Name of vacancy formation energy database.</span>
+<span class="sd">    GfV : dict</span>
+<span class="sd">        Vacancy formation energy in pure elements, given as [enthalpy, entropy]</span>
+<span class="sd">        in J/mol and J/mol/K. See :func:`data_io.get_vacancy_formation_energy`.</span>
+<span class="sd">    Va_method : str</span>
+<span class="sd">        Method used to compute equilibrium vacancy fraction: &#39;cst&#39;</span>
+<span class="sd">        (composition-fixed) or &#39;RK&#39; (composition-dependant via Redlich-Kister</span>
+<span class="sd">        polynomial).</span>
+<span class="sd">    thermo_params : dict of floats</span>
+<span class="sd">        Thermodynamic parameters arranged as follows:</span>
+
+<span class="sd">        | ``A: G_A for A in endmembers``</span>
+<span class="sd">        | ``AB: [L0, L1] for AB in binary subsystems``</span>
+
+<span class="sd">    mob_params : dict of dicts</span>
+<span class="sd">        Mobility parameters arranged as follows:</span>
+
+<span class="sd">        ``{i: subdict for i in comps}``</span>
+
+<span class="sd">        subdict: ``{j: val for j in subsystems}``.</span>
+
+<span class="sd">    k_dislo : float or str</span>
+<span class="sd">        Sink strength associated with dislocation climb (str should be a valid</span>
+<span class="sd">        file name in current job folder)</span>
+<span class="sd">    k_pores : float or str</span>
+<span class="sd">        Sink strength associated with pore growth (str should be a valid file</span>
+<span class="sd">        name in current job folder)</span>
+<span class="sd">    rho_dislo : float or str</span>
+<span class="sd">        Dislocation density, used to compute k_dislo from local DVa.</span>
+<span class="sd">    rho_pores : float</span>
+<span class="sd">        Density used to compute k_pores from local DVa.</span>
+<span class="sd">    ideal_lattice : bool</span>
+<span class="sd">        Whether lattice is ideal, i.e., vacancy fraction is kept at</span>
+<span class="sd">        equilibrium.</span>
+<span class="sd">    G_funx : function</span>
+<span class="sd">        Compute Gibbs free energy at composition provided as array of atom</span>
+<span class="sd">        fractions of the dependent constituents.</span>
+<span class="sd">    G_fun : function</span>
+<span class="sd">        Alias of G_funx</span>
+<span class="sd">    G_funy : function</span>
+<span class="sd">        Compute Gibbs free energy at composition provided as array of site</span>
+<span class="sd">        fractions of vacancies and of the dependent constituents. See</span>
+<span class="sd">        :meth:`add_thermo_model`.</span>
+<span class="sd">    MU_funx : function</span>
+<span class="sd">        Compute chemical potential at composition provided as array of atom</span>
+<span class="sd">        fractions of the dependent constituents.</span>
+<span class="sd">    MU_fun : function</span>
+<span class="sd">        Alias of MU_funx</span>
+<span class="sd">    MU_funy: function</span>
+<span class="sd">        Compute chemical potentials at composition provided as array of site</span>
+<span class="sd">        fractions of vacancies and of the dependent constituents. See</span>
+<span class="sd">        :meth:`add_thermo_model`.</span>
+<span class="sd">    yVa_fun : function</span>
+<span class="sd">        Compute equilibrium vacancy fraction at composition provided as array</span>
+<span class="sd">        of atom fractions of the dependent constituents. See</span>
+<span class="sd">        :meth:`add_Va_model`.</span>
+<span class="sd">    DT_fun: function</span>
+<span class="sd">        Compute tracer diffusion coefficients at composition provided as array</span>
+<span class="sd">        of atom fractions of the dependent constituents.</span>
+<span class="sd">    L_fun: function</span>
+<span class="sd">        Compute phenomenological coefficients at composition provided as array</span>
+<span class="sd">        of atom fractions of the dependent constituents. Derived from `DT_fun`</span>
+<span class="sd">        (see :func:`thermo_functions.make_Lfun`).</span>
+<span class="sd">    DVa_fun : function</span>
+<span class="sd">        Compute vacancy diffusion coefficient from atom fractions and site</span>
+<span class="sd">        fractions, see :func:`thermo_functions.make_DVa_fun`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AlloySystem.__init__">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Read input file and define system parameters. See</span>
+<span class="sd">        :func:`para_io.read_parameter_string` for how input file is parsed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">CustomLogger</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">intro_msg</span><span class="p">(),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s2"> Creating &#39;</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">&#39; system.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ref</span> <span class="o">=</span> <span class="n">ref</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">get_data_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_user_data</span><span class="p">()</span>
+        <span class="n">para_fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">/</span> <span class="p">(</span><span class="n">ref</span> <span class="o">+</span> <span class="s1">&#39;-input.txt&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">para_fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input file &#39;</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">-input.txt&#39; not found in &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">para_fpath</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">raw_input</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading input file &#39;</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">-input.txt&#39;.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pstring</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">read_parameter_string</span><span class="p">(</span><span class="n">raw_input</span><span class="p">,</span>
+                                                             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s1">&#39;Begin input file.&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pstring</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s1">&#39;End input file.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;inds&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dep&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dep</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thermo_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;thermo_db&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mob_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mob_db&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TC</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;TC&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TK</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TC</span> <span class="o">+</span> <span class="mf">273.15</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alloy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stamp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alloy</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TC</span><span class="p">)</span><span class="si">}</span><span class="s1">C&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume_db</span> <span class="o">=</span> <span class="n">get_and_log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="s1">&#39;volume_db&#39;</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;volume_db&#39;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_volume_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volume_databases</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">volume_db</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vacancy_db</span> <span class="o">=</span> <span class="n">get_and_log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="s1">&#39;vacancy_db&#39;</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;vacancy_db&#39;</span><span class="p">],</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GfV</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_vacancy_formation_energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vacancy_databases</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">vacancy_db</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mob_params</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_dislo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;k_dislo&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_pores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;k_pores&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_dislo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rho_dislo&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_pores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rho_pores&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># Log some attributes needed to read simulation results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;comps = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;V_partial = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Initialize attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G_fun</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G_funx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G_funy</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MU_fun</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MU_funx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MU_funy</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yVa_fun</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DT_fun</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DVa_fun</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">L_fun</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Define attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing thermodynamic and mobility data.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ideal_lattice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_lattice_ideal</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_thermo_functions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_mob_functions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing lattice sink terms.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ideal_lattice</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_sink_terms</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AlloySystem.get_user_data">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.get_user_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_user_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get data from user.</span>
+
+<span class="sd">        * Molar volume databases</span>
+<span class="sd">        * Vacancy formation energy databases</span>
+<span class="sd">        * Register of thermodynamics and mobility databases</span>
+<span class="sd">        * Default parameters</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_user_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume_databases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="n">user_data</span><span class="p">,</span> <span class="s1">&#39;molar_volume&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vacancy_databases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="n">user_data</span><span class="p">,</span>
+                                                   <span class="s1">&#39;vacancy_formation_energy&#39;</span><span class="p">)</span>
+        <span class="n">thermo_register</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="n">user_data</span><span class="p">,</span> <span class="s1">&#39;thermodynamics&#39;</span><span class="p">)</span>
+        <span class="n">mobility_register</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="n">user_data</span><span class="p">,</span> <span class="s1">&#39;mobility&#39;</span><span class="p">)</span>
+        <span class="c1"># Merge and make all keys lowercase</span>
+        <span class="n">database_register</span> <span class="o">=</span> <span class="n">thermo_register</span> <span class="o">|</span> <span class="n">mobility_register</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_register</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">val</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span>
+                                  <span class="n">database_register</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="c1"># Get numerical parameters from user data or from constants module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">factory</span> <span class="o">=</span> <span class="n">co</span><span class="o">.</span><span class="n">factory_default_parameters</span>
+        <span class="k">if</span> <span class="s1">&#39;default_parameters&#39;</span> <span class="ow">in</span> <span class="n">user_data</span><span class="p">:</span>
+            <span class="n">user_dct</span> <span class="o">=</span> <span class="n">user_data</span><span class="p">[</span><span class="s1">&#39;default_parameters&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">factory</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">user_dct</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_dct</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span> <span class="o">=</span> <span class="n">factory</span></div>
+
+
+<div class="viewcode-block" id="AlloySystem.get_or_raise">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.get_or_raise">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_or_raise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get value or raise exception if key not present.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Entry &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found in &#39;user_data.toml&#39; file.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="AlloySystem.is_lattice_ideal">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.is_lattice_ideal">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_lattice_ideal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check whether lattice is ideal and print info messages.</span>
+
+<span class="sd">        If the input files contains no value for either k_dislo, k_pores,</span>
+<span class="sd">        rho_dislo or rho_pores, the lattice is ideal. If either parameter is</span>
+<span class="sd">        given, the lattice is non-ideal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k_dislo</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_pores</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_dislo</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_pores</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Ideal lattice: sink term set to maintain vacancy fraction &quot;</span>
+                   <span class="s2">&quot;at equilibrium. No pore will form.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Non-ideal lattice: the Kirkendall effect may produce &quot;</span>
+                   <span class="s2">&quot;non-equilibrium vacancy fractions and porosity.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="AlloySystem.add_thermo_functions">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.add_thermo_functions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_thermo_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add thermodynamics functions.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_thermo_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Va_method</span> <span class="o">=</span> <span class="s1">&#39;RK&#39;</span>
+        <span class="c1"># TIP Va_method is always &#39;RK&#39; -&gt; no longer useful currently. Could</span>
+        <span class="c1"># either suppress or reimplement composition-fixed equilibrium (&#39;cst&#39;)</span>
+        <span class="c1"># vacancy fraction.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yVa_fun</span> <span class="o">=</span> <span class="n">wrap</span><span class="o">.</span><span class="n">yVa_fun_from_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Equilibrium vacancy fraction computed from G model.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">G_fun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">G_funx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MU_fun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MU_funx</span></div>
+
+
+<div class="viewcode-block" id="AlloySystem.add_thermo_model">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.add_thermo_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_thermo_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add analytical models for G and MU.&quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_register</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thermo_db</span><span class="p">)</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_thermo_from_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_register</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">thermo_db</span><span class="p">],</span> <span class="s1">&#39;file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span><span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">co</span><span class="o">.</span><span class="n">GV0</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">solvent</span> <span class="o">=</span> <span class="s1">&#39;Va&#39;</span> <span class="o">+</span> <span class="n">k</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">tfu</span><span class="o">.</span><span class="n">LkV_fun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GfV</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span><span class="p">[</span><span class="n">solvent</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">)):</span>
+                <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span><span class="p">[</span><span class="s1">&#39;Va&#39;</span> <span class="o">+</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G_funx</span> <span class="o">=</span> <span class="n">wrap</span><span class="o">.</span><span class="n">Gfun_from_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MU_funx</span> <span class="o">=</span> <span class="n">wrap</span><span class="o">.</span><span class="n">MUfun_from_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ideal_lattice</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">MU_funy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extend_MU_funx</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">G_funy</span> <span class="o">=</span> <span class="n">wrap</span><span class="o">.</span><span class="n">Gfun_from_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">MU_funy</span> <span class="o">=</span> <span class="n">wrap</span><span class="o">.</span><span class="n">MUfun_from_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                                                  <span class="bp">self</span><span class="o">.</span><span class="n">thermo_params</span><span class="p">,</span>
+                                                  <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Thermodynamic functions built from parameter file (</span><span class="si">{</span><span class="n">db</span><span class="si">}</span><span class="s2">).&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AlloySystem.extend_MU_funx">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.extend_MU_funx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extend_MU_funx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make function that computes MU from site fractions.</span>
+
+<span class="sd">        Here the vacancy site fraction is at its equilibrium value (MU_Va = 0).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">fun</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">MU</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MU_funx</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">MU</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">MU</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="k">return</span> <span class="n">fun</span></div>
+
+
+<div class="viewcode-block" id="AlloySystem.add_mob_functions">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.add_mob_functions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_mob_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add mobility functions.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_mob_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">L_fun</span> <span class="o">=</span> <span class="n">tfu</span><span class="o">.</span><span class="n">make_Lfun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DVa_fun</span> <span class="o">=</span> <span class="n">tfu</span><span class="o">.</span><span class="n">make_DVa_fun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AlloySystem.add_mob_model">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.add_mob_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_mob_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add analytical model for DT.&quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_register</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mob_db</span><span class="p">)</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mob_params</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_mob_from_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_register</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mob_db</span><span class="p">],</span> <span class="s1">&#39;file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DT_fun</span> <span class="o">=</span> <span class="n">wrap</span><span class="o">.</span><span class="n">DTfun_from_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mob_params</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Mobility functions built from parameter file (</span><span class="si">{</span><span class="n">db</span><span class="si">}</span><span class="s2">).&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AlloySystem.process_sink_terms">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.AlloySystem.process_sink_terms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_sink_terms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process user input for non-ideal lattice parameters.</span>
+
+<span class="sd">        Parameters of interest: k_dislo, k_pores, rho_dislo, rho_pores. Input</span>
+<span class="sd">        can be a float or a string indicating a file name. If neither k_dislo</span>
+<span class="sd">        or rho_dislo is given, k_dislo defaults to 0. Same for k_pores and</span>
+<span class="sd">        rho_pores.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dislo&#39;</span><span class="p">,</span> <span class="s1">&#39;pores&#39;</span><span class="p">]:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;k_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;rho_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No value found for k_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, defaults to 0.&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">/</span> <span class="n">k</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;k_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fpath</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">/</span> <span class="n">rho</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;rho_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fpath</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="intro_msg">
+<a class="viewcode-back" href="../modules/alloy_system.html#alloy_system.intro_msg">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">intro_msg</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare intro message.&quot;&quot;&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">35</span> <span class="o">+</span> <span class="s1">&#39;  Noda  &#39;</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">36</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;| A Python package for simulating diffusion in multicomponent alloys.&#39;</span>
+    <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">9</span> <span class="o">+</span> <span class="s1">&#39;|</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;| Version </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">63</span> <span class="o">+</span> <span class="s1">&#39;|</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">79</span>
+    <span class="k">return</span> <span class="n">msg</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>simu &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="solvers" href="solvers.html" />
+    <link rel="prev" title="results_io" href="results_io.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simu.Simulation"><code class="docutils literal notranslate"><span class="pre">Simulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.__init__"><code class="docutils literal notranslate"><span class="pre">Simulation.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.check_boundary_conditions"><code class="docutils literal notranslate"><span class="pre">Simulation.check_boundary_conditions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.unit_check_BC_constituents"><code class="docutils literal notranslate"><span class="pre">Simulation.unit_check_BC_constituents()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.unit_check_BC_values"><code class="docutils literal notranslate"><span class="pre">Simulation.unit_check_BC_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.check_grid_config"><code class="docutils literal notranslate"><span class="pre">Simulation.check_grid_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.add_grid"><code class="docutils literal notranslate"><span class="pre">Simulation.add_grid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.add_time"><code class="docutils literal notranslate"><span class="pre">Simulation.add_time()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.add_saved_steps"><code class="docutils literal notranslate"><span class="pre">Simulation.add_saved_steps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.add_profiles"><code class="docutils literal notranslate"><span class="pre">Simulation.add_profiles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.add_x_profile"><code class="docutils literal notranslate"><span class="pre">Simulation.add_x_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.check_x_profile_from_file"><code class="docutils literal notranslate"><span class="pre">Simulation.check_x_profile_from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.check_x_profile_from_dicts"><code class="docutils literal notranslate"><span class="pre">Simulation.check_x_profile_from_dicts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.add_yVa_profile"><code class="docutils literal notranslate"><span class="pre">Simulation.add_yVa_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.add_fm_profile"><code class="docutils literal notranslate"><span class="pre">Simulation.add_fm_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.add_BC"><code class="docutils literal notranslate"><span class="pre">Simulation.add_BC()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.make_JBC_fun"><code class="docutils literal notranslate"><span class="pre">Simulation.make_JBC_fun()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.make_cBC_fun"><code class="docutils literal notranslate"><span class="pre">Simulation.make_cBC_fun()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.prepare_simulation_log"><code class="docutils literal notranslate"><span class="pre">Simulation.prepare_simulation_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.run"><code class="docutils literal notranslate"><span class="pre">Simulation.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.NewSimulation"><code class="docutils literal notranslate"><span class="pre">NewSimulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simu.NewSimulation.__init__"><code class="docutils literal notranslate"><span class="pre">NewSimulation.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.ReadSimulationOld"><code class="docutils literal notranslate"><span class="pre">ReadSimulationOld</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simu.ReadSimulationOld.__init__"><code class="docutils literal notranslate"><span class="pre">ReadSimulationOld.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.ReadSimulation"><code class="docutils literal notranslate"><span class="pre">ReadSimulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simu.ReadSimulation.__init__"><code class="docutils literal notranslate"><span class="pre">ReadSimulation.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.make_profile"><code class="docutils literal notranslate"><span class="pre">make_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.make_compo_string_from_xdict"><code class="docutils literal notranslate"><span class="pre">make_compo_string_from_xdict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.make_plot_title"><code class="docutils literal notranslate"><span class="pre">make_plot_title()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/simu.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-simu">
+<span id="simu"></span><h1><a class="reference internal" href="#module-simu" title="simu"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a><a class="headerlink" href="#module-simu" title="Link to this heading"></a></h1>
+<p>Define and load diffusion simulation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simu.Simulation">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">Simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AlloySystem</span></code></p>
+<p>Thermodynamic system, simulation conditions, simulation results.</p>
+<p>This is a base class that does some pre-processing and provides methods to
+set up simulation conditions, run simulation and plot the results.</p>
+<p>It is possible to create a new simulation directly with this class, in
+which case the setup methods have to be called by the user. This provides
+the possibility of changing the system properties and simulation conditions
+in a user script, with functions not provided by this class (or the parent
+<a class="reference internal" href="alloy_system.html#alloy_system.AlloySystem" title="alloy_system.AlloySystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">alloy_system.AlloySystem</span></code></a>). Note that this should be done with
+great care, as the custom modifications may cause unexpected issues and
+will not be recorded in the log file.</p>
+<p>The recommended way to create a simulation is to use <a class="reference internal" href="#simu.NewSimulation" title="simu.NewSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">NewSimulation</span></code></a>
+(new simulation) or <a class="reference internal" href="#simu.ReadSimulation" title="simu.ReadSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReadSimulation</span></code></a> (read from log file), where the
+default setup methods will be called.</p>
+<p>Also note that using <a class="reference internal" href="#simu.ReadSimulation" title="simu.ReadSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReadSimulation</span></code></a> to load a simulation first
+created with <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> and custom setup functions (instead of
+<a class="reference internal" href="#simu.NewSimulation" title="simu.NewSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">NewSimulation</span></code></a>) may produce an inconsistent state.</p>
+<p>This is a 1D version, with time-invariant space grid and time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_profile</strong> (<em>str</em>) – Type of initial atom fraction profiles. See accepted values in
+<a class="reference internal" href="#simu.make_profile" title="simu.make_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_profile()</span></code></a>.</p></li>
+<li><p><strong>zstep</strong> (<em>float</em>) – Position of step along step profile in m (see doc in
+<a class="reference internal" href="meshing.html#meshing.make_step_profile" title="meshing.make_step_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">meshing.make_step_profile()</span></code></a>).</p></li>
+<li><p><strong>q</strong> (<em>float</em>) – Common ratio for geometric grid.</p></li>
+<li><p><strong>x_left</strong> (<em>dict</em><em> of </em><em>floats</em>) – Initial atom fractions of independent constituents on left-hand side.</p></li>
+<li><p><strong>x_right</strong> (<em>dict</em><em> of </em><em>floats</em>) – Initial atom fractions of independent constituents on right-hand side.</p></li>
+<li><p><strong>yVa_profile</strong> (<em>str</em>) – Type of initial vacancy site fraction profile. See accepted values in
+<a class="reference internal" href="#simu.make_profile" title="simu.make_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_profile()</span></code></a>.</p></li>
+<li><p><strong>yVa_left</strong> (<em>float</em>) – Initial vacancy site fraction on left-hand side.</p></li>
+<li><p><strong>yVa_right</strong> (<em>float</em>) – Initial vacancy site fraction on right-hand side.</p></li>
+<li><p><strong>fp_profile</strong> (<em>str</em>) – Type of initial pore volume fraction profile. See accepted values in
+<a class="reference internal" href="#simu.make_profile" title="simu.make_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_profile()</span></code></a>.</p></li>
+<li><p><strong>fp_left</strong> (<em>float</em>) – Initial pore volume fraction on left-hand side.</p></li>
+<li><p><strong>fp_right</strong> (<em>float</em>) – Initial pore volume fraction on right-hand side.</p></li>
+<li><p><strong>stencil</strong> (<em>str</em>) – Discretization stencil. See accepted values in
+<a class="reference internal" href="solvers.html#solvers.compute_resistance" title="solvers.compute_resistance"><code class="xref py py-func docutils literal notranslate"><span class="pre">solvers.compute_resistance()</span></code></a>.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title to be used in plots. See <code class="xref py py-func docutils literal notranslate"><span class="pre">plots.make_plot_title()</span></code>.</p></li>
+<li><p><strong>zmin</strong> (<em>float</em>) – Initial position of left-hand domain boundary (m).</p></li>
+<li><p><strong>zmax</strong> (<em>float</em>) – Initial position of right-hand domain boundary (m).</p></li>
+<li><p><strong>nz_init</strong> (<em>int</em>) – Number of steps in initial space grid.</p></li>
+<li><p><strong>z_init</strong> (<em>1D array</em>) – Initial node positions. Ranges from 0 to zmax, size nz. This is where
+fluxes are evaluated.</p></li>
+<li><p><strong>dz_init</strong> (<em>1D array</em>) – Initial space step, shape (nz - 1,).</p></li>
+<li><p><strong>zm_init</strong> (<em>1D array</em>) – Initial midpoint positions, shape (nz - 1,). This is where
+composition variables are evaluated.</p></li>
+<li><p><strong>geometry</strong> (<em>str</em>) – Domain geometry (planar, cylindrical or spherical).</p></li>
+<li><p><strong>th</strong> (<em>float</em>) – Simulation time in h.</p></li>
+<li><p><strong>ts</strong> (<em>float</em>) – Simulation time in s.</p></li>
+<li><p><strong>dt_multiplier</strong> (<em>float</em>) – Factor by which default time step is multiplied (see <a class="reference internal" href="#simu.Simulation.add_time" title="simu.Simulation.add_time"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_time()</span></code></a>).</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – Time step size in s.</p></li>
+<li><p><strong>nt</strong> (<em>int</em>) – Number of time steps (positions in time sequence), including 0.</p></li>
+<li><p><strong>num_out</strong> (<em>int</em>) – Number of time steps where simulation results are stored and saved on
+file.</p></li>
+<li><p><strong>saved_steps</strong> (<em>list</em>) – Steps for which simulation results are stored and saved on file.</p></li>
+<li><p><strong>saved_times</strong> (<em>list</em>) – Times in h (rounded) for which simulation results are stored and saved
+on file.</p></li>
+<li><p><strong>x_init</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – Initial atom fraction profiles of independent constituents.</p></li>
+<li><p><strong>yVa_init</strong> (<em>1D array</em>) – Initial vacancy site fraction profile.</p></li>
+<li><p><strong>fm_init</strong> (<em>1D array</em>) – Initial pore volume fraction profile.</p></li>
+<li><p><strong>cvar</strong> (<a class="reference internal" href="composition_variables.html#composition_variables.CompositionVariables" title="composition_variables.CompositionVariables"><code class="xref py py-class docutils literal notranslate"><span class="pre">composition_variables.CompositionVariables</span></code></a>) – Composition variables (x, y, c, Vm, …).</p></li>
+<li><p><strong>BC</strong> (<em>dict</em>) – Type of boundary condition (Dirichlet, Neumann) and corresponding
+values or expressions. See  <a class="reference internal" href="#simu.Simulation.add_BC" title="simu.Simulation.add_BC"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_BC()</span></code></a>.</p></li>
+<li><p><strong>res</strong> (<em>dict</em>) – Simulation results, nested dicts with syntax res[th][var][k].</p></li>
+<li><p><strong>simres</strong> (<a class="reference internal" href="results.html#results.SimulationResults" title="results.SimulationResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.SimulationResults</span></code></a>) – Simulation results.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<p>Use <a class="reference internal" href="alloy_system.html#alloy_system.AlloySystem" title="alloy_system.AlloySystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">alloy_system.AlloySystem</span></code></a> constructor to define system
+parameters, then pre-process some simulation conditions. See
+<code class="xref py py-func docutils literal notranslate"><span class="pre">para_io.read_parameter_file()</span></code> for how input file is parsed.</p>
+<p>Perform consistency checks: if lattice is ideal, custom initial vacancy
+and pore fraction profiles are not allowed (vacancy fraction profile
+will be set to equilibrium, pore fraction profile will be set to 0).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.check_boundary_conditions">
+<span class="sig-name descname"><span class="pre">check_boundary_conditions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.check_boundary_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.check_boundary_conditions" title="Link to this definition"></a></dt>
+<dd><p>Check that boundary conditions are consistent.</p>
+<p>Make sure all expected constituents are present in the declared
+boundary conditions.</p>
+<p>Call <a class="reference internal" href="#simu.Simulation.unit_check_BC_constituents" title="simu.Simulation.unit_check_BC_constituents"><code class="xref py py-meth docutils literal notranslate"><span class="pre">unit_check_BC_constituents()</span></code></a> for the 4 conditions.</p>
+<ul class="simple">
+<li><p>Condition on x: expect to find all independent constituents.</p></li>
+<li><p>Condition on J: expect to find all atom constituents</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.unit_check_BC_constituents">
+<span class="sig-name descname"><span class="pre">unit_check_BC_constituents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.unit_check_BC_constituents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.unit_check_BC_constituents" title="Link to this definition"></a></dt>
+<dd><p>Make sure all expected constituents are present in the BC.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.unit_check_BC_values">
+<span class="sig-name descname"><span class="pre">unit_check_BC_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.unit_check_BC_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.unit_check_BC_values" title="Link to this definition"></a></dt>
+<dd><p>Make sure atom fractions are within accepted bounds.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.check_grid_config">
+<span class="sig-name descname"><span class="pre">check_grid_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.check_grid_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.check_grid_config" title="Link to this definition"></a></dt>
+<dd><p>Make sure grid-related input is consistent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.add_grid">
+<span class="sig-name descname"><span class="pre">add_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.add_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.add_grid" title="Link to this definition"></a></dt>
+<dd><p>Add initial space grid.</p>
+<p>Behavior controlled by the ‘grid’ parameter:</p>
+<ul class="simple">
+<li><p>‘linear’: linear grid from zmin to zmax with size nz (zmax and nz
+must be included in parameter input file, zmin defaults to 0).</p></li>
+<li><p>‘geo’: geometric grid from zmin to zmax with size nz and common ratio
+q (zmax and nz must be included in input file, zmin and q are
+optional).</p></li>
+<li><p>filename: read from sdir/filename using np.genfromtxt (zmin, zmax and
+nz are inferred from the grid).</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.add_time">
+<span class="sig-name descname"><span class="pre">add_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.add_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.add_time" title="Link to this definition"></a></dt>
+<dd><p>Add time step and number of time steps.</p>
+<p>The time step dt is calculated to ensure the stability of explicit
+schemes, with a default Fourier number Fo = 0.4. The DT value is
+calculated from the initial concentration profile. The time step
+can be made smaller using the user-specified dt_multiplier (or
+nt_multiplier, see <a class="reference internal" href="para_io.html#para_io.read_parameter_string" title="para_io.read_parameter_string"><code class="xref py py-func docutils literal notranslate"><span class="pre">para_io.read_parameter_string()</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.add_saved_steps">
+<span class="sig-name descname"><span class="pre">add_saved_steps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.add_saved_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.add_saved_steps" title="Link to this definition"></a></dt>
+<dd><p>Add list of time steps where simulation results will be saved to file.</p>
+<p>The time steps are determined based on the num_out parameter.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.add_profiles">
+<span class="sig-name descname"><span class="pre">add_profiles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.add_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.add_profiles" title="Link to this definition"></a></dt>
+<dd><p>Add initial composition profiles.</p>
+<p>Make atom fraction, vacancy site fraction and pore volume fraction
+profiles. These are then used to initialize cvar (see
+<a class="reference internal" href="composition_variables.html#composition_variables.CompositionVariables" title="composition_variables.CompositionVariables"><code class="xref py py-class docutils literal notranslate"><span class="pre">composition_variables.CompositionVariables</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.add_x_profile">
+<span class="sig-name descname"><span class="pre">add_x_profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.add_x_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.add_x_profile" title="Link to this definition"></a></dt>
+<dd><p>Make initial atom fraction profile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.check_x_profile_from_file">
+<span class="sig-name descname"><span class="pre">check_x_profile_from_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.check_x_profile_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.check_x_profile_from_file" title="Link to this definition"></a></dt>
+<dd><p>Prepare initial atom fraction profile.</p>
+<p>Applies to profiles provided as file.</p>
+<ul class="simple">
+<li><p>Make sure the constituents in the initial atom fraction profile match
+the list of independent constituents declared in the input file.</p></li>
+<li><p>Enforce bounds on initial atom fractions and print warning.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.check_x_profile_from_dicts">
+<span class="sig-name descname"><span class="pre">check_x_profile_from_dicts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.check_x_profile_from_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.check_x_profile_from_dicts" title="Link to this definition"></a></dt>
+<dd><p>Prepare initial atom fraction profile.</p>
+<p>Applies to profiles provided as predefined types (see list in
+<a class="reference internal" href="#simu.make_profile" title="simu.make_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_profile()</span></code></a>).</p>
+<ul class="simple">
+<li><p>Make sure the constituents in the initial atom fraction profile match
+the list of independent constituents declared in the input file.</p></li>
+<li><p>Enforce bounds on initial atom fractions and print warning.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.add_yVa_profile">
+<span class="sig-name descname"><span class="pre">add_yVa_profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.add_yVa_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.add_yVa_profile" title="Link to this definition"></a></dt>
+<dd><p>Make initial vacancy site fraction profile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.add_fm_profile">
+<span class="sig-name descname"><span class="pre">add_fm_profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.add_fm_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.add_fm_profile" title="Link to this definition"></a></dt>
+<dd><p>Make initial metal volume fraction profile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.add_BC">
+<span class="sig-name descname"><span class="pre">add_BC</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.add_BC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.add_BC" title="Link to this definition"></a></dt>
+<dd><p>Add boundary conditions.</p>
+<p>The keys of the BC attribute are ‘left’, ‘right’, ‘cvar_left’,
+‘cvar_right’, ‘J_left’, ‘J_right’.</p>
+<p>‘left’ and ‘right’ indicate the type of BC and can be either:</p>
+<ul class="simple">
+<li><p>‘Dirichlet’: prescribed composition, if ‘xBC_left’ or ‘xBC_right’
+is provided in params.</p></li>
+<li><p>‘Neumann’: prescribed flux, if ‘JBC_left’ or ‘JBC_right’ is
+provided in params.</p></li>
+</ul>
+<p>The other keys (‘cvar_left’, ‘cvar_right’, ‘J_left’, ‘J_right’) are
+functions of time (ex: (3*t + 2)**(1/2)) that return composition
+variables and flux arrays.</p>
+<p>Defaults to 0-flux BC if no BC is specified in the input file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.make_JBC_fun">
+<span class="sig-name descname"><span class="pre">make_JBC_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J_strings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.make_JBC_fun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.make_JBC_fun" title="Link to this definition"></a></dt>
+<dd><p>Make function that returns a boundary flux array.</p>
+<p>The inner function returns a 1D array of fluxes, which include
+all atom constituents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.make_cBC_fun">
+<span class="sig-name descname"><span class="pre">make_cBC_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_strings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.make_cBC_fun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.make_cBC_fun" title="Link to this definition"></a></dt>
+<dd><p>Make function that returns a boundary composition variable.</p>
+<p>The inner function returns a
+<a class="reference internal" href="composition_variables.html#composition_variables.CompositionVariables" title="composition_variables.CompositionVariables"><code class="xref py py-class docutils literal notranslate"><span class="pre">composition_variables.CompositionVariables</span></code></a> instance. Two
+assumptions are made:</p>
+<ul class="simple">
+<li><p>vacancies are at equilibrium,</p></li>
+<li><p>the pore fraction is 0.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.prepare_simulation_log">
+<span class="sig-name descname"><span class="pre">prepare_simulation_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.prepare_simulation_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.prepare_simulation_log" title="Link to this definition"></a></dt>
+<dd><p>Add simulation info to log.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_completion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.run" title="Link to this definition"></a></dt>
+<dd><p>Run diffusion simulation.</p>
+<ul class="simple">
+<li><p>Call to <a class="reference internal" href="solvers.html#solvers.solver" title="solvers.solver"><code class="xref py py-func docutils literal notranslate"><span class="pre">solvers.solver()</span></code></a>. The function returns variables at
+saved_steps.</p></li>
+<li><p>These are printed to files, and stored in res dict. The keys of res
+are the time steps. The last time step can be accessed with -1 as
+key.</p></li>
+<li><p>A mass balance is performed (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">add_mass_balance()</span></code>).</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_completion</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print completion rate while simulation is running.</p></li>
+<li><p><strong>verbose</strong> (<em>int</em><em>, </em><em>optional</em>) – Verbosity level, sets amount of information printed while
+simulation is running. Recommended values: 0 (less verbose) and 1
+(more verbose). See <a class="reference internal" href="solvers.html#solvers.solver" title="solvers.solver"><code class="xref py py-func docutils literal notranslate"><span class="pre">solvers.solver()</span></code></a> and
+<a class="reference internal" href="solvers.html#solvers.remesh" title="solvers.remesh"><code class="xref py py-func docutils literal notranslate"><span class="pre">solvers.remesh()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simu.NewSimulation">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">NewSimulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#NewSimulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.NewSimulation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a></p>
+<p>Create new simulation from input file.</p>
+<p>This is the recommended way to create a new simulation. See
+<a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> for documentation on attributes and methods.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.NewSimulation.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#NewSimulation.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.NewSimulation.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<p>Call <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> constructor to define system parameters and
+pre-process simulation conditions. Then call <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a>
+methods to complete simulation setup.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simu.ReadSimulationOld">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">ReadSimulationOld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#ReadSimulationOld"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.ReadSimulationOld" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a></p>
+<p>Create simulation from results file.</p>
+<p>See <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> for documentation on attributes and methods.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.ReadSimulationOld.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#ReadSimulationOld.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.ReadSimulationOld.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<p>Read input parameters, log and simulation results from output file.
+Check that the parameters in the output file coincide with those in the
+input file. A difference would mean that the input file has been
+modified after the simulation was run, and would be error-inducing.
+Then add attributes to complete initialization.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simu.ReadSimulation">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">ReadSimulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#ReadSimulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.ReadSimulation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Create simulation from results file.</p>
+<p>See <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> for documentation on attributes and methods.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.ReadSimulation.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#ReadSimulation.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.ReadSimulation.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<p>Read log file of a previous simulation, extract useful attributes (see
+list in <a class="reference internal" href="alloy_system.html#alloy_system.AlloySystem" title="alloy_system.AlloySystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">alloy_system.AlloySystem</span></code></a> and <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a>) and
+make instance of <a class="reference internal" href="results.html#results.SimulationResults" title="results.SimulationResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.SimulationResults</span></code></a>. The latter
+organizes the results and exposes plot methods. The most useful plot
+methods are added as attributes of this class for ease of access (and
+backward compatibility).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simu.make_profile">
+<span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">make_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zm_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_left</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_right</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#make_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.make_profile" title="Link to this definition"></a></dt>
+<dd><p>Make profile along distance axis.</p>
+<p>Behavior determined by the ‘profile’ parameter:</p>
+<ul>
+<li><p>‘step’ followed by a float argument: step profile with step at zstep (see
+doc in <a class="reference internal" href="meshing.html#meshing.make_step_profile" title="meshing.make_step_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">meshing.make_step_profile()</span></code></a>) and values from val_left and
+val_right.</p>
+<p>If the argument is &gt; 0.1, it is interpreted as a fraction of zrange
+-&gt; zstep = zmin + argument*(zmax - zmin)</p>
+<p>If the argument is &lt; 0.1, it is interpreted as zstep in m.</p>
+</li>
+<li><p>‘smooth step’ followed by a float argument: same with an error function
+instead of heaviside (see <a class="reference internal" href="meshing.html#meshing.make_smooth_step_profile" title="meshing.make_smooth_step_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">meshing.make_smooth_step_profile()</span></code></a>)</p></li>
+<li><p>‘flat’: flat profile with values from val_left.</p></li>
+<li><p>filename: read from sdir/filename using np.genfromtxt</p></li>
+</ul>
+<p>The input file must have the constituent profiles arranged by
+columns, with the constituent names on the first line. The size
+of the columns must match that of zm (i.e., <cite>nz - 1</cite>).</p>
+<p>The ‘val_left’ and ‘val_right’ parameters are dicts with the independent
+constituents as keys.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simu.make_compo_string_from_xdict">
+<span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">make_compo_string_from_xdict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#make_compo_string_from_xdict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.make_compo_string_from_xdict" title="Link to this definition"></a></dt>
+<dd><p>Make label indicating an alloy composition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>dict</em>) – Atom fractions of independent constituents.</p></li>
+<li><p><strong>dep</strong> (<em>str</em>) – Name of dependent constituent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>A</strong> – Label indicating an alloy composition.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Cr&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;Al&#39;</span><span class="p">:</span> <span class="mf">0.062</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dep</span> <span class="o">=</span> <span class="s1">&#39;Ni&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make_compo_string_from_xdict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dep</span><span class="p">)</span>
+<span class="go">&#39;Ni-20Cr-6.2Al&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simu.make_plot_title">
+<span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">make_plot_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TC</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#make_plot_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.make_plot_title" title="Link to this definition"></a></dt>
+<dd><p>Make plot title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dep</strong> (<em>str</em>) – Name of dependent constituent.</p></li>
+<li><p><strong>profile_type</strong> (<em>str</em>) – Type of initial atom fraction profile. See <a class="reference internal" href="#simu.make_profile" title="simu.make_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_profile()</span></code></a>.</p></li>
+<li><p><strong>x_left</strong> (<em>dict</em><em> of </em><em>floats</em>) – Initial atom fraction of dependent constituents on left hand side.</p></li>
+<li><p><strong>x_right</strong> (<em>dict</em><em> of </em><em>floats</em>) – Initial atom fraction of dependent constituents on right hand side.</p></li>
+<li><p><strong>TC</strong> (<em>float</em>) – Temperature in Celsius.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>title</strong> – Plot title.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="results_io.html" class="btn btn-neutral float-left" title="results_io" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="solvers.html" class="btn btn-neutral float-right" title="solvers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

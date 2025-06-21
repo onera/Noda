@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="trackers" href="trackers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.is_string_value"><code class="docutils literal notranslate"><span class="pre">is_string_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.isfilename"><code class="docutils literal notranslate"><span class="pre">isfilename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.kd"><code class="docutils literal notranslate"><span class="pre">kd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.format_element_symbol"><code class="docutils literal notranslate"><span class="pre">format_element_symbol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.count_combinations"><code class="docutils literal notranslate"><span class="pre">count_combinations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.make_combinations"><code class="docutils literal notranslate"><span class="pre">make_combinations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.index_binary_combination"><code class="docutils literal notranslate"><span class="pre">index_binary_combination()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.index_ternary_combination"><code class="docutils literal notranslate"><span class="pre">index_ternary_combination()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.make_permutations_samesize"><code class="docutils literal notranslate"><span class="pre">make_permutations_samesize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.integrate"><code class="docutils literal notranslate"><span class="pre">integrate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.div"><code class="docutils literal notranslate"><span class="pre">div()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.AtomFractionError"><code class="docutils literal notranslate"><span class="pre">AtomFractionError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.UserInputError"><code class="docutils literal notranslate"><span class="pre">UserInputError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.ResultsError"><code class="docutils literal notranslate"><span class="pre">ResultsError</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-utils">
+<span id="utils"></span><h1><a class="reference internal" href="#module-utils" title="utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a><a class="headerlink" href="#module-utils" title="Link to this heading"></a></h1>
+<p>Miscellaneous functions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.is_string_value">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">is_string_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#is_string_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.is_string_value" title="Link to this definition"></a></dt>
+<dd><p>Check if x is str and then whether its value is val.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.isfilename">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">isfilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#isfilename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.isfilename" title="Link to this definition"></a></dt>
+<dd><p>Guess if string is a file name.</p>
+<p>True if s contains a dot and no space.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.kd">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">kd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#kd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.kd" title="Link to this definition"></a></dt>
+<dd><p>Kronecker delta.</p>
+<p>Returns 1 if a = b, 0 otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.format_element_symbol">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">format_element_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#format_element_symbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.format_element_symbol" title="Link to this definition"></a></dt>
+<dd><p>Format string to match valid element symbol.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.count_combinations">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">count_combinations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#count_combinations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.count_combinations" title="Link to this definition"></a></dt>
+<dd><p>Count p-size combinations in n-size set, with p up to 3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – Size of set.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><strong>res</strong> – <code class="docutils literal notranslate"><span class="pre">{k:</span> <span class="pre">val</span> <span class="pre">for</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">keys}</span></code> with the following keys:</p>
+<ul class="simple">
+<li><p>’unaries’ : n.</p></li>
+<li><p>’binaries’ : C(n, 2).</p></li>
+<li><p>’ternaries’ : C(n, 3).</p></li>
+<li><p>’mix’ : binaries + ternaries.</p></li>
+<li><p>’all’ : unaries + binaries + ternaries.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict of ints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.make_combinations">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">make_combinations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constituents</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#make_combinations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.make_combinations" title="Link to this definition"></a></dt>
+<dd><p>Make combinations of constituents up to size 3 (unary, binary, ternary).</p>
+<p>The combinations are stored as concatenated strings, for example “AuAg”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>constituents</strong> (<em>list</em><em> of </em><em>str</em>) – Constituents.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><strong>res</strong> – <code class="docutils literal notranslate"><span class="pre">{k:</span> <span class="pre">list_of_strings</span> <span class="pre">for</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">keys}</span></code> with the following keys:</p>
+<ul class="simple">
+<li><p>’unaries’ : Constituents.</p></li>
+<li><p>’binaries’ : All binary subsystems.</p></li>
+<li><p>’ternaries’ : All ternary subsystems.</p></li>
+<li><p>’mix’ : All binary and ternary subsystems.</p></li>
+<li><p>’all’ : All subsystems.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict of lists</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.index_binary_combination">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">index_binary_combination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#index_binary_combination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.index_binary_combination" title="Link to this definition"></a></dt>
+<dd><p>Compute index of binary combination in n-size system.</p>
+<p>Combination (i, j) where i and j start at 0.</p>
+<p>Example with n = 3:
+=====  ====
+index  i, j
+=====  ====
+0      0, 1
+1      0, 2
+2      1, 2
+=====  ====</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.index_ternary_combination">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">index_ternary_combination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#index_ternary_combination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.index_ternary_combination" title="Link to this definition"></a></dt>
+<dd><p>Compute index of ternary combination in n-size system.</p>
+<p>Combination (i, j, k) where i, j and k start at 0.</p>
+<p>Example with n = 4:
+=====  =======
+index  i, j, k
+=====  =======
+0      0, 1, 2
+1      0, 1, 3
+2      0, 2, 3
+3      1, 2, 3
+=====  =======</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.make_permutations_samesize">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">make_permutations_samesize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solvent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#make_permutations_samesize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.make_permutations_samesize" title="Link to this definition"></a></dt>
+<dd><p>Make all permutations of constituents in solvent, preserving size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>solvent</strong> (<em>str</em>) – Constituents concatenated to string. A constituent is defined by one
+uppercase letter followed by any number of lowercase letters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res</strong> – All permutations, with same syntax as input.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.integrate">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#integrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.integrate" title="Link to this definition"></a></dt>
+<dd><p>Compute radial vector field from its divergence.</p>
+<p>The field is evaluated along one space coordinate, in either of 3 geometric
+configurations (planar, cylindrical, spherical).</p>
+<p>The <cite>f</cite> values are evaluated at midpoints of the <cite>u</cite> array.
+Ensures minimum error when composed with <a class="reference internal" href="#utils.div" title="utils.div"><code class="xref py py-func docutils literal notranslate"><span class="pre">div()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<em>1D array</em>) – Divergence of the radial field, shape (u.size - 1,).</p></li>
+<li><p><strong>u</strong> (<em>1D array</em>) – Coordinates where the field is evaluated, shape (u.size,).</p></li>
+<li><p><strong>F0</strong> (<em>float</em>) – Integration constant.</p></li>
+<li><p><strong>geometry</strong> (<em>int</em>) – Indicates the geometry (planar, cylindrical, spherical).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Radial field, shape (u.size,).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.div">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">div</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#div"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.div" title="Link to this definition"></a></dt>
+<dd><p>Compute the divergence of a radial vector field.</p>
+<p>The field is evaluated along one space coordinate, in either of 3 geometric
+configurations (planar, cylindrical, spherical).</p>
+<p>Ensures minimum error when composed with <a class="reference internal" href="#utils.integrate" title="utils.integrate"><code class="xref py py-func docutils literal notranslate"><span class="pre">integrate()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>F</strong> (<em>1D array</em>) – Radial field, shape (u.size,).</p></li>
+<li><p><strong>u</strong> (<em>1D array</em>) – Coordinates where the field is evaluated, shape (u.size,).</p></li>
+<li><p><strong>geometry</strong> (<em>int</em>) – Indicates the geometry (planar, cylindrical, spherical).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Divergence of the field, shape (u.size - 1,).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>1D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="utils.AtomFractionError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">AtomFractionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#AtomFractionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.AtomFractionError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when an atom fraction is invalid.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="utils.UserInputError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">UserInputError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#UserInputError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.UserInputError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when a user input is invalid.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="utils.ResultsError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">ResultsError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#ResultsError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.ResultsError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when a user request to access results is invalid.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="trackers.html" class="btn btn-neutral float-left" title="trackers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=fee868cc" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/tabs.js?v=3ee01567"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting started" href="getting_started.html" />
+    <link rel="prev" title="Welcome to Noda’s documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            noda
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-installing-and-updating-noda">Getting, installing and updating Noda</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installing-from-the-url">Installing from the url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cloning-the-repository">Cloning the repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#downloading-the-package-archive">Downloading the package archive</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-tests">Running tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-documentation">Building the documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-the-noda-home-environment-variable">Setting the <code class="docutils literal notranslate"><span class="pre">NODA_HOME</span></code> environment variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uninstalling-noda">Uninstalling Noda</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#getting-installing-and-updating-noda" id="id3">Getting, installing and updating Noda</a></p>
+<ul>
+<li><p><a class="reference internal" href="#installing-from-the-url" id="id4">Installing from the url</a></p></li>
+<li><p><a class="reference internal" href="#cloning-the-repository" id="id5">Cloning the repository</a></p></li>
+<li><p><a class="reference internal" href="#downloading-the-package-archive" id="id6">Downloading the package archive</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#running-tests" id="id7">Running tests</a></p></li>
+<li><p><a class="reference internal" href="#building-the-documentation" id="id8">Building the documentation</a></p></li>
+<li><p><a class="reference internal" href="#setting-the-noda-home-environment-variable" id="id9">Setting the <code class="docutils literal notranslate"><span class="pre">NODA_HOME</span></code> environment variable</a></p></li>
+<li><p><a class="reference internal" href="#uninstalling-noda" id="id10">Uninstalling Noda</a></p></li>
+</ul>
+</nav>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The following is a set of instructions to get Noda up and running
+<em>in most cases</em>. It assumes you already have a Python installation with pip
+accessible from a command-line interface. Issues may arise depending on
+how your internet connection, Git and Python installations are configured.
+You may also want to follow a different installation route. As with any
+Python package, it is advisable to have a general knowledge of virtual
+environments, packages and dependencies before attempting to install Noda.</p>
+</div>
+<section id="getting-installing-and-updating-noda">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Getting, installing and updating Noda</a><a class="headerlink" href="#getting-installing-and-updating-noda" title="Link to this heading"></a></h2>
+<p>It is recommended to install Noda in a virtual environment. These instructions
+assume you use a virtual environment named noda-env. It can be installed using
+the standard library venv module or with other tools such as conda. Open a
+terminal, cd to a folder where you want to keep the installation directory,
+create and activate the virtual environment:</p>
+<ul>
+<li><p>with venv:</p>
+<blockquote>
+<div><div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Unix (Linux / Mac)</label><div class="tab-content docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m venv noda-env
+$ source noda-env/bin/activate
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Windows</label><div class="tab-content docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="n">noda</span><span class="o">-</span><span class="n">env</span>
+<span class="o">&gt;</span> <span class="o">.</span>\<span class="n">noda</span><span class="o">-</span><span class="n">env</span>\<span class="n">Scripts</span>\<span class="n">activate</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div></blockquote>
+</li>
+<li><p>with conda:</p>
+<blockquote>
+<div><div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">Unix (Linux / Mac)</label><div class="tab-content docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda create -n noda-env
+$ source activate noda-env
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Windows</label><div class="tab-content docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">noda</span><span class="o">-</span><span class="n">env</span>
+<span class="o">&gt;</span> <span class="n">conda</span> <span class="n">activate</span> <span class="n">noda</span><span class="o">-</span><span class="n">env</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<p>Then get and install Noda via either of the following routes:</p>
+<section id="installing-from-the-url">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Installing from the url</a><a class="headerlink" href="#installing-from-the-url" title="Link to this heading"></a></h3>
+<p>Install directly from the repository url:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(noda-env) $ pip install git+https://github.com/onera/Noda.git@main
+</pre></div>
+</div>
+<p>To update, run the same command.</p>
+</section>
+<section id="cloning-the-repository">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Cloning the repository</a><a class="headerlink" href="#cloning-the-repository" title="Link to this heading"></a></h3>
+<p>First clone the repository, then install:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(noda-env) $ git clone https://github.com/onera/Noda.git
+(noda-env) $ cd Noda
+(noda-env) $ pip install .
+</pre></div>
+</div>
+<p>To update, pull the repository and run the install command.</p>
+</section>
+<section id="downloading-the-package-archive">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Downloading the package archive</a><a class="headerlink" href="#downloading-the-package-archive" title="Link to this heading"></a></h3>
+<p>Use a web browser to find the online repository: <a class="reference external" href="https://github.com/onera/noda">https://github.com/onera/noda</a>.
+Click on the green “Code” button, then “Download ZIP”. Copy the archive where
+you put the virtual environment, then unzip and install:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(noda-env) $ tar -xf Noda-main.zip
+(noda-env) $ cd Noda-main
+(noda-env) $ pip install .
+</pre></div>
+</div>
+<p>To update, download the archive again and repeat.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https</span></code> command fails or if the <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code>
+command fails with the following error:
+<code class="docutils literal notranslate"><span class="pre">fatal:</span> <span class="pre">unable</span> <span class="pre">to</span> <span class="pre">access</span> <span class="pre">'https://github.com/onera/Noda.git/':</span> <span class="pre">Failed</span> <span class="pre">to</span> <span class="pre">connect</span> <span class="pre">to</span> <span class="pre">github.com</span> <span class="pre">port</span> <span class="pre">443</span> <span class="pre">after</span> <span class="pre">21064</span> <span class="pre">ms:</span> <span class="pre">Could</span> <span class="pre">not</span> <span class="pre">connect</span> <span class="pre">to</span> <span class="pre">server</span></code>,
+this may be because you are connecting to the web via a proxy server and Git
+is not aware of it. To configure Git to use a proxy, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git config --global http.proxy yourhost:yourport
+</pre></div>
+</div>
+<p>Your proxy host and port can be found in a number of ways, see for instance
+<a class="reference external" href="https://superuser.com/q/346372">https://superuser.com/q/346372</a>. Alternatively, you can try disconnecting
+your VPN if you were using one.</p>
+</div>
+</section>
+</section>
+<section id="running-tests">
+<span id="id2"></span><h2><a class="toc-backref" href="#id7" role="doc-backlink">Running tests</a><a class="headerlink" href="#running-tests" title="Link to this heading"></a></h2>
+<p>After Noda is installed, it is recommended to run the test suite, which relies
+on pytest:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(noda-env) $ pip install pytest
+(noda-env) $ pytest
+</pre></div>
+</div>
+<p>Warnings may be issued and can be ignored, but all tests should pass.</p>
+</section>
+<section id="building-the-documentation">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Building the documentation</a><a class="headerlink" href="#building-the-documentation" title="Link to this heading"></a></h2>
+<p>It is also recommended to build the documentation locally. This is done with
+Sphinx. To install Sphinx and the necessary extensions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(noda-env) $ pip install sphinx sphinx_rtd_theme sphinx-inline-tabs
+</pre></div>
+</div>
+<p>Then go to the <code class="docutils literal notranslate"><span class="pre">doc</span></code> folder of the installation directory and build the
+documentation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(noda-env) $ cd doc
+(noda-env) $ make html
+</pre></div>
+</div>
+<p>The entry point to the documentation, <code class="docutils literal notranslate"><span class="pre">index.html</span></code>, is located in
+<code class="docutils literal notranslate"><span class="pre">doc/_build/html</span></code>. It is useful to make a link or a shortcut to this file
+and place it somewhere easier to access:</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Unix (Linux / Mac)</label><div class="tab-content docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(noda-env) $ ln -s /path/to/NODA/doc/_build/html/index.html ~/Desktop/noda_documentation
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2">Windows</label><div class="tab-content docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(noda-env) &gt; $WshShell = New-Object -ComObject WScript.Shell
+(noda-env) &gt; $Shortcut = $WshShell.CreateShortcut(&quot;C:\Users\user\Desktop\noda_documentation.lnk&quot;)
+(noda-env) &gt; $Shortcut.TargetPath = &quot;C:\path\to\NODA\doc\_build\html\index.html&quot;
+(noda-env) &gt; $Shortcut.Save()
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="setting-the-noda-home-environment-variable">
+<span id="environment-variable"></span><h2><a class="toc-backref" href="#id9" role="doc-backlink">Setting the <code class="docutils literal notranslate"><span class="pre">NODA_HOME</span></code> environment variable</a><a class="headerlink" href="#setting-the-noda-home-environment-variable" title="Link to this heading"></a></h2>
+<p>This is used to tell the package where user data files (such as thermodynamic
+databases) will be located.</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--1">Unix (Linux / Mac)</label><div class="tab-content docutils container">
+<p>Add an export command in your Bash shell startup script (<code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">NODA_HOME</span><span class="o">=/</span><span class="n">the</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">you</span><span class="o">/</span><span class="n">want</span>
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--2">Windows</label><div class="tab-content docutils container">
+<p>Type “environment variables” in the search tool, then in the Environment
+variables window, choose “New”, then in Variable name, type NODA_HOME, and in
+Variable value, choose the path you want.</p>
+</div>
+</div>
+</section>
+<section id="uninstalling-noda">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Uninstalling Noda</a><a class="headerlink" href="#uninstalling-noda" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(noda-env) $ pip uninstall noda
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Noda’s documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

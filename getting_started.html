@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting started &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=fee868cc" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/tabs.js?v=3ee01567"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Basic use" href="basic_use.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            noda
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#file-structure">File structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tests-and-documentation">Tests and documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#user-data">User data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#thermodynamic-and-mobility-database-files">Thermodynamic and mobility database files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#file-structure" id="id5">File structure</a></p></li>
+<li><p><a class="reference internal" href="#tests-and-documentation" id="id6">Tests and documentation</a></p></li>
+<li><p><a class="reference internal" href="#user-data" id="id7">User data</a></p></li>
+<li><p><a class="reference internal" href="#thermodynamic-and-mobility-database-files" id="id8">Thermodynamic and mobility database files</a></p></li>
+</ul>
+</nav>
+<section id="file-structure">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">File structure</a><a class="headerlink" href="#file-structure" title="Link to this heading"></a></h2>
+<p>The package root directory (or installation directory) is structured as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>NODA
+   ├───doc
+   │   ├───_build
+   │   ├───...
+   │   └───source
+   ├───noda
+   │   │   alloy_system.py
+   │   │   ...
+   │   └───data
+   │           fcc-AB-mob-bin_ideal.ods
+   │           fcc-AB-thermo-bin_ideal.ods
+   │           fcc-NiCrSi-mob-du2001.ods
+   │           fcc-NiCrSi-thermo-schuster2000.ods
+   │           user_data.toml
+   └───tests
+       │   conftest.py
+       └───jobs
+           ├───ideal_couple
+           │       ideal_couple-input.txt
+           │       ideal_couple.png
+           │       run.py
+           │       run_test.py
+           ├───...
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">doc</span></code> folder contains the source code of the documentation, and the html
+files once these are built.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">noda</span></code> folder contains the source code of the package and a set of data
+files used to run test jobs.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tests</span></code> folder contains input files used to run test jobs.</p></li>
+</ul>
+<p>The user directory, whose location is set by the <code class="docutils literal notranslate"><span class="pre">NODA_HOME</span></code> environment
+variable (see <a class="reference internal" href="installation.html#environment-variable"><span class="std std-ref">Setting the NODA_HOME environment variable</span></a>) is used to store user data — it is
+also typically used to store job folders, although these can be located anywhere
+in the file system:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>NODA_user
+   ├───data
+   │       my_thermodynamics_database.ods
+   │       my_mobility_database.xlsx
+   │       user_data.toml
+   └───jobs
+        └───fancy_simulation
+                fancy1-input.txt
+                fancy2-input.txt
+                make_fancy_graphs.py
+</pre></div>
+</div>
+<p>Running a simulation requires an input file, which must be a txt file named with
+a reference followed by <code class="docutils literal notranslate"><span class="pre">-input.txt</span></code> (for example, <code class="docutils literal notranslate"><span class="pre">fancy1-input.txt</span></code>).
+Simulations can be run from a Python script (for example,
+<code class="docutils literal notranslate"><span class="pre">make_fancy_graphs.py</span></code>) or interactively. The contents of the input file and
+common use cases are described in <a class="reference internal" href="basic_use.html#basic-use"><span class="std std-ref">Basic use</span></a>.</p>
+<p>When a simulation is run, if the <code class="docutils literal notranslate"><span class="pre">NODA_HOME</span></code> environment variable is provided
+and a <code class="docutils literal notranslate"><span class="pre">data</span></code> folder is found in the user directory, Noda will look for data
+there. If not, Noda will look for data in the installation directory <code class="docutils literal notranslate"><span class="pre">noda/data</span></code>
+folder.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended to not modify the files present in the installation directory
+<code class="docutils literal notranslate"><span class="pre">noda/data</span></code> folder. To get started, users may instead copy these files
+into the user directory, and modify the files and add new files there.</p>
+</div>
+</section>
+<section id="tests-and-documentation">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Tests and documentation</a><a class="headerlink" href="#tests-and-documentation" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">tests</span></code> folder in the installation directory serves several purposes. Test
+jobs are used for validation during code development. It is also recommended to
+run the test suite after installing to make sure the installation proceeded
+properly (see <a class="reference internal" href="installation.html#running-tests"><span class="std std-ref">Running tests</span></a>). When test jobs are run, simulation results
+are compared with reference results, including results from analytical
+solutions in the cases where these exist. Running simulations requires data —
+this is why Noda ships with some example data. Jobs in the <code class="docutils literal notranslate"><span class="pre">tests</span></code> folder are
+always run using the data in the <code class="docutils literal notranslate"><span class="pre">noda/data</span></code> folder. Test jobs are also used as
+examples in the documentation: see <a class="reference internal" href="basic_use.html#basic-use"><span class="std std-ref">Basic use</span></a>. The data and job files
+are a good starting point to prepare your own data and jobs.</p>
+<p>As shown above, in addition to an input file and a running script, test job
+folders contain a script named <code class="docutils literal notranslate"><span class="pre">run_test.py</span></code>: this is used as part of the
+automatic testing procedure, which relies on the Pytest framework
+(<a class="reference external" href="https://docs.pytest.org">https://docs.pytest.org</a>). Some test job folders also contain image files used
+in the documentation.</p>
+</section>
+<section id="user-data">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">User data</a><a class="headerlink" href="#user-data" title="Link to this heading"></a></h2>
+<p>The file “user_data.toml” is used to store several types of data
+required to run simulations. It uses the TOML format (see <a class="reference external" href="https://toml.io">https://toml.io</a>) and
+contains four tables:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">molar_volume</span></code> gathers partial molar volumes of pure metals, vacancies and
+pores.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vacancy_formation_energy</span></code> gathers vacancy formation energies in pure metals.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermodynamics</span></code> stores names of thermodynamic data files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mobility</span></code> does the same for mobility databases.</p></li>
+</ul>
+<p>Each table contains one or more subtables, which define databases users can
+choose from when setting up a simulation (<a class="reference internal" href="basic_use.html#setting-up"><span class="std std-ref">Setting up a simulation</span></a>).</p>
+<p>For example, the “user_data.toml” file included in the installation directory
+(<code class="docutils literal notranslate"><span class="pre">noda/data</span></code>) contains the following:</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">/../../noda/data/user_data.toml</span><a class="headerlink" href="#id4" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">molar_volume</span><span class="p">]</span>
+<span class="c1"># Partial molar volume in m3/mol</span>
+
+<span class="p">[</span><span class="n">molar_volume</span><span class="o">.</span><span class="n">standard</span><span class="p">]</span>
+<span class="n">default</span> <span class="o">=</span> <span class="mf">1e-5</span>
+
+<span class="p">[</span><span class="n">molar_volume</span><span class="o">.</span><span class="n">Vegard</span><span class="p">]</span>
+<span class="c1"># Calculated by dividing the atomic mass by the density of the pure metals.</span>
+<span class="n">Va</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span>
+<span class="n">pore</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span>
+<span class="n">Al</span> <span class="o">=</span> <span class="mf">9.99e-06</span>
+<span class="n">Cr</span> <span class="o">=</span> <span class="mf">7.27e-06</span>
+<span class="n">Ni</span> <span class="o">=</span> <span class="mf">6.59e-06</span>
+<span class="n">Si</span> <span class="o">=</span> <span class="mf">1.21e-05</span>
+
+<span class="p">[</span><span class="n">vacancy_formation_energy</span><span class="p">]</span>
+<span class="c1"># Vacancy formation energy</span>
+<span class="c1"># GfV = HfV - T*SfV with [HfV, SfV] in [eV, eV/K]</span>
+
+<span class="p">[</span><span class="n">vacancy_formation_energy</span><span class="o">.</span><span class="n">Shang2016</span><span class="p">]</span>
+<span class="c1"># Source: Shang et al 2016, https://doi.org/10.1016/j.actamat.2016.02.031,</span>
+<span class="c1"># supplementary materials, xls sheet</span>
+<span class="n">fcc</span><span class="o">-</span><span class="n">Ni</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.669</span><span class="p">,</span> <span class="mf">3.5953e-04</span><span class="p">]</span>
+<span class="n">fcc</span><span class="o">-</span><span class="n">Cr</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.681</span><span class="p">,</span> <span class="mf">2.4272e-04</span><span class="p">]</span>
+<span class="n">fcc</span><span class="o">-</span><span class="n">Fe</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.423</span><span class="p">,</span> <span class="mf">6.2757e-04</span><span class="p">]</span>
+<span class="n">fcc</span><span class="o">-</span><span class="n">Al</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.734</span><span class="p">,</span> <span class="mf">3.2038e-04</span><span class="p">]</span>
+
+<span class="p">[</span><span class="n">vacancy_formation_energy</span><span class="o">.</span><span class="n">standard</span><span class="p">]</span>
+<span class="c1"># Made-up data</span>
+<span class="n">default</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">3e-04</span><span class="p">]</span>
+
+<span class="p">[</span><span class="n">vacancy_formation_energy</span><span class="o">.</span><span class="n">madeup</span><span class="p">]</span>
+<span class="c1"># Made-up data</span>
+<span class="n">fcc</span><span class="o">-</span><span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">3e-04</span><span class="p">]</span>
+<span class="n">fcc</span><span class="o">-</span><span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">3e-04</span><span class="p">]</span>
+
+<span class="p">[</span><span class="n">thermodynamics</span><span class="p">]</span>
+
+<span class="p">[</span><span class="n">thermodynamics</span><span class="o">.</span><span class="n">schuster2000</span><span class="p">]</span>
+<span class="c1"># Database for CrNiSi system</span>
+<span class="c1"># Source: Schuster and Du 2000, https://doi.org/10.1007/s11661-006-0248-y</span>
+<span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;fcc-NiCrSi-thermo-schuster2000.ods&quot;</span>
+
+<span class="p">[</span><span class="n">thermodynamics</span><span class="o">.</span><span class="n">thermo_bin_ideal</span><span class="p">]</span>
+<span class="c1"># Made-up data for an ideal A-B binary system</span>
+<span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;fcc-AB-thermo-bin_ideal.ods&quot;</span>
+
+<span class="p">[</span><span class="n">mobility</span><span class="p">]</span>
+
+<span class="p">[</span><span class="n">mobility</span><span class="o">.</span><span class="n">du2001</span><span class="p">]</span>
+<span class="c1"># Database for fcc phase of CrNiSi system</span>
+<span class="c1"># Source: Du and Schuster, &quot;Assessment of Diffusional Mobilities of Cr, Ni, and</span>
+<span class="c1"># Si in fcc Cr-Ni-Si Alloys&quot;, Zeitschrift fur Metallkunde 92 (2001) 28-31</span>
+<span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;fcc-NiCrSi-mob-du2001.ods&quot;</span>
+
+<span class="p">[</span><span class="n">mobility</span><span class="o">.</span><span class="n">mob_bin_ideal</span><span class="p">]</span>
+<span class="c1"># Made-up data for an ideal A-B binary system</span>
+<span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;fcc-AB-mob-bin_ideal.ods&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>Two partial molar volume databases are present, named <code class="docutils literal notranslate"><span class="pre">standard</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Vegard</span></code>. When creating a simulation, Noda looks for the partial molar
+volume of all system constituents in the selected database. If a constituent is
+not present, it looks for the <code class="docutils literal notranslate"><span class="pre">default</span></code> key. If no <code class="docutils literal notranslate"><span class="pre">default</span></code> key is
+provided in the selected database, it falls back to a system-wide default value
+<a class="footnote-reference brackets" href="#f1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. Here, if using the <code class="docutils literal notranslate"><span class="pre">standard</span></code> database, all constituents will be
+assigned the value given by the <code class="docutils literal notranslate"><span class="pre">default</span></code> key of this database, 1e-5 m3/mol;
+if using the <code class="docutils literal notranslate"><span class="pre">Vegard</span></code> database, Al, Cr, Ni and Si will be given the indicated
+partial molar volumes, and any other constituent will be given the system-wide
+default.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Partial molar volumes of pure metals are numerical values. Vacancies and
+pores are special in that their partial molar volume can be a float or the
+string <code class="docutils literal notranslate"><span class="pre">local</span></code>, in which case they take the local average molar volume —
+see <a class="reference internal" href="background.html#background"><span class="std std-ref">Background</span></a>.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">vacancy_formation_energy</span></code> table works the same way as the
+<code class="docutils literal notranslate"><span class="pre">molar_volume</span></code> table, with a slightly different syntax: the crystal structure
+of the pure metals is specified, and the energy values are given as
+[enthalpy, entropy] lists (in [eV, eV/K]).</p>
+<p>Subtables in the <code class="docutils literal notranslate"><span class="pre">thermodynamics</span></code> and <code class="docutils literal notranslate"><span class="pre">mobility</span></code> tables contain only one
+key/value pair, used to indicate the name of the file containing the actual
+data. The thermodynamics and mobility database files should be located in the
+user data folder. Their content is described next.</p>
+</section>
+<section id="thermodynamic-and-mobility-database-files">
+<span id="thermokin-database-files"></span><h2><a class="toc-backref" href="#id8" role="doc-backlink">Thermodynamic and mobility database files</a><a class="headerlink" href="#thermodynamic-and-mobility-database-files" title="Link to this heading"></a></h2>
+<p>Thermodynamic and mobility database files are spreadsheets in either ods or
+xslx format.</p>
+<p>The Gibbs free energy of the metal phase is described with the Calphad method,
+using a Redlich-Kister polynomial for the excess term (see the <a class="reference internal" href="background.html#thermo"><span class="std std-ref">Thermodynamics of the metal phase</span></a>
+Section). Thermodynamic database files contain two sheets:</p>
+<ul>
+<li><p><cite>Pure elements</cite> stores coefficients that describe the temperature
+dependence of the Gibbs free energy of pure elements, in the form
+<span class="math notranslate nohighlight">\(G - H_\mathrm{SER}\)</span>, according to <a class="reference internal" href="#dinsdale-1991" id="id2"><span>[Dinsdale_1991]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[G = a + b\,T + c\,T\,\ln{T} + d_2\,T^2 + d_3\,T^3 + \frac{e}{T} + G_\mathrm{mag}\]</div>
+<p>(for the magnetic part <span class="math notranslate nohighlight">\(G_\mathrm{mag}\)</span>, see <a class="reference internal" href="#dinsdale-1991" id="id3"><span>[Dinsdale_1991]</span></a>).</p>
+</li>
+<li><p><cite>Interactions</cite> stores coefficients that describe the temperature
+dependence of the binary and ternary interaction parameters, in the
+form:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}_{}^{0}\Lambda_{ij} = A + B \cdot T,\\
+_{}^{1}\Lambda_{ij} = C + D \cdot T,\\
+\Lambda_{ijk} = A + B \cdot T.\end{split}\]</div>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Noda only considers ternary interactions of order 0. Entries for coefficients
+<cite>C</cite> and <cite>D</cite> of a ternary endmember will be ignored.</p>
+</div>
+<p>The logarithm of tracer diffusion coefficients is described with a
+Redlich-Kister polynomial (see <a class="reference internal" href="background.html#mobility"><span class="std std-ref">Mobility</span></a>). Mobility database files contain
+one sheet, that stores coefficients that describe the temperature dependence of
+unary terms, and binary and ternary interaction parameters:</p>
+<div class="math notranslate nohighlight">
+\[\phi_\mathrm{solute}^\mathrm{solvent} = A + B \cdot T.\]</div>
+<p>In this context, <cite>solute</cite> is the diffusing species, while <cite>solvent</cite> is the
+endmember in which it diffuses.</p>
+<p>The parameters that populate the thermodynamics and mobility database files
+are typically found in journal articles. Users are recommended to use the
+files provided in the <code class="docutils literal notranslate"><span class="pre">tests</span></code> folder of the installation directory and the
+corresponding journal articles as examples to build their own database files.</p>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="f1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>A “factory” default value is defined in the package installation and
+can be overridden, see <a class="reference internal" href="advanced_use.html#default-parameters"><span class="std std-ref">Default parameters</span></a>.</p>
+</aside>
+</aside>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="dinsdale-1991" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Dinsdale_1991<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id3">2</a>)</span>
+<p>A.T. Dinsdale, Calphad 15 (1991) 317-425,
+<a class="reference external" href="https://doi.org/10.1016/0364-5916(91)90030-N">DOI: 10.1016/0364-5916(91)90030-N</a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="basic_use.html" class="btn btn-neutral float-right" title="Basic use" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

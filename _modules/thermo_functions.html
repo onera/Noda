@@ -1,0 +1,655 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>thermo_functions &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">thermo_functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for thermo_functions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Functions related to thermodynamics and mobility models.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numdifftools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">ut</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">R</span><span class="p">,</span> <span class="n">GV0</span>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Gibbs free energy in pure metal</span>
+
+<div class="viewcode-block" id="Gmag_fun">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.Gmag_fun">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Gmag_fun</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Tcritical</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">phase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute magnetic part of Gibbs free energy.</span>
+
+<span class="sd">    See Dinsdale 1991 [#Dinsdale_1991]_.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">T</span><span class="o">/</span><span class="n">Tcritical</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="mf">0.28</span>
+    <span class="k">if</span> <span class="n">phase</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;BCC_A2&#39;</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mf">0.4</span>
+
+    <span class="n">D</span> <span class="o">=</span> <span class="mi">518</span><span class="o">/</span><span class="mi">1125</span> <span class="o">+</span> <span class="mi">11692</span><span class="o">/</span><span class="mi">15975</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tau</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">79</span><span class="o">/</span><span class="p">(</span><span class="mi">140</span><span class="o">*</span><span class="n">p</span><span class="o">*</span><span class="n">tau</span><span class="p">)</span>
+                 <span class="o">+</span> <span class="mi">474</span><span class="o">/</span><span class="mi">497</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">tau</span><span class="o">**</span><span class="mi">3</span><span class="o">/</span><span class="mi">6</span> <span class="o">+</span> <span class="n">tau</span><span class="o">**</span><span class="mi">9</span><span class="o">/</span><span class="mi">135</span> <span class="o">+</span> <span class="n">tau</span><span class="o">**</span><span class="mi">15</span><span class="o">/</span><span class="mi">600</span><span class="p">)</span>
+                 <span class="p">)</span><span class="o">/</span><span class="n">D</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">tau</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span> <span class="o">+</span> <span class="n">tau</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">)</span><span class="o">/</span><span class="mi">315</span> <span class="o">+</span> <span class="n">tau</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">25</span><span class="p">)</span><span class="o">/</span><span class="mi">1500</span><span class="p">)</span><span class="o">/</span><span class="n">D</span>
+
+    <span class="k">return</span> <span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">beta</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">g</span></div>
+
+
+
+<div class="viewcode-block" id="G0_fun">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.G0_fun">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">G0_fun</span><span class="p">(</span><span class="n">Gpara</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">phase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute Gibbs free energy in pure metal.</span>
+
+<span class="sd">    Data in the form of G - H_SER. See Dinsdale 1991 [#Dinsdale_1991]_.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Gpara</span><span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">]</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Gpara</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Gpara</span><span class="p">[</span><span class="s1">&#39;T*ln(T)&#39;</span><span class="p">]</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">Gpara</span><span class="p">[</span><span class="s1">&#39;T^2&#39;</span><span class="p">]</span>
+    <span class="n">d3</span> <span class="o">=</span> <span class="n">Gpara</span><span class="p">[</span><span class="s1">&#39;T^3&#39;</span><span class="p">]</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Gpara</span><span class="p">[</span><span class="s1">&#39;1/T&#39;</span><span class="p">]</span>
+    <span class="n">Tc</span> <span class="o">=</span> <span class="n">Gpara</span><span class="p">[</span><span class="s1">&#39;Tcritical&#39;</span><span class="p">]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">Gpara</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span>
+
+    <span class="n">Gmain</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="n">c</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">+</span> <span class="n">d2</span><span class="o">*</span><span class="n">T</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">d3</span><span class="o">*</span><span class="n">T</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="n">e</span><span class="o">/</span><span class="n">T</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Tc</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">beta</span><span class="p">):</span>
+        <span class="n">Gmag</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Gmag</span> <span class="o">=</span> <span class="n">Gmag_fun</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Tc</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Gmain</span> <span class="o">+</span> <span class="n">Gmag</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Gibbs free energy in alloy</span>
+
+<div class="viewcode-block" id="G_model">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.G_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">G_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">G0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute molar Gibbs free energy at given composition.</span>
+
+<span class="sd">    Use excess term with binary interactions of order 0 and 1, and ternary</span>
+<span class="sd">    interactions of order 0.</span>
+
+<span class="sd">    Interactions are represented with a Redlich-Kister polynomial:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       &amp;G_{m} = \sum_{i = 1}^{n}{x_{i}G_{i}}</span>
+<span class="sd">                + RT\sum_{i = 1}^{n}{x_{i}\ln x_{i}}</span>
+<span class="sd">                + ^{xs}G_{m}</span>
+
+<span class="sd">       &amp;_{}^{xs}G_{m} = \sum_{i = 1}^{n - 1}{</span>
+<span class="sd">                          \sum_{j = i + 1\ }^{n}{</span>
+<span class="sd">                        x_{i}x_{j}\left(^0L_{ij} + ^1L_{ij}(x_i - x_j)\right)}}</span>
+<span class="sd">       + \sum_{i = 1}^{n - 2}{</span>
+<span class="sd">           \sum_{j = i + 1\ }^{n - 1}{</span>
+<span class="sd">               \sum_{k = j + 1\ }^{n}{x_{i}x_{j}x_{k}L_{ijk}}}}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : 2D array</span>
+<span class="sd">        Atom fraction of the independent constituents, shape (`ninds`, `nz`).</span>
+<span class="sd">    G0 : list of floats</span>
+<span class="sd">        Gibbs free energy of the endmembers, len `ncomps`.</span>
+<span class="sd">    L : 1D array</span>
+<span class="sd">        Interaction parameters, given as a flat array.</span>
+
+<span class="sd">        | Number of terms in a n-component system:</span>
+<span class="sd">        | binary  : 2*C(n, 2) = n*(n - 1)</span>
+<span class="sd">        | ternary : C(n, 3) = n*(n - 1)*(n - 2)/6</span>
+<span class="sd">        |</span>
+<span class="sd">        | In a 2-comp. system, :math:`L = [L_{12}]`</span>
+<span class="sd">        | In a 3-comp. system, :math:`L = [L_{12}, L_{13}, L_{23}, L_{123}]`</span>
+<span class="sd">        | where binary terms are couples :math:`L_{ij} = (^0L_{ij}, ^1L_{ij})`</span>
+
+<span class="sd">    T : float or int</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    1D array</span>
+<span class="sd">        Gibbs free energy.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">G0</span><span class="p">)</span>
+    <span class="n">xn</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">xn</span><span class="p">))</span>
+
+    <span class="n">L_</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">n_bin</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">count_combinations</span><span class="p">(</span><span class="n">n</span><span class="p">)[</span><span class="s1">&#39;binaries&#39;</span><span class="p">]</span>
+    <span class="n">L_bin</span> <span class="o">=</span> <span class="n">L_</span><span class="p">[:</span><span class="n">n_bin</span><span class="p">]</span>
+    <span class="n">L_ter</span> <span class="o">=</span> <span class="n">L_</span><span class="p">[</span><span class="n">n_bin</span><span class="p">:]</span>
+
+    <span class="n">mech</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">G0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+    <span class="n">smix</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+    <span class="n">binary</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">index_binary_combination</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">binary</span> <span class="o">+=</span> <span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">L_bin</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
+                                   <span class="n">L_bin</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+
+    <span class="n">ternary</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">index_ternary_combination</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+                <span class="n">ternary</span> <span class="o">+=</span> <span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">x_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">L_ter</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">mech</span> <span class="o">+</span> <span class="n">smix</span> <span class="o">+</span> <span class="n">binary</span> <span class="o">+</span> <span class="n">ternary</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Chemical potentials</span>
+
+<div class="viewcode-block" id="partial_derivative">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.partial_derivative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">partial_derivative</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">dx</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the derivative of fun with respect to i-th row of x.</span>
+
+<span class="sd">    Adapted from https://stackoverflow.com/a/20708578.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">wraps</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nd</span><span class="o">.</span><span class="n">Derivative</span><span class="p">(</span><span class="n">wraps</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">dx</span><span class="p">)(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="MU_model">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.MU_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">MU_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute chemical potentials.</span>
+
+<span class="sd">    .. math:: \mu_k = G + \frac{\partial G}{\partial x_k}</span>
+<span class="sd">                      - \sum_{i=0}^n {x_i \frac{\partial G}{\partial x_i}}</span>
+
+<span class="sd">    The G model uses excess term with binary interactions of order 0 and 1 and</span>
+<span class="sd">    ternary interactions of order 0 (see :func:`G_model`).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : 2D array</span>
+<span class="sd">        Atom fraction of the independent constituents, shape (`ninds`, `nz`).</span>
+<span class="sd">    p : list of floats</span>
+<span class="sd">        Thermodynamic parameters.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    MU : 2D array</span>
+<span class="sd">        Chemical potentials, shape (`ncomps`, `nz`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nc</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">nz</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">xn</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">xn</span><span class="p">))</span>
+
+    <span class="n">G0</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:</span><span class="n">nc</span><span class="p">]</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">nc</span><span class="p">:])</span>
+
+    <span class="n">G</span> <span class="o">=</span> <span class="n">G_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">G0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">TK</span><span class="p">)</span>
+    <span class="n">dG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nc</span><span class="p">,</span> <span class="n">nz</span><span class="p">))</span>
+    <span class="n">MU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nc</span><span class="p">,</span> <span class="n">nz</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">dG</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">partial_derivative</span><span class="p">(</span><span class="n">G_model</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">G0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">TK</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="p">):</span>
+        <span class="n">MU</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">G</span> <span class="o">+</span> <span class="n">dG</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">dG</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">MU</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Equilibrium vacancy fraction</span>
+
+<div class="viewcode-block" id="LkV_fun">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.LkV_fun">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">LkV_fun</span><span class="p">(</span><span class="n">GfV</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute thermodynamic interaction parameter between vacancy and atom k.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    GfV : dict of lists</span>
+<span class="sd">        Gibbs free energy of vacancy formation in pure metals.</span>
+
+<span class="sd">        ``{k: [enthalpy, entropy] for k in comps}``</span>
+<span class="sd">    k : str</span>
+<span class="sd">        Atom.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Interaction parameter.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">GfV_at_T</span> <span class="o">=</span> <span class="n">GfV</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">TK</span><span class="o">*</span><span class="n">GfV</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">GfV_at_T</span> <span class="o">-</span> <span class="n">GV0</span></div>
+
+
+
+<div class="viewcode-block" id="yVa_model">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.yVa_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">yVa_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">G0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute composition-dependent equilibrium vacancy fractions.</span>
+
+<span class="sd">    Use a Redlich-Kister expansion with binary interactions of order 0 and 1</span>
+<span class="sd">    and ternary interactions of order 0:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       &amp;y_{0}^{eq} = \exp \left( - \frac{G_{f,Va}^{\text{alloy}}}{RT} \right)</span>
+
+<span class="sd">       &amp;G_{f,Va}^{\text{alloy}} = G_{0}</span>
+<span class="sd">       + \sum_{i = 1}^{n}{y_i \left(^0L_{0i} - y_i\ ^1L_{0i} \right)}</span>
+<span class="sd">       - \sum_{i = 1}^{n - 1}{</span>
+<span class="sd">           \sum_{j = i + 1\ }^{n}{</span>
+<span class="sd">               y_iy_j \left(^0L_{ij} + 2\ ^1L_{ij}(y_i - y_j) \right)}}</span>
+
+<span class="sd">       &amp;\qquad{}+ \sum_{i = 1}^{n - 1}{\sum_{j = i + 1\ }^{n}{y_i y_j L_{0ij}}}</span>
+<span class="sd">               - 2 \sum_{i = 1}^{n - 2}{</span>
+<span class="sd">                     \sum_{j = i + 1\ }^{n - 1}{</span>
+<span class="sd">                       \sum_{k = j + 1\ }^{n}{y_i y_j y_k L_{ijk}}}}</span>
+
+<span class="sd">    See Gheno 2022 [#Gheno_2022]_ for details.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : 2D array</span>
+<span class="sd">        Atom fraction of the independent constituents, shape (`ninds`, `nz`).</span>
+<span class="sd">    G0 : list of floats</span>
+<span class="sd">        Gibbs free energy of the endmembers, len `ncomps`.</span>
+<span class="sd">    L : 1D array</span>
+<span class="sd">        Interaction parameters, given as a flat array.</span>
+
+<span class="sd">        | Number of terms in a n-component system:</span>
+<span class="sd">        | binary  : 2*C(n, 2) = n*(n - 1)</span>
+<span class="sd">        | ternary : C(n, 3) = n*(n - 1)*(n - 2)/6</span>
+<span class="sd">        |</span>
+<span class="sd">        | In a 2-comp. system, :math:`L = [L_{12}]`</span>
+<span class="sd">        | In a 3-comp. system, :math:`L = [L_{12}, L_{13}, L_{23}, L_{123}]`</span>
+<span class="sd">        | where binary terms are couples :math:`L_{ij} = (^0L_{ij}, ^1L_{ij})`</span>
+
+<span class="sd">    T : float or int</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    1D array</span>
+<span class="sd">        Equilibrium vacancy site fraction.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">G0</span><span class="p">)</span>
+    <span class="n">xn</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">y_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">xn</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">xn</span><span class="p">))</span>
+
+    <span class="n">n_bin</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">count_combinations</span><span class="p">(</span><span class="n">n</span><span class="p">)[</span><span class="s1">&#39;binaries&#39;</span><span class="p">]</span>
+    <span class="n">L_bin</span> <span class="o">=</span> <span class="n">L</span><span class="p">[:</span><span class="n">n_bin</span><span class="p">]</span>
+    <span class="n">L_ter</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="n">n_bin</span><span class="p">:]</span>
+
+    <span class="n">binary</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">binary</span> <span class="o">+=</span> <span class="n">y_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">L_bin</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">L_bin</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">index_binary_combination</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">binary</span> <span class="o">-=</span> <span class="n">y_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">y_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">L_bin</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+                                   <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">y_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">*</span><span class="n">L_bin</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">ternary</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">index_ternary_combination</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">ternary</span> <span class="o">+=</span> <span class="n">y_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">y_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">L_ter</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">index_ternary_combination</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+                <span class="n">ternary</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">y_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">y_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">y_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">L_ter</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">Gf</span> <span class="o">=</span> <span class="n">G0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">binary</span> <span class="o">+</span> <span class="n">ternary</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">Gf</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">TK</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Vacancy tracer diffusion coefficient</span>
+
+<div class="viewcode-block" id="make_DVa_fun">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.make_DVa_fun">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_DVa_fun</span><span class="p">(</span><span class="n">DT_fun</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make function to compute vacancy tracer diffusion coefficient.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        D_{0}^{*} = \frac{1}{y_{0}}\sum_{k = 1}^{n}{y_{k}D_{k}^{*}}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    DT_fun : function</span>
+<span class="sd">        Compute tracer diffusion coefficient of atom constituents.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    function</span>
+<span class="sd">        Compute vacancy tracer diffusion coefficient.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fun</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">DT</span> <span class="o">=</span> <span class="n">DT_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">DT</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fun</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Onsager coefficients</span>
+
+<div class="viewcode-block" id="make_Lfun">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.make_Lfun">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_Lfun</span><span class="p">(</span><span class="n">DT_fun</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate function to evaluate Onsager coefficients.</span>
+
+<span class="sd">    See background in Andersson 1992 [#Andersson_1992]_.</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    DT_fun: function</span>
+<span class="sd">        Function evaluating tracer diffusion coefficients on composition array.</span>
+<span class="sd">    TK: float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    function</span>
+<span class="sd">        Function that takes composition array (typical shape (`n_comps`, `nz`))</span>
+<span class="sd">        as argument, and returns array (shape (`n_comps`, `n_comps`, `nz`)) of</span>
+<span class="sd">        phenomenological coefficients evaluated on this array (ex:</span>
+<span class="sd">        ``L[i, j, k]``, where component i diffuses in a gradient of j, and k is</span>
+<span class="sd">        a space index).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fun</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+
+        <span class="n">DT</span> <span class="o">=</span> <span class="n">DT_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">nc</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nc</span><span class="p">,</span> <span class="n">nc</span><span class="p">,</span> <span class="n">nz</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="p">):</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">kd</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span><span class="o">*</span><span class="n">c</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">DT</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">TK</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">return</span> <span class="n">fun</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Mobility</span>
+
+<div class="viewcode-block" id="RK_pol">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.RK_pol">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">RK_pol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Redlich-Kister polynomial with binary and ternary interactions of order 0.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       MQ = \sum_{i = 1}^{n}{x_{i}L_{i}}</span>
+<span class="sd">       + \sum_{i = 1}^{n - 1}{</span>
+<span class="sd">           \sum_{j = i + 1\ }^{n}{x_{i}x_{j}L_{ij}}}</span>
+<span class="sd">       + \sum_{i = 1}^{n - 2}{</span>
+<span class="sd">           \sum_{j = i + 1\ }^{n - 1}{</span>
+<span class="sd">             \sum_{k = j + 1\ }^{n}{x_{i}x_{j}x_{k}L_{ijk}}}}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : 2D array</span>
+<span class="sd">        Atom fraction of the independent constituents, shape (`ninds`, `nz`).</span>
+<span class="sd">    p : 1D array</span>
+<span class="sd">        | Parameters of the polynomial, given as a flat array.</span>
+<span class="sd">        | Number of terms in a n-component system:</span>
+<span class="sd">        | unary   : C(n, 1) = n</span>
+<span class="sd">        | binary  : C(n, 2) = n*(n - 1)/2</span>
+<span class="sd">        | ternary : C(n, 3) = n*(n - 1)*(n - 2)/6</span>
+<span class="sd">        |</span>
+<span class="sd">        | In a 2-component system, :math:`L = [L_1, L_2, L_{12}]`</span>
+<span class="sd">        | In a 3-component system, :math:`L = [L_1, L_2, L_3, L_{12}, L_{13},</span>
+<span class="sd">                                               L_{23}, L_{123}]`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    1D array</span>
+<span class="sd">        Polynomial evaluated along composition profile, shape (`nz`,).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">xn</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">xn</span><span class="p">))</span>
+    <span class="n">n_bin</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">count_combinations</span><span class="p">(</span><span class="n">n</span><span class="p">)[</span><span class="s1">&#39;binaries&#39;</span><span class="p">]</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>  <span class="c1"># unary terms</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="n">n</span> <span class="o">+</span> <span class="n">n_bin</span><span class="p">]</span>  <span class="c1"># binary interactions</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="n">n_bin</span><span class="p">:]</span>  <span class="c1"># ternary interactions</span>
+
+    <span class="n">unary</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+    <span class="n">binary</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">index_binary_combination</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">binary</span> <span class="o">+=</span> <span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">b</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="n">ternary</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">ut</span><span class="o">.</span><span class="n">index_ternary_combination</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+                <span class="n">ternary</span> <span class="o">+=</span> <span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">x_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">c</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">unary</span> <span class="o">+</span> <span class="n">binary</span> <span class="o">+</span> <span class="n">ternary</span></div>
+
+
+
+<div class="viewcode-block" id="lnDT_model">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.lnDT_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lnDT_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute log of tracer diffusion coefficients.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : 2D array</span>
+<span class="sd">        Atom fraction of the independent constituents, shape (`ninds`, `nz`).</span>
+<span class="sd">    p : list of floats</span>
+<span class="sd">        Mobility parameters.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    2D array</span>
+<span class="sd">        Log of DT, shape (`ncomps`, `nz`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nc</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">lnDT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nc</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
+    <span class="n">npa</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">/</span><span class="n">nc</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="p">):</span>
+        <span class="n">p_i</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">npa</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">npa</span><span class="p">]</span>
+        <span class="n">lnDT</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit_lnDT</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p_i</span><span class="p">,</span> <span class="n">TK</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lnDT</span></div>
+
+
+
+<div class="viewcode-block" id="unit_lnDT">
+<a class="viewcode-back" href="../modules/thermo_functions.html#thermo_functions.unit_lnDT">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unit_lnDT</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute log of tracer diffusion coefficient of one component.</span>
+
+<span class="sd">    Use Redlich-Kister polynomial with binary and ternary interactions of order</span>
+<span class="sd">    0 (see :func:`RK_pol`).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : 2D array</span>
+<span class="sd">        Atom fraction of the independent constituents, shape (`ninds`, `nz`).</span>
+<span class="sd">    p : list of floats</span>
+<span class="sd">        Mobility parameters.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    1D array</span>
+<span class="sd">        Log of DT, shape (`nz`,).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MQ</span> <span class="o">=</span> <span class="n">RK_pol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">MQ</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">TK</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

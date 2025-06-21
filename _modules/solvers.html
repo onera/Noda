@@ -1,0 +1,613 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>solvers &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">solvers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for solvers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Solve the diffusion equation.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spi</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.lattice</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">la</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">div</span>
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Solver</span>
+
+
+<div class="viewcode-block" id="solver">
+<a class="viewcode-back" href="../modules/solvers.html#solvers.solver">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">solver</span><span class="p">(</span><span class="n">z_init</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">cvar</span><span class="p">,</span> <span class="n">MU_fun</span><span class="p">,</span> <span class="n">L_fun</span><span class="p">,</span> <span class="n">yVa_fun</span><span class="p">,</span> <span class="n">nt</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span>
+           <span class="n">ideal_lattice</span><span class="p">,</span> <span class="n">k_dislo</span><span class="p">,</span> <span class="n">k_pores</span><span class="p">,</span> <span class="n">rho_dislo</span><span class="p">,</span> <span class="n">rho_pores</span><span class="p">,</span> <span class="n">DVa_fun</span><span class="p">,</span>
+           <span class="n">Va_method</span><span class="p">,</span> <span class="n">saved_steps</span><span class="p">,</span> <span class="n">BC</span><span class="p">,</span> <span class="n">show_completion</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">stencil</span><span class="p">,</span>
+           <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve diffusion equation.</span>
+
+<span class="sd">    Explicit (forward Euler) solver with non-equilibrium vacancies and pores,</span>
+<span class="sd">    finite sink strengths that represent dislocation climb and pore growth.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z_init : 1D array</span>
+<span class="sd">        Initial node positions, shape (`nz`,).</span>
+<span class="sd">    geometry : str</span>
+<span class="sd">        Domain geometry (planar, cylindrical or spherical).</span>
+<span class="sd">    cvar : :class:`composition_variables.CompositionVariables`</span>
+<span class="sd">        Composition variables (x, y, c, Vm, ...).</span>
+<span class="sd">    MU_fun : function</span>
+<span class="sd">        Compute chemical potential from site fractions (see `MU_funy` in</span>
+<span class="sd">        :class:`simu.System`).</span>
+<span class="sd">    L_fun : func</span>
+<span class="sd">        Same for phenomenological coefficients.</span>
+<span class="sd">    yVa_fun : function</span>
+<span class="sd">        Compute equilibrium vacancy site fraction, see</span>
+<span class="sd">        :meth:`simu.System.add_Va_model`.</span>
+<span class="sd">    nt : int</span>
+<span class="sd">        Number of time steps, including time 0.</span>
+<span class="sd">    dt : float</span>
+<span class="sd">        Time step (s).</span>
+<span class="sd">    ideal_lattice : bool</span>
+<span class="sd">        Whether lattice is ideal, i.e., vacancy fraction is kept at</span>
+<span class="sd">        equilibrium.</span>
+<span class="sd">    k_dislo : float or str</span>
+<span class="sd">        Sink strength associated with dislocation climb (str should be a valid</span>
+<span class="sd">        file name in current job folder)</span>
+<span class="sd">    k_pores : float or str</span>
+<span class="sd">        Sink strength associated with pore growth (str should be a valid file</span>
+<span class="sd">        name in current job folder)</span>
+<span class="sd">    rho_dislo : float or str</span>
+<span class="sd">        Dislocation density, used to compute k_dislo from local DVa.</span>
+<span class="sd">    rho_pores : float</span>
+<span class="sd">        Density used to compute k_pores from local DVa.</span>
+<span class="sd">    DVa_fun : function</span>
+<span class="sd">        Compute vacancy diffusion coefficient from atom fractions and site</span>
+<span class="sd">        fractions, see :func:`thermo_functions.make_DVa_fun`.</span>
+<span class="sd">    Va_method : str</span>
+<span class="sd">        Type of function for equilibrium vacancy site fraction. Determined</span>
+<span class="sd">        based on `thermo_method` in :meth:`simu.System.add_thermo_functions`.</span>
+<span class="sd">    saved_steps : list</span>
+<span class="sd">        Steps for which results are returned.</span>
+<span class="sd">    BC : dict</span>
+<span class="sd">        Types and functions of left and right BC, see</span>
+<span class="sd">        :meth:`simu.Simulation.add_BC`.</span>
+<span class="sd">    show_completion : bool</span>
+<span class="sd">        Print completion rate while solver is running.</span>
+<span class="sd">    verbose : str</span>
+<span class="sd">        Verbosity level.</span>
+<span class="sd">    stencil : str</span>
+<span class="sd">        Name of discretization stencil. See :func:`compute_resistance`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res: dict of dicts</span>
+<span class="sd">        Dict of stored variables:</span>
+
+<span class="sd">        ``{n: {var: array for var in variables} for n in saved_steps}``</span>
+
+<span class="sd">        where variables are:</span>
+
+<span class="sd">        * z : node positions, 1D array</span>
+<span class="sd">        * c : concentrations, 2D array</span>
+<span class="sd">        * fp : pore fractions, 1D array</span>
+<span class="sd">        * mu : chemical potentials, 2D array</span>
+<span class="sd">        * Jlat : fluxes in lattice-fixed frame, 2D array</span>
+<span class="sd">        * yVa_eq : equilibrium vacancy fraction, 1D array</span>
+<span class="sd">        * v : velocity field of lattice in laboratory frame, 1D array.</span>
+<span class="sd">        * gamma_V : relative volume variation rate associated with molar volume</span>
+<span class="sd">          variation, 1D array.</span>
+<span class="sd">        * gamma_p : relative volume variation rate associated with pore growth,</span>
+<span class="sd">          1D array.</span>
+<span class="sd">        * alpha_d : sink term associated with dislocation climb, 1D array.</span>
+<span class="sd">        * alpha_p : sink term associated with pore growth, 1D array.</span>
+<span class="sd">        * L : Onsager coefficients, 3D array</span>
+<span class="sd">        * deformation : cumulative deformation in diffusion direction (eps_zz),</span>
+<span class="sd">          1D array.</span>
+
+<span class="sd">        The first 3 variables (z, c, fp) are stored at the start of the time</span>
+<span class="sd">        step, while the others are stored at the end of the step.</span>
+<span class="sd">    dur : float</span>
+<span class="sd">        Solver run time in s.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">comps</span> <span class="o">=</span> <span class="n">cvar</span><span class="o">.</span><span class="n">comps</span>
+    <span class="n">V_partial</span> <span class="o">=</span> <span class="n">cvar</span><span class="o">.</span><span class="n">V_partial</span>
+    <span class="n">Vk</span> <span class="o">=</span> <span class="n">cvar</span><span class="o">.</span><span class="n">Vk_arr</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">z_init</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">dz_min</span> <span class="o">=</span> <span class="n">dz</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">dz_max</span> <span class="o">=</span> <span class="n">dz</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">deformation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dz</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">z</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="n">cvar</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">mid</span><span class="p">,</span> <span class="s1">&#39;fp&#39;</span><span class="p">:</span> <span class="n">cvar</span><span class="o">.</span><span class="n">fp</span><span class="o">.</span><span class="n">mid</span><span class="p">}}</span>
+
+    <span class="n">completion_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">completion_steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">nt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">completion_rates</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">show_completion</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Run&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">2</span><span class="si">}{</span><span class="s1">&#39;Completion&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;time (s)&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">2</span><span class="si">}{</span><span class="s1">&#39;rate (%)&#39;</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># The variables calculated in the loop (MU, Jlat, ...) are based on the</span>
+    <span class="c1"># composition at the beginning of the loop, but are stored at the end of</span>
+    <span class="c1"># the loop. Therefore the loop is run once more than needed for the</span>
+    <span class="c1"># composition, in order to record the other variables at the last step.</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nt</span><span class="p">):</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">cvar</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">mid</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">cvar</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">mid</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">cvar</span><span class="o">.</span><span class="n">V</span><span class="o">.</span><span class="n">mid</span>
+        <span class="n">Vm</span> <span class="o">=</span> <span class="n">cvar</span><span class="o">.</span><span class="n">Vm</span><span class="o">.</span><span class="n">mid</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">cvar</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">mid</span>
+        <span class="n">fm</span> <span class="o">=</span> <span class="n">cvar</span><span class="o">.</span><span class="n">fm</span><span class="o">.</span><span class="n">mid</span>
+
+        <span class="n">V0</span> <span class="o">=</span> <span class="n">V_partial</span><span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">V_partial</span><span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;local&#39;</span> <span class="k">else</span> <span class="n">Vm</span>
+        <span class="n">Vp</span> <span class="o">=</span> <span class="n">V_partial</span><span class="p">[</span><span class="s1">&#39;pore&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">V_partial</span><span class="p">[</span><span class="s1">&#39;pore&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;local&#39;</span> <span class="k">else</span> <span class="n">Vm</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">saved_steps</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;fm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">AtomFractionError</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># Compute chemical potentials</span>
+        <span class="n">MU</span> <span class="o">=</span> <span class="n">MU_fun</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">MU_diff</span> <span class="o">=</span> <span class="n">MU</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">MU</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">yVa_eq</span> <span class="o">=</span> <span class="n">yVa_fun</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Compute Onsager coeffs, factor in yVa</span>
+        <span class="c1"># Note: since c is the global concentration, L_eq includes fm. This is</span>
+        <span class="c1"># only valid inasmuch as L_ij = 0 in the pores</span>
+        <span class="n">L_eq</span> <span class="o">=</span> <span class="n">L_fun</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">L_eq</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">yVa_eq</span>
+
+        <span class="c1"># Compute diffusion fluxes</span>
+        <span class="n">RL</span> <span class="o">=</span> <span class="n">compute_resistance</span><span class="p">(</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">L</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">stencil</span><span class="p">)</span>
+
+        <span class="n">Jbulk</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">MU_diff</span><span class="p">)</span><span class="o">/</span><span class="n">RL</span>
+        <span class="n">Jleft</span><span class="p">,</span> <span class="n">Jright</span> <span class="o">=</span> <span class="n">compute_boundary_fluxes</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">dt</span><span class="p">,</span> <span class="n">MU_diff</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">BC</span><span class="p">,</span> <span class="n">MU_fun</span><span class="p">,</span>
+                                                <span class="n">L</span><span class="p">,</span> <span class="n">L_fun</span><span class="p">,</span> <span class="n">Vk</span><span class="p">)</span>
+        <span class="n">Jlat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">Jleft</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">Jbulk</span><span class="p">,</span> <span class="n">Jright</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">ideal_lattice</span><span class="p">:</span>
+            <span class="n">alphas</span> <span class="o">=</span> <span class="n">compute_alpha_ideal</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cvar</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">nod</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="n">c</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Jlat</span><span class="p">,</span>
+                                         <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Vp</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Vm</span><span class="p">,</span> <span class="n">yVa_fun</span><span class="p">,</span> <span class="n">Va_method</span><span class="p">,</span>
+                                         <span class="n">geometry</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rho_dislo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rho_pores</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">D0</span> <span class="o">=</span> <span class="n">DVa_fun</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">rho_dislo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">k_dislo</span> <span class="o">=</span> <span class="n">rho_dislo</span> <span class="o">*</span> <span class="n">D0</span>
+                <span class="k">if</span> <span class="n">rho_pores</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">k_pores</span> <span class="o">=</span> <span class="n">rho_pores</span> <span class="o">*</span> <span class="n">D0</span>
+            <span class="n">alphas</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">compute_alpha_nonideal</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yVa_eq</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Vp</span><span class="p">,</span> <span class="n">fm</span><span class="p">,</span>
+                                               <span class="n">k_dislo</span><span class="p">,</span> <span class="n">k_pores</span><span class="p">)</span>
+        <span class="n">alpha_d</span><span class="p">,</span> <span class="n">alpha_p</span> <span class="o">=</span> <span class="n">alphas</span>
+
+        <span class="n">c</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">gamma_V</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">solver_core</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cvar</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">nod</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="n">c</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Jlat</span><span class="p">,</span>
+                                           <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Vp</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Vm</span><span class="p">,</span> <span class="n">alpha_d</span><span class="p">,</span> <span class="n">alpha_p</span><span class="p">,</span>
+                                           <span class="n">geometry</span><span class="p">)</span>
+        <span class="n">deformation</span> <span class="o">+=</span> <span class="n">gamma</span><span class="o">*</span><span class="n">dt</span>
+
+        <span class="c1"># New boundary positions</span>
+        <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">dt</span>
+        <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">dt</span>
+        <span class="n">dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="c1"># Add/remove nods as needed</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">dz</span> <span class="o">&lt;</span> <span class="n">dz_min</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">dz</span> <span class="o">&gt;</span> <span class="n">dz_max</span><span class="o">*</span><span class="mi">3</span><span class="o">/</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">deformation</span> <span class="o">=</span> <span class="n">remesh</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">dz_min</span><span class="p">,</span> <span class="n">dz_max</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">deformation</span><span class="p">,</span>
+                                       <span class="n">verbose</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+            <span class="n">dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="n">cvar</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">mid</span> <span class="o">=</span> <span class="n">c</span>
+
+        <span class="c1"># Record variables</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">saved_steps</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;mu&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MU</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;Jlat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Jlat</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;yVa_eq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">yVa_eq</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;v&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;gamma_V&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma_V</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;gamma_p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">alpha_p</span><span class="o">*</span><span class="n">Vp</span><span class="o">/</span><span class="n">V</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;alpha_d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_d</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;alpha_p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_p</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">L</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;deformation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deformation</span>
+
+        <span class="k">if</span> <span class="n">show_completion</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">completion_steps</span><span class="p">:</span>
+                <span class="n">dur</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">n</span><span class="o">/</span><span class="p">(</span><span class="n">nt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dur</span><span class="si">:</span><span class="s1">^10.3f</span><span class="si">}{</span><span class="s2">&quot;&quot;</span><span class="si">:</span><span class="s1">2</span><span class="si">}{</span><span class="n">r</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s1">^10.0f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">dur</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Solver run time: </span><span class="si">{</span><span class="n">dur</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> s&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="solver_core">
+<a class="viewcode-back" href="../modules/solvers.html#solvers.solver_core">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">solver_core</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cnod</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">y_Va</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Jlat</span><span class="p">,</span> <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Vp</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Vm</span><span class="p">,</span>
+                <span class="n">alpha_d</span><span class="p">,</span> <span class="n">alpha_p</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute fluxes in laboratory frame and then new concentrations.</span>
+
+<span class="sd">    See argument definitions in :func:`solver`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha_d</span> <span class="o">+</span> <span class="n">alpha_p</span>
+    <span class="n">gamma_V</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">compute_gamma_V</span><span class="p">(</span><span class="n">Jlat</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Vm</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">y_Va</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+    <span class="n">gamma_N</span> <span class="o">=</span> <span class="n">Vm</span><span class="o">/</span><span class="n">V</span><span class="o">*</span><span class="n">alpha</span>
+    <span class="n">gamma_p</span> <span class="o">=</span> <span class="o">-</span><span class="n">alpha_p</span><span class="o">*</span><span class="n">Vp</span><span class="o">/</span><span class="n">V</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma_V</span> <span class="o">+</span> <span class="n">gamma_N</span> <span class="o">+</span> <span class="n">gamma_p</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">compute_velocity</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Jlat</span><span class="p">,</span> <span class="n">y_Va</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+
+    <span class="n">cnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="n">Jref</span> <span class="o">=</span> <span class="n">Jlat</span> <span class="o">+</span> <span class="n">cnod</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">v</span>
+    <span class="n">derc</span> <span class="o">=</span> <span class="o">-</span> <span class="n">div</span><span class="p">(</span><span class="n">Jref</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+    <span class="n">cnew</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">dt</span><span class="o">*</span><span class="n">derc</span>
+
+    <span class="n">Jlat_Va</span> <span class="o">=</span> <span class="o">-</span><span class="nb">sum</span><span class="p">(</span><span class="n">Jlat</span><span class="p">)</span>
+    <span class="n">Jref_Va</span> <span class="o">=</span> <span class="n">Jlat_Va</span> <span class="o">+</span> <span class="n">cnod</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">v</span>
+    <span class="n">derc</span> <span class="o">=</span> <span class="o">-</span> <span class="n">div</span><span class="p">(</span><span class="n">Jref_Va</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span> <span class="o">+</span> <span class="n">alpha</span><span class="o">/</span><span class="n">V</span>
+    <span class="n">cnew</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">dt</span><span class="o">*</span><span class="n">derc</span>
+
+    <span class="k">return</span> <span class="n">cnew</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">gamma_V</span><span class="p">,</span> <span class="n">gamma</span></div>
+
+
+
+<div class="viewcode-block" id="compute_alpha_ideal">
+<a class="viewcode-back" href="../modules/solvers.html#solvers.compute_alpha_ideal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_alpha_ideal</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cnod</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">y_Va</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Jlat</span><span class="p">,</span> <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span> <span class="n">Vp</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Vm</span><span class="p">,</span>
+                        <span class="n">yVa_fun</span><span class="p">,</span> <span class="n">Va_method</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute ideal sink terms.</span>
+
+<span class="sd">    See argument definitions in :func:`solver`.</span>
+
+<span class="sd">    The term related to pore growth, alpha_p, is zero.</span>
+
+<span class="sd">    The term related to dislocation climb, alpha_d, is computed from analytical</span>
+<span class="sd">    expression if the equilibrium vacancy fraction is composition-fixed. If</span>
+<span class="sd">    not, an iterative method is used instead, with the analytical version as a</span>
+<span class="sd">    starting point. See Gheno 2022 [#Gheno_2022]_ for details.</span>
+
+<span class="sd">    The error increases when partial molar volumes are different. The error is</span>
+<span class="sd">    reduced by increasing the number of loops. Two loops is found to be</span>
+<span class="sd">    sufficient in practice (y0 - y0_eq = 1e-13 - 1e-14).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Jlat_Va</span> <span class="o">=</span> <span class="o">-</span><span class="nb">sum</span><span class="p">(</span><span class="n">Jlat</span><span class="p">)</span>
+    <span class="c1"># Analytical expression</span>
+    <span class="n">alpha_d</span> <span class="o">=</span> <span class="n">V</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y_Va</span><span class="p">)</span><span class="o">*</span><span class="n">div</span><span class="p">(</span><span class="n">Jlat_Va</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+    <span class="n">alpha_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">alpha_d</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Va_method</span> <span class="o">!=</span> <span class="s1">&#39;cst&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">c_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">solver_core</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cnod</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">y_Va</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Jlat</span><span class="p">,</span> <span class="n">Vk</span><span class="p">,</span> <span class="n">V0</span><span class="p">,</span>
+                                      <span class="n">Vp</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Vm</span><span class="p">,</span> <span class="n">alpha_d</span><span class="p">,</span> <span class="n">alpha_p</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+            <span class="n">y_</span> <span class="o">=</span> <span class="n">c_</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">c_</span><span class="p">)</span>
+            <span class="n">x_</span> <span class="o">=</span> <span class="n">y_</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">yVa_eq_</span> <span class="o">=</span> <span class="n">yVa_fun</span><span class="p">(</span><span class="n">x_</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">alpha_d</span> <span class="o">+=</span> <span class="p">(</span><span class="n">yVa_eq_</span> <span class="o">-</span> <span class="n">y_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dt</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">alpha_d</span><span class="p">,</span> <span class="n">alpha_p</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Auxiliary functions</span>
+
+
+<div class="viewcode-block" id="compute_boundary_fluxes">
+<a class="viewcode-back" href="../modules/solvers.html#solvers.compute_boundary_fluxes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_boundary_fluxes</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">MU_diff</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">BC</span><span class="p">,</span> <span class="n">MU_fun</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">L_fun</span><span class="p">,</span> <span class="n">Vk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute fluxes on domain boundaries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : float</span>
+<span class="sd">        Time (s).</span>
+<span class="sd">    MU_diff : 2D array</span>
+<span class="sd">        Diffusion potentials (MU_k - MU_0), initial shape (`ninds` + 1,</span>
+<span class="sd">        `nz` - 1).</span>
+<span class="sd">    dz : 1D array</span>
+<span class="sd">        Space step (m).</span>
+<span class="sd">    BC : dict</span>
+<span class="sd">        Types and functions of left and right BC, see</span>
+<span class="sd">        :meth:`simu.Simulation.add_BC`.</span>
+<span class="sd">    MU_fun : function</span>
+<span class="sd">        Compute chemical potentials from site fractions.</span>
+<span class="sd">    L : 3D array</span>
+<span class="sd">        Onsager coefficients, initial shape (`ninds` + 1, `ninds` + 1,</span>
+<span class="sd">        `nz` - 1).</span>
+<span class="sd">    Vk : 1D array</span>
+<span class="sd">        Partial molar volumes, shape (`ninds` + 2).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    J[&#39;left&#39;] : 1D array</span>
+<span class="sd">        Flux on left-hand boundary, shape (`ninds` + 1,).</span>
+<span class="sd">    J[&#39;right&#39;] : 1D array</span>
+<span class="sd">        Flux on right-hand boundary, shape (`ninds` + 1,).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]:</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">i0</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">BC</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Dirichlet&#39;</span><span class="p">:</span>
+            <span class="n">cvar_BC</span> <span class="o">=</span> <span class="n">BC</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;c_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">](</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">y_BC</span> <span class="o">=</span> <span class="n">cvar_BC</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">mid</span>
+            <span class="n">MU_BC</span> <span class="o">=</span> <span class="n">MU_fun</span><span class="p">(</span><span class="n">y_BC</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">MU_diff_BC</span> <span class="o">=</span> <span class="n">MU_BC</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">MU_BC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">gen_comps</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">MU_diff_BC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">L_BC_fullarray</span> <span class="o">=</span> <span class="n">L_fun</span><span class="p">(</span><span class="n">cvar_BC</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">mid</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">cvar_BC</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">mid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">L_BC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">L_BC_fullarray</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">gen_comps</span><span class="p">])</span>
+            <span class="n">L_mid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">i0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">gen_comps</span><span class="p">])</span>
+            <span class="n">L_side</span> <span class="o">=</span> <span class="p">(</span><span class="n">L_BC</span> <span class="o">+</span> <span class="n">L_mid</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+            <span class="n">RL_side</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">dz</span><span class="p">[</span><span class="n">i0</span><span class="p">]</span><span class="o">/</span><span class="n">L_side</span>
+            <span class="n">J</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">sign</span><span class="o">*</span><span class="p">(</span><span class="n">MU_diff</span><span class="p">[:,</span> <span class="n">i0</span><span class="p">]</span> <span class="o">-</span> <span class="n">MU_diff_BC</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                            <span class="o">/</span> <span class="n">RL_side</span><span class="p">)</span>
+            <span class="c1"># Compensate volume change by setting flux of dependent constituent</span>
+            <span class="n">J</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="nb">sum</span><span class="p">(</span><span class="n">J</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">Vk</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">Vk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">J</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sign</span><span class="o">*</span><span class="n">BC</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;J_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">](</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">J</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">],</span> <span class="n">J</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="compute_resistance">
+<a class="viewcode-back" href="../modules/solvers.html#solvers.compute_resistance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_resistance</span><span class="p">(</span><span class="n">comps</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">stencil</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute diffusion resistance.</span>
+
+<span class="sd">    Defined as dz/L, with L the Onsager coefficients.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents.</span>
+<span class="sd">    L : 3D array</span>
+<span class="sd">        Onsager coefficients, initial shape (`ninds` + 1, `ninds` + 1,</span>
+<span class="sd">        `nz` - 1).</span>
+<span class="sd">    dz : 1D array</span>
+<span class="sd">        Space step, initial shape (`nz` - 1,).</span>
+<span class="sd">    stencil : str</span>
+<span class="sd">        Name of discretization stencil. Possible values: &#39;H&#39;, &#39;A&#39;, &#39;G&#39;.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If stencil is not supported.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    RL : 2D array</span>
+<span class="sd">        Diffusion resistance, initial shape (`ninds` + 1, `nz` - 2).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gen_comps</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">comps</span><span class="p">))</span>
+    <span class="n">RL</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">stencil</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+        <span class="n">RL_mid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dz</span><span class="o">/</span><span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">gen_comps</span><span class="p">])</span>
+        <span class="n">RL</span> <span class="o">=</span> <span class="p">(</span><span class="n">RL_mid</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">RL_mid</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+
+    <span class="k">elif</span> <span class="n">stencil</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span><span class="p">:</span>
+        <span class="n">L_mid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">gen_comps</span><span class="p">])</span>
+        <span class="n">L_bar</span> <span class="o">=</span> <span class="p">(</span><span class="n">L_mid</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">L_mid</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">dz_bar</span> <span class="o">=</span> <span class="p">(</span><span class="n">dz</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">dz</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">RL</span> <span class="o">=</span> <span class="n">dz_bar</span><span class="o">/</span><span class="n">L_bar</span>
+
+    <span class="k">elif</span> <span class="n">stencil</span> <span class="o">==</span> <span class="s1">&#39;G&#39;</span><span class="p">:</span>
+        <span class="n">L_mid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">gen_comps</span><span class="p">])</span>
+        <span class="n">L_bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">L_mid</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">L_mid</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">dz_bar</span> <span class="o">=</span> <span class="p">(</span><span class="n">dz</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">dz</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">RL</span> <span class="o">=</span> <span class="n">dz_bar</span><span class="o">/</span><span class="n">L_bar</span>
+    <span class="k">return</span> <span class="n">RL</span></div>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Node adding/deleting algorithm</span>
+
+
+<div class="viewcode-block" id="remesh">
+<a class="viewcode-back" href="../modules/solvers.html#solvers.remesh">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remesh</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">dz_min</span><span class="p">,</span> <span class="n">dz_max</span><span class="p">,</span> <span class="n">cmid</span><span class="p">,</span> <span class="n">deformation</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add or delete nodes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Time step.</span>
+<span class="sd">    z : 1D array</span>
+<span class="sd">        Node positions, initial shape (`nz`,).</span>
+<span class="sd">    dz_min : float</span>
+<span class="sd">        Minimum of initial dz.</span>
+<span class="sd">    dz_max : float</span>
+<span class="sd">        Maximum of initial dz.</span>
+<span class="sd">    cmid : 2D array</span>
+<span class="sd">        Concentrations, initial shape (`ninds` + 1, `nz` - 1).</span>
+<span class="sd">    deformation : 1D array</span>
+<span class="sd">        Cumulated deformation, initial shape (`nz` - 1,).</span>
+<span class="sd">    verbose : str</span>
+<span class="sd">        Verbosity level.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    new_z : 1D array</span>
+<span class="sd">        New node positions.</span>
+<span class="sd">    new_cmid : 2D array</span>
+<span class="sd">        New concentrations.</span>
+<span class="sd">    new_deformation : 1D array</span>
+<span class="sd">        New deformation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">zm</span> <span class="o">=</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">z</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+
+    <span class="n">delete_condition</span> <span class="o">=</span> <span class="n">dz</span> <span class="o">&lt;</span> <span class="n">dz_min</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">split_condition</span> <span class="o">=</span> <span class="n">dz</span> <span class="o">&gt;</span> <span class="n">dz_max</span><span class="o">*</span><span class="mi">3</span><span class="o">/</span><span class="mi">2</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">delete_condition</span><span class="p">):</span>
+        <span class="n">idx_to_delete</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">delete_condition</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># avoid deleting last node</span>
+        <span class="k">if</span> <span class="n">idx_to_delete</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">idx_to_delete</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Step </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">: deleting node(s) at index(ices) </span><span class="si">{</span><span class="n">idx_to_delete</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="n">idx_to_keep</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">idx_to_delete</span><span class="p">]</span>
+        <span class="n">new_z</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">idx_to_keep</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">idx_to_split</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">split_condition</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Step </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">: adding node(s) at index(ices) </span><span class="si">{</span><span class="n">idx_to_split</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="n">new_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">idx_to_split</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">zm</span><span class="p">[</span><span class="n">idx_to_split</span><span class="p">])</span>
+
+    <span class="n">new_zm</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_z</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">new_z</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">new_cmid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">cmid</span><span class="p">),</span> <span class="n">new_z</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cmid</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">spi</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">cm</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
+        <span class="n">new_cmid</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">new_zm</span><span class="p">)</span>
+    <span class="n">f_def</span> <span class="o">=</span> <span class="n">spi</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">deformation</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
+    <span class="n">new_deformation</span> <span class="o">=</span> <span class="n">f_def</span><span class="p">(</span><span class="n">new_zm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new_z</span><span class="p">,</span> <span class="n">new_cmid</span><span class="p">,</span> <span class="n">new_deformation</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

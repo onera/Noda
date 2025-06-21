@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>log_utils &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="meshing" href="meshing.html" />
+    <link rel="prev" title="lattice" href="lattice.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alloy_system.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#log_utils.CustomLogger"><code class="docutils literal notranslate"><span class="pre">CustomLogger</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#log_utils.CustomLogger.__init__"><code class="docutils literal notranslate"><span class="pre">CustomLogger.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log_utils.CustomLogger.add_stream_handler"><code class="docutils literal notranslate"><span class="pre">CustomLogger.add_stream_handler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log_utils.CustomLogger.add_file_handler"><code class="docutils literal notranslate"><span class="pre">CustomLogger.add_file_handler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log_utils.CustomLogger.data"><code class="docutils literal notranslate"><span class="pre">CustomLogger.data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log_utils.CustomLogger.results"><code class="docutils literal notranslate"><span class="pre">CustomLogger.results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log_utils.CustomLogger.info"><code class="docutils literal notranslate"><span class="pre">CustomLogger.info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log_utils.CustomLogger.warning"><code class="docutils literal notranslate"><span class="pre">CustomLogger.warning()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log_utils.CustomLogger.log_wrapper"><code class="docutils literal notranslate"><span class="pre">CustomLogger.log_wrapper()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#log_utils.get_and_log"><code class="docutils literal notranslate"><span class="pre">get_and_log()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/log_utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-log_utils">
+<span id="log-utils"></span><h1><a class="reference internal" href="#module-log_utils" title="log_utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a><a class="headerlink" href="#module-log_utils" title="Link to this heading"></a></h1>
+<p>Define custom logger and logging wrapper function.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="log_utils.CustomLogger">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">log_utils.</span></span><span class="sig-name descname"><span class="pre">CustomLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#CustomLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.CustomLogger" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></p>
+<p>Custom logger.</p>
+<p>Features:</p>
+<ul class="simple">
+<li><p>Uses a custom DATA level.</p></li>
+<li><p>Implements a stream handler (level INFO) and a file handler (level DATA).</p></li>
+<li><p>Wraps messages before logging.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="log_utils.CustomLogger.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#CustomLogger.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.CustomLogger.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="log_utils.CustomLogger.add_stream_handler">
+<span class="sig-name descname"><span class="pre">add_stream_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#CustomLogger.add_stream_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.CustomLogger.add_stream_handler" title="Link to this definition"></a></dt>
+<dd><p>Add stream handler with level INFO to logger object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="log_utils.CustomLogger.add_file_handler">
+<span class="sig-name descname"><span class="pre">add_file_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#CustomLogger.add_file_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.CustomLogger.add_file_handler" title="Link to this definition"></a></dt>
+<dd><p>Add file handler with level DATA to logger object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="log_utils.CustomLogger.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#CustomLogger.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.CustomLogger.data" title="Link to this definition"></a></dt>
+<dd><p>Log message with DATA level.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="log_utils.CustomLogger.results">
+<span class="sig-name descname"><span class="pre">results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#CustomLogger.results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.CustomLogger.results" title="Link to this definition"></a></dt>
+<dd><p>Log message with RESULTS level.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="log_utils.CustomLogger.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#CustomLogger.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.CustomLogger.info" title="Link to this definition"></a></dt>
+<dd><p>Log message with INFO level (overrides parent class method).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="log_utils.CustomLogger.warning">
+<span class="sig-name descname"><span class="pre">warning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#CustomLogger.warning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.CustomLogger.warning" title="Link to this definition"></a></dt>
+<dd><p>Log message with WARNING level (overrides parent class method).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="log_utils.CustomLogger.log_wrapper">
+<span class="sig-name descname"><span class="pre">log_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#CustomLogger.log_wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.CustomLogger.log_wrapper" title="Link to this definition"></a></dt>
+<dd><p>Wrap message and log lines as multiple messages.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_utils.get_and_log">
+<span class="sig-prename descclassname"><span class="pre">log_utils.</span></span><span class="sig-name descname"><span class="pre">get_and_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_alias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/log_utils.html#get_and_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#log_utils.get_and_log" title="Link to this definition"></a></dt>
+<dd><p>Get dict value and send log if the key is absent from the dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>di</strong> (<em>dictionary</em>) – Dictionary to be probed.</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – Requested key.</p></li>
+<li><p><strong>default</strong> (<em>any</em>) – Value returned if key is not in dict.</p></li>
+<li><p><strong>key_alias</strong> (<em>str</em><em>, </em><em>optional</em>) – Name to be logged instead of key if key is absent. The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res</strong> – Value obtained from dict or default.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>any</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="lattice.html" class="btn btn-neutral float-left" title="lattice" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="meshing.html" class="btn btn-neutral float-right" title="meshing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

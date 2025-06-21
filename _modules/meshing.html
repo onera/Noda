@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>meshing &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">meshing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for meshing</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Define space grids and composition profiles.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+
+
+<div class="viewcode-block" id="geo_grid">
+<a class="viewcode-back" href="../modules/meshing.html#meshing.geo_grid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">geo_grid</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">nz</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make space grid according to geometric progression.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    zmin : float</span>
+<span class="sd">        Start position.</span>
+<span class="sd">    zmax : float</span>
+<span class="sd">        End position.</span>
+<span class="sd">    nz : int</span>
+<span class="sd">        Number of elements.</span>
+<span class="sd">    q : float</span>
+<span class="sd">        Common ratio.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    1D array</span>
+<span class="sd">        Geometric grid.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dz0</span> <span class="o">=</span> <span class="p">(</span><span class="n">zmax</span> <span class="o">-</span> <span class="n">zmin</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">q</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">q</span><span class="o">**</span><span class="p">(</span><span class="n">nz</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">zmin</span> <span class="o">+</span> <span class="n">dz0</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">q</span><span class="o">**</span><span class="n">idx</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">q</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="make_step_profile">
+<a class="viewcode-back" href="../modules/meshing.html#meshing.make_step_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_step_profile</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">x_left</span><span class="p">,</span> <span class="n">x_right</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make step profiles.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z: 1D array</span>
+<span class="sd">        Node positions, shape (`nz`,).</span>
+<span class="sd">    zstep: float</span>
+<span class="sd">        Position of the step. If `zstep` falls on the `z` grid, the value at</span>
+<span class="sd">        `zstep` is the average of the end-values.</span>
+<span class="sd">    x_left: dict of floats</span>
+<span class="sd">        Atom fractions on the left-hand side.</span>
+<span class="sd">    x_right: dict of floats</span>
+<span class="sd">        Atom fractions on the right-hand side.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x: dict of 1D arrays</span>
+<span class="sd">        Atom fraction profiles on `z` grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x_left</span><span class="p">:</span>
+        <span class="n">xl</span> <span class="o">=</span> <span class="n">x_left</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">xr</span> <span class="o">=</span> <span class="n">x_right</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># Round to avoid floating point precision error, which can place zstep</span>
+        <span class="c1"># off the z grid when it should in fact be on a grid point.</span>
+        <span class="n">z_rel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">xl</span> <span class="o">+</span> <span class="p">(</span><span class="n">xr</span> <span class="o">-</span> <span class="n">xl</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">heaviside</span><span class="p">(</span><span class="n">z_rel</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="make_smooth_step_profile">
+<a class="viewcode-back" href="../modules/meshing.html#meshing.make_smooth_step_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_smooth_step_profile</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">x_left</span><span class="p">,</span> <span class="n">x_right</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make smooth step profiles.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z: 1D array</span>
+<span class="sd">        Node positions, shape (`nz`,).</span>
+<span class="sd">    zstep: float</span>
+<span class="sd">        Position of the step. If `zstep` falls on the `z` grid, the value at</span>
+<span class="sd">        `zstep` is the average of the end-values.</span>
+<span class="sd">    x_left: dict of floats</span>
+<span class="sd">        Atom fractions on the left-hand side.</span>
+<span class="sd">    x_right: dict of floats</span>
+<span class="sd">        Atom fractions on the right-hand side.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x: dict of 1D arrays</span>
+<span class="sd">        Atom fraction profiles on `z` grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">zspan</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x_left</span><span class="p">:</span>
+        <span class="n">xl</span> <span class="o">=</span> <span class="n">x_left</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">xr</span> <span class="o">=</span> <span class="n">x_right</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># Round to avoid floating point precision error, which can place zstep</span>
+        <span class="c1"># off the z grid when it should in fact be on a grid point.</span>
+        <span class="n">z_rel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">xl</span> <span class="o">+</span> <span class="n">xr</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xr</span> <span class="o">-</span> <span class="n">xl</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sp</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="n">z_rel</span><span class="o">/</span><span class="n">zspan</span><span class="o">*</span><span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="make_x_full">
+<a class="viewcode-back" href="../modules/meshing.html#meshing.make_x_full">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_x_full</span><span class="p">(</span><span class="n">x_sides</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Map the composition space.</span>
+
+<span class="sd">    Only supports binary and ternary systems.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x_sides : dict of dicts</span>
+<span class="sd">        End values of the atom fractions of each constituent.</span>
+<span class="sd">    nx : int, optional</span>
+<span class="sd">        Number of steps in each dimension of the composition grid. The default</span>
+<span class="sd">        is 20.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If the system contains more than two independent constituents.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x_full : 2D array</span>
+<span class="sd">        Atom fraction grid, shape (`n_inds`, `nx**n_inds`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TIP: this function is no longer used. Max DT is calculated from initial x</span>
+    <span class="c1"># array (see simu.add_time). It would be useful to extend make_x_full to</span>
+    <span class="c1"># systems of any size to better scan possible compositions (?).</span>
+
+    <span class="n">x_range</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">x_sides</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">]:</span>
+        <span class="n">x_range</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_sides</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">x_sides</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>
+                                 <span class="n">num</span><span class="o">=</span><span class="n">nx</span><span class="p">)</span>
+
+    <span class="n">n_inds</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_sides</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">n_inds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">x_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">x_range</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="k">elif</span> <span class="n">n_inds</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+
+        <span class="n">x_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="n">nx</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">A</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">x_range</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">x_range</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">x_full</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span><span class="o">*</span><span class="n">x_range</span><span class="p">[</span><span class="n">A</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">)])</span>
+        <span class="n">x_full</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">x_range</span><span class="p">[</span><span class="n">B</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">)])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;make_x_full&quot; not implemented for n_inds = </span><span class="si">{</span><span class="n">n_inds</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x_full</span></div>
+
+
+
+<div class="viewcode-block" id="make_xtab">
+<a class="viewcode-back" href="../modules/meshing.html#meshing.make_xtab">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_xtab</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make 2D array from dict of 1D arrays.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : dict of 1D arrays</span>
+<span class="sd">        `n_inds` composition arrays, shape (`nx_i`,).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    points : 2D array</span>
+<span class="sd">        Composition array, shape (`product(nx_i)`, `n_inds`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">)</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grids</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">points</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

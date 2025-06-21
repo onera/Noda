@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>alloy_system &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="composition_variables" href="composition_variables.html" />
+    <link rel="prev" title="Package reference" href="../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#alloy_system.AlloySystem"><code class="docutils literal notranslate"><span class="pre">AlloySystem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.__init__"><code class="docutils literal notranslate"><span class="pre">AlloySystem.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.get_user_data"><code class="docutils literal notranslate"><span class="pre">AlloySystem.get_user_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.get_or_raise"><code class="docutils literal notranslate"><span class="pre">AlloySystem.get_or_raise()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.is_lattice_ideal"><code class="docutils literal notranslate"><span class="pre">AlloySystem.is_lattice_ideal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.add_thermo_functions"><code class="docutils literal notranslate"><span class="pre">AlloySystem.add_thermo_functions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.add_thermo_model"><code class="docutils literal notranslate"><span class="pre">AlloySystem.add_thermo_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.extend_MU_funx"><code class="docutils literal notranslate"><span class="pre">AlloySystem.extend_MU_funx()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.add_mob_functions"><code class="docutils literal notranslate"><span class="pre">AlloySystem.add_mob_functions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.add_mob_model"><code class="docutils literal notranslate"><span class="pre">AlloySystem.add_mob_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alloy_system.AlloySystem.process_sink_terms"><code class="docutils literal notranslate"><span class="pre">AlloySystem.process_sink_terms()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#alloy_system.intro_msg"><code class="docutils literal notranslate"><span class="pre">intro_msg()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="meshing.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">meshing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="para_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">para_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_wrappers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_wrappers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trackers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/alloy_system.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-alloy_system">
+<span id="alloy-system"></span><h1><a class="reference internal" href="#module-alloy_system" title="alloy_system"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alloy_system</span></code></a><a class="headerlink" href="#module-alloy_system" title="Link to this heading"></a></h1>
+<p>Define thermodynamic and mobility properties of alloy system.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">alloy_system.</span></span><span class="sig-name descname"><span class="pre">AlloySystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Thermodynamic and mobility properties of alloy system.</p>
+<p>This class mainly serves as a base class for <a class="reference internal" href="simu.html#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">simu.Simulation</span></code></a>. It
+can also be used on its own to examine thermodynamics and mobility data.</p>
+<p>This is an isothermal, single-phase version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ref</strong> (<em>str</em>) – System reference, name of sub-directory with input and output files.</p></li>
+<li><p><strong>work_dir</strong> (<em>pathlib.Path</em>) – Path to directory with system-related input and output files.</p></li>
+<li><p><strong>database_register</strong> (<em>dict</em>) – Register of available thermodynamic and mobility databases.</p></li>
+<li><p><strong>volume_databases</strong> (<em>dict</em>) – Available molar volume data.</p></li>
+<li><p><strong>vacancy_databases</strong> (<em>dict</em>) – Available vacancy formation energy data.</p></li>
+<li><p><strong>pstring</strong> (<em>str</em>) – Content of system input file, set of user-defined parameters.</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – Set of system parameters, processed by
+<a class="reference internal" href="para_io.html#para_io.read_parameter_string" title="para_io.read_parameter_string"><code class="xref py py-func docutils literal notranslate"><span class="pre">para_io.read_parameter_string()</span></code></a> from pstring.</p></li>
+<li><p><strong>inds</strong> (<em>list</em>) – Independent constituents.</p></li>
+<li><p><strong>dep</strong> (<em>str</em>) – Dependent constituent.</p></li>
+<li><p><strong>comps</strong> (<em>list</em>) – Conservative (atomic) species, with dependent constituent at the end.</p></li>
+<li><p><strong>phase</strong> (<em>str</em>) – Name of phase.</p></li>
+<li><p><strong>thermo_db</strong> (<em>str</em>) – Name of thermodynamic database.</p></li>
+<li><p><strong>mob_db</strong> (<em>str</em>) – Name of mobility database.</p></li>
+<li><p><strong>TC</strong> (<em>float</em>) – Temperature in Celsius.</p></li>
+<li><p><strong>TK</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+<li><p><strong>alloy</strong> (<em>str</em>) – Alloy system str representation, with dependent constituent first.</p></li>
+<li><p><strong>stamp</strong> (<em>str</em>) – Label with syntax phase-alloy-TC.</p></li>
+<li><p><strong>volume_db</strong> (<em>str</em>) – Name of partial molar volume database.</p></li>
+<li><p><strong>V_partial</strong> (<em>dict</em>) – Partial molar volumes. See See <a class="reference internal" href="data_io.html#data_io.get_volume_data" title="data_io.get_volume_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">data_io.get_volume_data()</span></code></a>.</p></li>
+<li><p><strong>vacancy_db</strong> (<em>str</em>) – Name of vacancy formation energy database.</p></li>
+<li><p><strong>GfV</strong> (<em>dict</em>) – Vacancy formation energy in pure elements, given as [enthalpy, entropy]
+in J/mol and J/mol/K. See <a class="reference internal" href="data_io.html#data_io.get_vacancy_formation_energy" title="data_io.get_vacancy_formation_energy"><code class="xref py py-func docutils literal notranslate"><span class="pre">data_io.get_vacancy_formation_energy()</span></code></a>.</p></li>
+<li><p><strong>Va_method</strong> (<em>str</em>) – Method used to compute equilibrium vacancy fraction: ‘cst’
+(composition-fixed) or ‘RK’ (composition-dependant via Redlich-Kister
+polynomial).</p></li>
+<li><p><strong>thermo_params</strong> (<em>dict</em><em> of </em><em>floats</em>) – <p>Thermodynamic parameters arranged as follows:</p>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">A:</span> <span class="pre">G_A</span> <span class="pre">for</span> <span class="pre">A</span> <span class="pre">in</span> <span class="pre">endmembers</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">AB:</span> <span class="pre">[L0,</span> <span class="pre">L1]</span> <span class="pre">for</span> <span class="pre">AB</span> <span class="pre">in</span> <span class="pre">binary</span> <span class="pre">subsystems</span></code></div>
+</div>
+</p></li>
+<li><p><strong>mob_params</strong> (<em>dict</em><em> of </em><em>dicts</em>) – <p>Mobility parameters arranged as follows:</p>
+<p><code class="docutils literal notranslate"><span class="pre">{i:</span> <span class="pre">subdict</span> <span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">comps}</span></code></p>
+<p>subdict: <code class="docutils literal notranslate"><span class="pre">{j:</span> <span class="pre">val</span> <span class="pre">for</span> <span class="pre">j</span> <span class="pre">in</span> <span class="pre">subsystems}</span></code>.</p>
+</p></li>
+<li><p><strong>k_dislo</strong> (<em>float</em><em> or </em><em>str</em>) – Sink strength associated with dislocation climb (str should be a valid
+file name in current job folder)</p></li>
+<li><p><strong>k_pores</strong> (<em>float</em><em> or </em><em>str</em>) – Sink strength associated with pore growth (str should be a valid file
+name in current job folder)</p></li>
+<li><p><strong>rho_dislo</strong> (<em>float</em><em> or </em><em>str</em>) – Dislocation density, used to compute k_dislo from local DVa.</p></li>
+<li><p><strong>rho_pores</strong> (<em>float</em>) – Density used to compute k_pores from local DVa.</p></li>
+<li><p><strong>ideal_lattice</strong> (<em>bool</em>) – Whether lattice is ideal, i.e., vacancy fraction is kept at
+equilibrium.</p></li>
+<li><p><strong>G_funx</strong> (<em>function</em>) – Compute Gibbs free energy at composition provided as array of atom
+fractions of the dependent constituents.</p></li>
+<li><p><strong>G_fun</strong> (<em>function</em>) – Alias of G_funx</p></li>
+<li><p><strong>G_funy</strong> (<em>function</em>) – Compute Gibbs free energy at composition provided as array of site
+fractions of vacancies and of the dependent constituents. See
+<a class="reference internal" href="#alloy_system.AlloySystem.add_thermo_model" title="alloy_system.AlloySystem.add_thermo_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_thermo_model()</span></code></a>.</p></li>
+<li><p><strong>MU_funx</strong> (<em>function</em>) – Compute chemical potential at composition provided as array of atom
+fractions of the dependent constituents.</p></li>
+<li><p><strong>MU_fun</strong> (<em>function</em>) – Alias of MU_funx</p></li>
+<li><p><strong>MU_funy</strong> (<em>function</em>) – Compute chemical potentials at composition provided as array of site
+fractions of vacancies and of the dependent constituents. See
+<a class="reference internal" href="#alloy_system.AlloySystem.add_thermo_model" title="alloy_system.AlloySystem.add_thermo_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_thermo_model()</span></code></a>.</p></li>
+<li><p><strong>yVa_fun</strong> (<em>function</em>) – Compute equilibrium vacancy fraction at composition provided as array
+of atom fractions of the dependent constituents. See
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">add_Va_model()</span></code>.</p></li>
+<li><p><strong>DT_fun</strong> (<em>function</em>) – Compute tracer diffusion coefficients at composition provided as array
+of atom fractions of the dependent constituents.</p></li>
+<li><p><strong>L_fun</strong> (<em>function</em>) – Compute phenomenological coefficients at composition provided as array
+of atom fractions of the dependent constituents. Derived from <cite>DT_fun</cite>
+(see <a class="reference internal" href="thermo_functions.html#thermo_functions.make_Lfun" title="thermo_functions.make_Lfun"><code class="xref py py-func docutils literal notranslate"><span class="pre">thermo_functions.make_Lfun()</span></code></a>).</p></li>
+<li><p><strong>DVa_fun</strong> (<em>function</em>) – Compute vacancy diffusion coefficient from atom fractions and site
+fractions, see <a class="reference internal" href="thermo_functions.html#thermo_functions.make_DVa_fun" title="thermo_functions.make_DVa_fun"><code class="xref py py-func docutils literal notranslate"><span class="pre">thermo_functions.make_DVa_fun()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<p>Read input file and define system parameters. See
+<a class="reference internal" href="para_io.html#para_io.read_parameter_string" title="para_io.read_parameter_string"><code class="xref py py-func docutils literal notranslate"><span class="pre">para_io.read_parameter_string()</span></code></a> for how input file is parsed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.get_user_data">
+<span class="sig-name descname"><span class="pre">get_user_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.get_user_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.get_user_data" title="Link to this definition"></a></dt>
+<dd><p>Get data from user.</p>
+<ul class="simple">
+<li><p>Molar volume databases</p></li>
+<li><p>Vacancy formation energy databases</p></li>
+<li><p>Register of thermodynamics and mobility databases</p></li>
+<li><p>Default parameters</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.get_or_raise">
+<span class="sig-name descname"><span class="pre">get_or_raise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.get_or_raise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.get_or_raise" title="Link to this definition"></a></dt>
+<dd><p>Get value or raise exception if key not present.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.is_lattice_ideal">
+<span class="sig-name descname"><span class="pre">is_lattice_ideal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.is_lattice_ideal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.is_lattice_ideal" title="Link to this definition"></a></dt>
+<dd><p>Check whether lattice is ideal and print info messages.</p>
+<p>If the input files contains no value for either k_dislo, k_pores,
+rho_dislo or rho_pores, the lattice is ideal. If either parameter is
+given, the lattice is non-ideal.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.add_thermo_functions">
+<span class="sig-name descname"><span class="pre">add_thermo_functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.add_thermo_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.add_thermo_functions" title="Link to this definition"></a></dt>
+<dd><p>Add thermodynamics functions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.add_thermo_model">
+<span class="sig-name descname"><span class="pre">add_thermo_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.add_thermo_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.add_thermo_model" title="Link to this definition"></a></dt>
+<dd><p>Add analytical models for G and MU.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.extend_MU_funx">
+<span class="sig-name descname"><span class="pre">extend_MU_funx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.extend_MU_funx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.extend_MU_funx" title="Link to this definition"></a></dt>
+<dd><p>Make function that computes MU from site fractions.</p>
+<p>Here the vacancy site fraction is at its equilibrium value (MU_Va = 0).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.add_mob_functions">
+<span class="sig-name descname"><span class="pre">add_mob_functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.add_mob_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.add_mob_functions" title="Link to this definition"></a></dt>
+<dd><p>Add mobility functions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.add_mob_model">
+<span class="sig-name descname"><span class="pre">add_mob_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.add_mob_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.add_mob_model" title="Link to this definition"></a></dt>
+<dd><p>Add analytical model for DT.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="alloy_system.AlloySystem.process_sink_terms">
+<span class="sig-name descname"><span class="pre">process_sink_terms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#AlloySystem.process_sink_terms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.AlloySystem.process_sink_terms" title="Link to this definition"></a></dt>
+<dd><p>Process user input for non-ideal lattice parameters.</p>
+<p>Parameters of interest: k_dislo, k_pores, rho_dislo, rho_pores. Input
+can be a float or a string indicating a file name. If neither k_dislo
+or rho_dislo is given, k_dislo defaults to 0. Same for k_pores and
+rho_pores.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="alloy_system.intro_msg">
+<span class="sig-prename descclassname"><span class="pre">alloy_system.</span></span><span class="sig-name descname"><span class="pre">intro_msg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/alloy_system.html#intro_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#alloy_system.intro_msg" title="Link to this definition"></a></dt>
+<dd><p>Prepare intro message.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api.html" class="btn btn-neutral float-left" title="Package reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="composition_variables.html" class="btn btn-neutral float-right" title="composition_variables" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

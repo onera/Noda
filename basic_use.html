@@ -1,0 +1,1210 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basic use &mdash; noda 1.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=fee868cc" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8ca9e7a0"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/tabs.js?v=3ee01567"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Advanced use" href="advanced_use.html" />
+    <link rel="prev" title="Getting started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            noda
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic use</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-a-simulation">Setting up a simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#thermodynamic-and-mobility-databases">Thermodynamic and mobility databases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#system-constituents">System constituents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#system-conditions">System conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simulation-conditions">Simulation conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#domain-geometry">Domain geometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initial-space-grid">Initial space grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initial-atom-fraction-profile">Initial atom fraction profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#boundary-conditions">Boundary conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optional-parameters">Optional parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-a-diffusion-simulation">Running a diffusion simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#accessing-and-plotting-simulation-results">Accessing and plotting simulation results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#accessing-results">Accessing results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-results">Plotting results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#accessing-thermodynamic-and-diffusion-properties">Accessing thermodynamic and diffusion properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#working-with-model-systems">Working with model systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#diffusion-couple-planar-geometry">Diffusion couple (planar geometry)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constant-surface-concentration-planar-geometry">Constant surface concentration (planar geometry)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constant-surface-concentration-spherical-geometry">Constant surface concentration (spherical geometry)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Basic use</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/basic_use.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="basic-use">
+<span id="id1"></span><h1>Basic use<a class="headerlink" href="#basic-use" title="Link to this heading"></a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#setting-up-a-simulation" id="id20">Setting up a simulation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#thermodynamic-and-mobility-databases" id="id21">Thermodynamic and mobility databases</a></p></li>
+<li><p><a class="reference internal" href="#system-constituents" id="id22">System constituents</a></p></li>
+<li><p><a class="reference internal" href="#system-conditions" id="id23">System conditions</a></p></li>
+<li><p><a class="reference internal" href="#simulation-conditions" id="id24">Simulation conditions</a></p></li>
+<li><p><a class="reference internal" href="#domain-geometry" id="id25">Domain geometry</a></p></li>
+<li><p><a class="reference internal" href="#initial-space-grid" id="id26">Initial space grid</a></p></li>
+<li><p><a class="reference internal" href="#initial-atom-fraction-profile" id="id27">Initial atom fraction profile</a></p></li>
+<li><p><a class="reference internal" href="#boundary-conditions" id="id28">Boundary conditions</a></p></li>
+<li><p><a class="reference internal" href="#optional-parameters" id="id29">Optional parameters</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#running-a-diffusion-simulation" id="id30">Running a diffusion simulation</a></p></li>
+<li><p><a class="reference internal" href="#accessing-and-plotting-simulation-results" id="id31">Accessing and plotting simulation results</a></p>
+<ul>
+<li><p><a class="reference internal" href="#accessing-results" id="id32">Accessing results</a></p></li>
+<li><p><a class="reference internal" href="#plotting-results" id="id33">Plotting results</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#accessing-thermodynamic-and-diffusion-properties" id="id34">Accessing thermodynamic and diffusion properties</a></p></li>
+<li><p><a class="reference internal" href="#working-with-model-systems" id="id35">Working with model systems</a></p>
+<ul>
+<li><p><a class="reference internal" href="#diffusion-couple-planar-geometry" id="id36">Diffusion couple (planar geometry)</a></p></li>
+<li><p><a class="reference internal" href="#constant-surface-concentration-planar-geometry" id="id37">Constant surface concentration (planar geometry)</a></p></li>
+<li><p><a class="reference internal" href="#constant-surface-concentration-spherical-geometry" id="id38">Constant surface concentration (spherical geometry)</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="setting-up-a-simulation">
+<span id="setting-up"></span><h2><a class="toc-backref" href="#id20" role="doc-backlink">Setting up a simulation</a><a class="headerlink" href="#setting-up-a-simulation" title="Link to this heading"></a></h2>
+<p>A typical input file contains the following:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">/../../tests/jobs/couple_NiCrSi/couple_NiCrSi-input.txt</span><a class="headerlink" href="#id9" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Thermodynamic and mobility databases</span>
+<span class="n">thermo_db</span> <span class="o">=</span> <span class="n">schuster2000</span>
+<span class="n">mob_db</span>    <span class="o">=</span> <span class="n">du2001</span>
+
+<span class="c1"># System constituents</span>
+<span class="n">independent</span>    <span class="o">=</span> <span class="n">Si</span><span class="p">,</span> <span class="n">Cr</span>                  <span class="c1"># independent constituents</span>
+<span class="n">dependent</span>      <span class="o">=</span> <span class="n">Ni</span>                      <span class="c1"># dependent constituent</span>
+
+<span class="c1"># System conditions</span>
+<span class="n">phase</span>     <span class="o">=</span> <span class="n">fcc</span>                          <span class="c1"># phase</span>
+<span class="n">TC</span>        <span class="o">=</span> <span class="mi">1200</span>                         <span class="c1"># temperature (Celsius)</span>
+
+<span class="c1"># Simulation conditions</span>
+<span class="n">th</span>        <span class="o">=</span> <span class="mi">10</span>                           <span class="c1"># total time (h)</span>
+<span class="n">num_out</span>   <span class="o">=</span> <span class="mi">11</span>                           <span class="c1"># number of saved time steps, optional</span>
+
+<span class="c1"># Domain geometry</span>
+<span class="n">geometry</span>  <span class="o">=</span> <span class="n">planar</span>                       <span class="c1"># optional</span>
+
+<span class="c1"># Initial space grid</span>
+<span class="n">zmin</span>      <span class="o">=</span> <span class="mi">0</span>                            <span class="c1"># position of left-hand domain border (m), optional</span>
+<span class="n">zmax</span>      <span class="o">=</span> <span class="mf">5e-4</span>                         <span class="c1"># position of right-hand domain border (m)</span>
+<span class="n">nz</span>        <span class="o">=</span> <span class="mi">60</span>                           <span class="c1"># number of space steps, optional</span>
+<span class="n">grid</span>      <span class="o">=</span> <span class="n">linear</span>                       <span class="c1"># grid type, optional</span>
+
+<span class="c1"># Initial atom fraction profile</span>
+<span class="n">x_profile</span> <span class="o">=</span> <span class="n">step</span> <span class="mf">0.5</span>                     <span class="c1"># profile type and options</span>
+<span class="n">x_left</span>    <span class="o">=</span> <span class="n">Si</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Cr</span><span class="p">:</span> <span class="mf">0.3</span>               <span class="c1"># independent constituents on left-hand side</span>
+<span class="n">x_right</span>   <span class="o">=</span> <span class="n">Si</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">Cr</span><span class="p">:</span> <span class="mi">0</span>               <span class="c1"># independent constituents on right-hand side</span>
+
+<span class="c1"># Boundary conditions</span>
+<span class="n">JBC_left</span>  <span class="o">=</span> <span class="n">Si</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Cr</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Ni</span><span class="p">:</span> <span class="mi">0</span>          <span class="c1"># flux of atom constituents on left boundary, optional</span>
+<span class="n">JBC_right</span> <span class="o">=</span> <span class="n">Si</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Cr</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Ni</span><span class="p">:</span> <span class="mi">0</span>          <span class="c1"># flux of atom constituents on right boundary, optional</span>
+</pre></div>
+</div>
+</div>
+<p>Blank lines and code located after the comment character <code class="docutils literal notranslate"><span class="pre">#</span></code> are ignored when
+the file is parsed. Parameters are to be entered with the following syntax:
+<code class="docutils literal notranslate"><span class="pre">key</span> <span class="pre">=</span> <span class="pre">value</span></code>, with any number of spaces around the <code class="docutils literal notranslate"><span class="pre">=</span></code> sign. Some keys
+have an accepted alias (shorter name), as shown below.</p>
+<p>Element symbols are case-insensitive — for instance, <code class="docutils literal notranslate"><span class="pre">fe</span></code> is a valid symbol
+for iron.</p>
+<p>Some of the parameters are optional. When an optional parameter is not present
+in the input file, a default value is assigned. “Factory” default values are
+defined in the package installation but can be overridden by user-defined
+values (see <a class="reference internal" href="advanced_use.html#default-parameters"><span class="std std-ref">Default parameters</span></a>).</p>
+<section id="thermodynamic-and-mobility-databases">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Thermodynamic and mobility databases</a><a class="headerlink" href="#thermodynamic-and-mobility-databases" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">thermo_db</span></code>: name of the thermodynamic database to be used in the calculation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mob_db</span></code>: name of the mobility database to be used in the calculation.</p></li>
+</ul>
+<p>These names must be associated with database files in <code class="docutils literal notranslate"><span class="pre">user_data.toml</span></code>.</p>
+</section>
+<section id="system-constituents">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">System constituents</a><a class="headerlink" href="#system-constituents" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">independent</span></code>: name independent constituents, with the following syntax:<br>
+<code class="docutils literal notranslate"><span class="pre">element1,</span> <span class="pre">element2,</span> <span class="pre">...</span></code>. Alias: <code class="docutils literal notranslate"><span class="pre">inds</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dependent</span></code>: name of the dependent constituent. This is typically the alloy
+base element.|br|
+Alias: <code class="docutils literal notranslate"><span class="pre">dep</span></code>.</p></li>
+</ul>
+</section>
+<section id="system-conditions">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">System conditions</a><a class="headerlink" href="#system-conditions" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">phase</span></code>: name of the phase.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TC</span></code>: temperature in Celsius.</p></li>
+</ul>
+</section>
+<section id="simulation-conditions">
+<span id="id2"></span><h3><a class="toc-backref" href="#id24" role="doc-backlink">Simulation conditions</a><a class="headerlink" href="#simulation-conditions" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">th</span></code>: simulation time in h.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_out</span></code>: number of saved time steps, optional (factory default: 2). A
+simulation often requires a large number of time steps; only the number of
+steps specified by <code class="docutils literal notranslate"><span class="pre">num_out</span></code> are saved to file, and accessible after the
+simulation is done.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The initial and last step are always saved, and these two steps are included
+in <code class="docutils literal notranslate"><span class="pre">num_out</span></code>. Therefore <code class="docutils literal notranslate"><span class="pre">num_out</span></code> must be greater than or equal to 2. For
+instance, if the simulation time is 2 h and one wants to access the results
+that correspond to 1 h of simulation, one may use <br>
+<code class="docutils literal notranslate"><span class="pre">num_out</span> <span class="pre">=</span> <span class="pre">3</span></code>. This will save results at 0, 1 and 2 h of simulation
+(<code class="docutils literal notranslate"><span class="pre">saved_times</span> <span class="pre">=</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></code>).</p>
+</div>
+</section>
+<section id="domain-geometry">
+<span id="id3"></span><h3><a class="toc-backref" href="#id25" role="doc-backlink">Domain geometry</a><a class="headerlink" href="#domain-geometry" title="Link to this heading"></a></h3>
+<p>Noda solves the diffusion problem along one space coordinate, in either of three
+geometric configurations:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>planar : a slab of given thickness in one direction
+and translational symmetry in the two other directions, described in
+Cartesian coordinates.</p></li>
+<li><p>cylindrical : a cylinder with translational and rotational
+symmetry with respect to its axis, described in cylindrical coordinates.</p></li>
+<li><p>spherical : a sphere with rotational symmetry with respect
+to its center, described in spherical coordinates.</p></li>
+</ul>
+</div></blockquote>
+<p>The <code class="docutils literal notranslate"><span class="pre">geometry</span></code> parameter takes either argument (‘planar’, ‘cylindrical’ or
+‘spherical’). It is optional (factory default: ‘planar’).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The rotational symmetry in the cylindrical and spherical geometries has
+implications regarding the choice of the domain boundary positions and
+boundary conditions (see <a class="reference internal" href="#initial-space-grid"><span class="std std-ref">Initial space grid</span></a>).</p>
+</div>
+</section>
+<section id="initial-space-grid">
+<span id="id4"></span><h3><a class="toc-backref" href="#id26" role="doc-backlink">Initial space grid</a><a class="headerlink" href="#initial-space-grid" title="Link to this heading"></a></h3>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">zmin</span></code>: position of left-hand domain boundary in m, optional (system
+default: 0).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">zmax</span></code>: position of right-hand domain boundary in m.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nz</span></code>: number of space steps, optional (factory default: 51).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">grid</span></code>: optional (factory default: ‘linear’). Can be either a standard grid
+type or a file name:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘linear’: linear grid from <code class="docutils literal notranslate"><span class="pre">zmin</span></code> to <code class="docutils literal notranslate"><span class="pre">zmax</span></code> with size <code class="docutils literal notranslate"><span class="pre">nz</span></code>.</p></li>
+<li><p>‘geo’: geometric grid from <code class="docutils literal notranslate"><span class="pre">zmin</span></code> to <code class="docutils literal notranslate"><span class="pre">zmax</span></code> with size <code class="docutils literal notranslate"><span class="pre">nz</span></code> and
+common ratio <code class="docutils literal notranslate"><span class="pre">q</span></code>:<br><span class="math notranslate nohighlight">\(\Delta z_{i+1} = q \Delta z_{i}\)</span>. The
+common ratio is indicated as an additional parameter, for example
+<code class="docutils literal notranslate"><span class="pre">q</span> <span class="pre">=</span> <span class="pre">1.02</span></code>. It is optional (factory default: 1.02).</p></li>
+<li><p>filename: read grid positions from file in the current job folder. The
+file can be in any format readable by the Numpy <code class="docutils literal notranslate"><span class="pre">genfromtxt</span></code> method.
+<code class="docutils literal notranslate"><span class="pre">zmin</span></code>, <code class="docutils literal notranslate"><span class="pre">zmax</span></code> and <code class="docutils literal notranslate"><span class="pre">nz</span></code> are inferred from the grid file, and must
+not be included in the input file.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As shown in <a class="reference internal" href="background.html#implementation-diffusion"><span class="std std-ref">Diffusion</span></a>, grid positions correspond to the
+edges of the volumes (nodes, noted <code class="docutils literal notranslate"><span class="pre">z</span></code>). Fluxes are evaluated on nodes.
+Composition and related variables (concentrations, atom fractions, chemical
+potentials, molar volumes, …) are evaluated in the center of the volumes,
+noted <code class="docutils literal notranslate"><span class="pre">zm</span></code>. For instance, with <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">=</span> <span class="pre">linear</span></code>, <code class="docutils literal notranslate"><span class="pre">nz</span> <span class="pre">=</span> <span class="pre">4</span></code> and <code class="docutils literal notranslate"><span class="pre">zmax</span> <span class="pre">=</span> <span class="pre">3</span></code>
+will produce <br> <code class="docutils literal notranslate"><span class="pre">z</span> <span class="pre">=</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3]</span></code> and <code class="docutils literal notranslate"><span class="pre">zm</span> <span class="pre">=</span> <span class="pre">[0.5,</span> <span class="pre">1.5,</span> <span class="pre">2.5]</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At the moment, Noda only includes an explicit (forward Euler) time
+integration scheme, which is conditionnally stable. The minimum time step is
+based on the smallest space step (see <a class="reference internal" href="advanced_use.html#time-step"><span class="std std-ref">Time step</span></a>). Using a geometric
+grid with a large common ratio will produce locally small space steps and
+therefore require a large number of time steps.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the cylindrical and spherical geometries:</p>
+<ul class="simple">
+<li><p>The space coordinate is named  <span class="math notranslate nohighlight">\(z\)</span>, instead of the usual <span class="math notranslate nohighlight">\(\rho\)</span>
+or <span class="math notranslate nohighlight">\(r\)</span>, to favor compatibility across the three geometries.</p></li>
+<li><p>The simulation domain is represented by positive radial coordinates, and
+the left-hand domain border is closest to the centre of symmetry.
+Therefore the following is enforced:
+<span class="math notranslate nohighlight">\(0 \leq z_\mathrm{min} &lt; z_\mathrm{max}\)</span>.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">zmin</span> <span class="pre">=</span> <span class="pre">0</span></code>, the left-hand domain boundary is at the axis (or center)
+of symmetry. In this case, it is recommended to use a 0-flux boundary
+condition at this boundary.</p></li>
+<li><p>It is possible to represent a hollow cylinder (or sphere) by giving a
+strictly positive value to <code class="docutils literal notranslate"><span class="pre">zmin</span></code>.</p></li>
+</ul>
+</div>
+</section>
+<section id="initial-atom-fraction-profile">
+<span id="initial-atom-fraction"></span><h3><a class="toc-backref" href="#id27" role="doc-backlink">Initial atom fraction profile</a><a class="headerlink" href="#initial-atom-fraction-profile" title="Link to this heading"></a></h3>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">x_profile</span></code>: can be either a standard profile type or a file name:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘step’ followed by a float argument: heaviside profile with step at
+<code class="docutils literal notranslate"><span class="pre">zstep</span></code>. <br>
+If the argument is &gt; 0.1, it is interpreted as a fraction of the domain
+length <br>
+<span class="math notranslate nohighlight">\(\rightarrow\)</span> <code class="docutils literal notranslate"><span class="pre">zstep</span> <span class="pre">=</span> <span class="pre">zmin</span> <span class="pre">+</span> <span class="pre">arg</span> <span class="pre">*</span> <span class="pre">(zmax</span> <span class="pre">-</span> <span class="pre">zmin)</span></code>. <br>
+If the argument is &lt; 0.1, it is interpreted as <code class="docutils literal notranslate"><span class="pre">zstep</span></code> in m. <br>
+The atom fractions on the left and right sides of the step are read from
+the <code class="docutils literal notranslate"><span class="pre">x_left</span></code> and <code class="docutils literal notranslate"><span class="pre">x_right</span></code> parameters (both required).</p></li>
+<li><p>‘smooth step’ followed by a float: same with an error function instead of
+heaviside.</p></li>
+<li><p>‘flat’: flat profile. The atom fractions are read from the <code class="docutils literal notranslate"><span class="pre">x_left</span></code>
+parameter (required).</p></li>
+<li><p>filename: read values from file in the current job folder. The file can be
+in any format readable by the Numpy <code class="docutils literal notranslate"><span class="pre">genfromtxt</span></code> method. It must have
+the independent constituent profiles arranged by columns, with the
+constituent names on the first line. The size of the columns must match
+that of <code class="docutils literal notranslate"><span class="pre">zm</span></code> (i.e., <code class="docutils literal notranslate"><span class="pre">nz</span> <span class="pre">-</span> <span class="pre">1</span></code>). <code class="docutils literal notranslate"><span class="pre">x_left</span></code> and <code class="docutils literal notranslate"><span class="pre">x_right</span></code> must not be
+used.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x_left</span></code>: name and atom fractions of each independent constituent on the
+left-hand side, with the following syntax: <code class="docutils literal notranslate"><span class="pre">element1:</span> <span class="pre">value,</span> <span class="pre">element2:</span> <span class="pre">value,</span> <span class="pre">...</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x_right</span></code>: same on the right-hand side.</p></li>
+</ul>
+</section>
+<section id="boundary-conditions">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Boundary conditions</a><a class="headerlink" href="#boundary-conditions" title="Link to this heading"></a></h3>
+<p>Noda supports Neumann (fixed flux) and Dirichlet (fixed composition)
+boundary conditions. For each of the left and right boundary, the user can
+specify a composition (atom fractions of the independent constituents) or fluxes
+(of all atom constituents). If no condition is given, a zero flux condition is
+applied.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">JBC_left</span></code>: flux of atom constituents on left boundary, with the following
+syntax: <br>
+<code class="docutils literal notranslate"><span class="pre">element1:</span> <span class="pre">value,</span> <span class="pre">element2:</span> <span class="pre">value,</span> <span class="pre">...</span></code> <br>
+The value is in SI units (mol/m2/s). It can also be an expression of time
+(noted <code class="docutils literal notranslate"><span class="pre">t</span></code>) with basic Python operators, which will be evaluated with
+<code class="docutils literal notranslate"><span class="pre">eval</span></code>, ex: <code class="docutils literal notranslate"><span class="pre">(3*t</span> <span class="pre">+</span> <span class="pre">2)**(1/2)</span></code>. If <code class="docutils literal notranslate"><span class="pre">JBC_left</span></code> is used, values must be
+given for all atom constituents.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">JBC_right</span></code>: same on right boundary.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xBC_left</span></code>: atom fractions of independent constituents on left boundary,
+with the following syntax: <code class="docutils literal notranslate"><span class="pre">element1:</span> <span class="pre">value,</span> <span class="pre">element2:</span> <span class="pre">value,</span> <span class="pre">...</span></code> <br>
+It can also be an expression of time (noted <code class="docutils literal notranslate"><span class="pre">t</span></code>) with basic Python
+operators. If <code class="docutils literal notranslate"><span class="pre">xBC_left</span></code> is used, values must be given for all independent
+constituents.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xBC_right</span></code>: same on right boundary.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Internally, Dirichlet boundary conditions are implemented by setting fluxes
+of the independent constituants in the lattice reference frame. By default,
+a flux of the dependent constituent is set so that the sum of the volumetric
+fluxes at the boundary is 0:</p>
+<div class="math notranslate nohighlight">
+\[J_n^\mathrm{lat} = -\frac{1}{V_n}\sum_{i=1}^{n - 1} J_i^\mathrm{lat}V_i,\]</div>
+<p>where the <span class="math notranslate nohighlight">\(V_i\)</span> are the partial molar volumes. The volume of the
+simulation domain is conserved. The quantity of atom matter (in mol) may
+change due to differences in the partial molar volumes.</p>
+</div>
+</section>
+<section id="optional-parameters">
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Optional parameters</a><a class="headerlink" href="#optional-parameters" title="Link to this heading"></a></h3>
+<p>The user may also specify:</p>
+<ul class="simple">
+<li><p>A partial molar volume database, with key <code class="docutils literal notranslate"><span class="pre">volume_db</span></code>. The factory default is
+<code class="docutils literal notranslate"><span class="pre">standard</span></code>.</p></li>
+<li><p>A vacancy formation energy database, with key <code class="docutils literal notranslate"><span class="pre">vacancy_db</span></code>. The factory
+default is <code class="docutils literal notranslate"><span class="pre">standard</span></code>.</p></li>
+</ul>
+<p>Like the other optional parameters, the factory default values can be overridden
+by user-specified default values (see <a class="reference internal" href="advanced_use.html#default-parameters"><span class="std std-ref">Default parameters</span></a>).</p>
+</section>
+</section>
+<section id="running-a-diffusion-simulation">
+<h2><a class="toc-backref" href="#id30" role="doc-backlink">Running a diffusion simulation</a><a class="headerlink" href="#running-a-diffusion-simulation" title="Link to this heading"></a></h2>
+<p>A new simulation is created using the <a class="reference internal" href="modules/simu.html#simu.NewSimulation" title="simu.NewSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">simu.NewSimulation</span></code></a> class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">simu</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">NewSimulation</span><span class="p">(</span><span class="s1">&#39;couple_NiCrSi&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This supposes that an input file named <code class="docutils literal notranslate"><span class="pre">couple_NiCrSi-input.txt</span></code> is present
+in the working directory. When the simulation is created, some information is
+logged:</p>
+<ul class="simple">
+<li><p>Part of it (with the <cite>INFO</cite> level) is printed to screen and saved to the log
+file (here <code class="docutils literal notranslate"><span class="pre">couple_NiCrSi.nod</span></code>): this indicates what default choices are
+made for all parameters not present in the input file, and gives general
+information as to how thermodynamics and mobility functions are generated.</p></li>
+<li><p>Another part (with the <cite>DATA</cite> level) is only saved to the log file: this
+contains data that will be used when loading the simulation.</p></li>
+</ul>
+<p>The simulation is then run with the <a class="reference internal" href="modules/simu.html#simu.Simulation.run" title="simu.Simulation.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">simu.Simulation.run()</span></code></a> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">foo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Once the calculation is done, Noda logs the run time (screen and log file) and
+the results (to the log file only).</p>
+</section>
+<section id="accessing-and-plotting-simulation-results">
+<h2><a class="toc-backref" href="#id31" role="doc-backlink">Accessing and plotting simulation results</a><a class="headerlink" href="#accessing-and-plotting-simulation-results" title="Link to this heading"></a></h2>
+<p>Simulation results may be accessed either directly after a new simulation is
+run (see above), or by loading the log file from a simulation run in a previous
+session. In the latter case, the simulation is created using the
+<a class="reference internal" href="modules/simu.html#simu.ReadSimulation" title="simu.ReadSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">simu.ReadSimulation</span></code></a> class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">foo</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">ReadSimulation</span><span class="p">(</span><span class="s1">&#39;couple_NiCrSi&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This supposes that a log file named <code class="docutils literal notranslate"><span class="pre">couple_NiCrSi.nod</span></code> is present in the
+working directory.</p>
+<p>The simulation results are stored at a number of time steps. The steps and the
+associated simulation times (in h) can be accessed using the <code class="docutils literal notranslate"><span class="pre">saved_steps</span></code>
+and <code class="docutils literal notranslate"><span class="pre">saved_times</span></code> attributes of the simulation object:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="o">.</span><span class="n">saved_steps</span>
+<span class="go">array([  0,  47,  94, 141, 188, 235, 282, 329, 376, 423, 470])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="o">.</span><span class="n">saved_times</span>
+<span class="go">array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10.])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The unit of <code class="docutils literal notranslate"><span class="pre">saved_times</span></code> is hours. Here, there are 11 saved steps
+including the initial step (<span class="math notranslate nohighlight">\(t=0\)</span>), and the simulated time is 10 h.
+However, the time step is not exactly a rational number multiplied by 3600.
+It follows that the saved times are not necessarily integer numbers of hours.</p>
+</div>
+<p>Other useful attributes are:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="o">.</span><span class="n">th</span>       <span class="c1"># time (h)</span>
+<span class="go">10.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="o">.</span><span class="n">ts</span>       <span class="c1"># time (s)</span>
+<span class="go">36000.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="o">.</span><span class="n">dt</span>       <span class="c1"># time step (s)</span>
+<span class="go">76.59574468085107</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="o">.</span><span class="n">nt</span>       <span class="c1"># number of time steps</span>
+<span class="go">471</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span><span class="o">.</span><span class="n">num_out</span>  <span class="c1"># number of saved time steps</span>
+<span class="go">11</span>
+</pre></div>
+</div>
+<section id="accessing-results">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Accessing results</a><a class="headerlink" href="#accessing-results" title="Link to this heading"></a></h3>
+<p>The results are accessed using the <a class="reference internal" href="modules/results.html#results.SimulationResults.result" title="results.SimulationResults.result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">results.SimulationResults.result()</span></code></a>
+method. The simulation time one would like to access is specified with either
+of two keyword arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">step_index</span></code>, which is the index of the required step in <code class="docutils literal notranslate"><span class="pre">saved_steps</span></code>.
+<code class="docutils literal notranslate"><span class="pre">step_index</span></code> must be an integer between 0 and the number of saved steps.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">th</span></code>, a time in h. In this case the simulation time accessed will be the
+closest to the specified value.</p></li>
+</ul>
+<p>The results are also accessible as a dictionary of results objects. The
+dictionary is called <code class="docutils literal notranslate"><span class="pre">results</span></code> and uses time steps as keys.</p>
+<p>To wrap up, these are three ways to access the results after 4 h of simulation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bar</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">step_index</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">th</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">188</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Both <code class="docutils literal notranslate"><span class="pre">step_index</span></code> and <code class="docutils literal notranslate"><span class="pre">th</span></code> are optional arguments of
+<a class="reference internal" href="modules/results.html#results.SimulationResults.result" title="results.SimulationResults.result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">results.SimulationResults.result()</span></code></a>. If no argument is given, the method
+uses the default <code class="docutils literal notranslate"><span class="pre">step_index</span> <span class="pre">=</span> <span class="pre">-1</span></code>, which is an alias for the last time step,
+i.e., <code class="docutils literal notranslate"><span class="pre">foo.result()</span></code> returns the results at the last time step. Similarly,
+<code class="docutils literal notranslate"><span class="pre">foo.results[-1]</span></code> returns the results at the last time step.</p>
+<p>The results objects (instances of <a class="reference internal" href="modules/results.html#results.UnitResult" title="results.UnitResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.UnitResult</span></code></a>) have attributes
+which store the simulation variables as Numpy arrays (or dictionaries of Numpy
+arrays). Commonly used attributes are:</p>
+<ul class="simple">
+<li><p>z : Node positions (m).</p></li>
+<li><p>zm : Midpoint positions (m).</p></li>
+<li><p>c : Concentrations (mol/m3).</p></li>
+<li><p>y : Metal site fractions.</p></li>
+<li><p>x : Metal atom fractions.</p></li>
+<li><p>Vm : Average molar volume of metal (m3/mol).</p></li>
+<li><p>mu : Chemical potentials (J/mol).</p></li>
+<li><p>Jlat : Fluxes in lattice-fixed frame (mol m-2 s-1).</p></li>
+<li><p>v : Velocity field of lattice relative to laboratory frame (m/s).</p></li>
+<li><p>deformation : Relative length variation.</p></li>
+</ul>
+<p>Composition variables such as <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">c</span></code> are stored as dictionaries of 1D
+arrays, with the relevant constituents as keys. The relevant constituents are
+vacancies and all atom constituents, except for atom fractions <code class="docutils literal notranslate"><span class="pre">x</span></code> which only
+apply to atom constituents:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;Cr&#39;, &#39;Si&#39;, &#39;Ni&#39;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;Va&#39;, &#39;Cr&#39;, &#39;Si&#39;, &#39;Ni&#39;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="o">.</span><span class="n">Jlat</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;Va&#39;, &#39;Cr&#39;, &#39;Si&#39;, &#39;Ni&#39;])</span>
+</pre></div>
+</div>
+<p>Composition variables are also accessible as 2D arrays of shape <code class="docutils literal notranslate"><span class="pre">(nc,</span> <span class="pre">nz</span> <span class="pre">-</span> <span class="pre">1)</span></code>
+where <code class="docutils literal notranslate"><span class="pre">nc</span></code> is the number of constituents. These 2D arrays are named with the
+suffix ‘_arr’, for example <code class="docutils literal notranslate"><span class="pre">x_arr</span></code>.</p>
+</section>
+<section id="plotting-results">
+<h3><a class="toc-backref" href="#id33" role="doc-backlink">Plotting results</a><a class="headerlink" href="#plotting-results" title="Link to this heading"></a></h3>
+<p>Profiles of the simulated variables can be plotted using the
+<a class="reference internal" href="modules/results.html#results.UnitResult.plot" title="results.UnitResult.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">results.UnitResult.plot()</span></code></a> method. The variable is specified with the
+optional argument <code class="docutils literal notranslate"><span class="pre">varname</span></code>, which defaults to <code class="docutils literal notranslate"><span class="pre">x</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bar.plot(varname='Jlat')</span></code> will plot fluxes in the lattice reference frame.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bar.plot()</span></code> will plot atom fractions.</p></li>
+</ul>
+<p>It is also possible to call plot directly from the simulation object; in this
+case, the time step is specified with the optional arguments <code class="docutils literal notranslate"><span class="pre">th</span></code> or
+<code class="docutils literal notranslate"><span class="pre">step_index</span></code>, which defaults to the last time step:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">foo.plot(varname='v',</span> <span class="pre">th=3)</span></code> will plot the lattice velocity after 3 h.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">foo.plot(th=3)</span></code> will plot atom fractions after 3 h.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">foo.plot(varname='mu')</span></code> will plot chemical potentials at the last time step.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">foo.plot()</span></code> will plot atom fractions at the last time step.</p></li>
+</ul>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/couple_NiCrSi.png"><img alt="_images/couple_NiCrSi.png" src="_images/couple_NiCrSi.png" style="width: 400px;" />
+</a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>The <a class="reference internal" href="modules/results.html#results.UnitResult.plot" title="results.UnitResult.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">results.UnitResult.plot()</span></code></a> method returns matplotlib figure and axis
+objects. This allows modifying the graph settings after it is generated, for
+example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Custom title&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="modules/results.html#results.SimulationResults.interactive_plot" title="results.SimulationResults.interactive_plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">results.SimulationResults.interactive_plot()</span></code></a> method allows accessing
+time steps dynamically on a plot using a slider. Again the variable to be
+plotted is specified with the optional argument <code class="docutils literal notranslate"><span class="pre">varname</span></code>, which defaults to
+<code class="docutils literal notranslate"><span class="pre">x</span></code>, and a shortcut is accessible from the simulation object:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">foo.interactive_plot(varname='mu')</span></code> will plot chemical potentials.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">foo.interactive_plot()</span></code> will plot atom fractions.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Interactive plots require an interactive graphics backend. If you are using
+Spyder, you will need to set the graphics backend to ‘Automatic’ rather than
+‘Inline’ (see Tools/Preferences/IPython console/Graphics/Graphics backend).</p>
+</div>
+</section>
+</section>
+<section id="accessing-thermodynamic-and-diffusion-properties">
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">Accessing thermodynamic and diffusion properties</a><a class="headerlink" href="#accessing-thermodynamic-and-diffusion-properties" title="Link to this heading"></a></h2>
+<p>Noda contains methods to compute the thermodynamic and diffusion properties of
+a system, at given compositions. This can be done from a simulation object (an
+instance of the <a class="reference internal" href="modules/simu.html#simu.NewSimulation" title="simu.NewSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">simu.NewSimulation</span></code></a> class, see above), or by creating
+a system object with the <a class="reference internal" href="modules/alloy_system.html#alloy_system.AlloySystem" title="alloy_system.AlloySystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">alloy_system.AlloySystem</span></code></a> class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">alloy_system</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="n">alloy_system</span><span class="o">.</span><span class="n">AlloySystem</span><span class="p">(</span><span class="s1">&#39;NiCrSi&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The input file for <a class="reference internal" href="modules/alloy_system.html#alloy_system.AlloySystem" title="alloy_system.AlloySystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">alloy_system.AlloySystem</span></code></a> instances only requires
+the following parameters:</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-number">Listing 3 </span><span class="caption-text">/../../tests/jobs/properties_NiCrSi/NiCrSi-input.txt</span><a class="headerlink" href="#id10" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">thermo_db</span> <span class="o">=</span> <span class="n">schuster2000</span>
+<span class="n">mob_db</span>    <span class="o">=</span> <span class="n">du2001</span>
+
+<span class="n">independent</span>    <span class="o">=</span> <span class="n">Si</span><span class="p">,</span> <span class="n">Cr</span>
+<span class="n">dependent</span>      <span class="o">=</span> <span class="n">Ni</span> 
+
+<span class="n">phase</span>     <span class="o">=</span> <span class="n">fcc_a1</span>
+<span class="n">TC</span>        <span class="o">=</span> <span class="mi">1200</span>
+</pre></div>
+</div>
+</div>
+<p>The following example illustrates how properties are computed:</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-number">Listing 4 </span><span class="caption-text">/../../tests/jobs/properties_NiCrSi/run.py</span><a class="headerlink" href="#id11" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">simu</span>
+
+<span class="n">foo</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">AlloySystem</span><span class="p">(</span><span class="s1">&#39;NiCrSi&#39;</span><span class="p">)</span>
+
+<span class="c1"># The independent constituents are Cr and Si, in alphabetical order:</span>
+<span class="k">assert</span> <span class="n">foo</span><span class="o">.</span><span class="n">inds</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;Cr&#39;</span><span class="p">,</span> <span class="s1">&#39;Si&#39;</span><span class="p">]</span>
+
+<span class="c1"># Make atom fraction array</span>
+<span class="c1"># The required shape is (n_inds, n_points), where n_inds is the number of</span>
+<span class="c1"># independent constituents, and n_points the number of compositions of</span>
+<span class="c1"># interest. Here n_inds = 2. The independent constituents must be entered in</span>
+<span class="c1"># the order used by foo.inds (alphabetical).</span>
+<span class="n">x_Cr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="n">x_Si</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">])</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x_Cr</span><span class="p">,</span> <span class="n">x_Si</span><span class="p">))</span>
+
+<span class="c1"># Compute Gibbs free energy, shape = (n_points,)</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">G_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Compute chemical potentials, shape = (n ind. constituents, n_points)</span>
+<span class="n">MU</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">MU_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Compute tracer diffusion coefficients, shape = (n ind. constituents, n_points)</span>
+<span class="n">DT</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<span class="c1">#%% Validation</span>
+
+<span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;NiCrSi-ref.txt&#39;</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">x_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">G_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">MU_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+<span class="n">DT_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span>
+
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_ref</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G_ref</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">MU</span><span class="p">,</span> <span class="n">MU_ref</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">DT</span><span class="p">,</span> <span class="n">DT_ref</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The methods shown here are also accessible from <a class="reference internal" href="modules/simu.html#simu.NewSimulation" title="simu.NewSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">simu.NewSimulation</span></code></a>
+instances.</p>
+<p>Thermodynamic and diffusion properties are obtained as ndarrays and may be
+plotted using standard matplotlib commands:</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-number">Listing 5 </span><span class="caption-text">/../../tests/jobs/properties_NiCrSi/plot.py</span><a class="headerlink" href="#id12" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">simu</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">AlloySystem</span><span class="p">(</span><span class="s1">&#39;NiCrSi&#39;</span><span class="p">)</span>
+
+<span class="c1">#%% Gibbs free energy</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]:</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x0</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">*</span><span class="n">val</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">))</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">G_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">G</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Cr}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$G$ (kJ/mol)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Si}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+
+<span class="c1">#%% Chemical potentials</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    
+    <span class="n">A</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x0</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">*</span><span class="n">val</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">))</span>
+        <span class="n">MU</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">MU_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">MU</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s1">&#39;$\mu_\mathrm</span><span class="se">{{</span><span class="si">{</span><span class="n">A</span><span class="si">}</span><span class="se">}}</span><span class="s1">$ (kJ/mol)&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Si}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+    
+    <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">*</span><span class="n">val</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">))</span>
+        <span class="n">MU</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">MU_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">MU</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Cr}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Cr}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Si}</span><span class="s1">$&#39;</span><span class="p">)</span>
+
+<span class="c1"># plt.savefig(&#39;chemical_potentials_NiCrSi.png&#39;, bbox_inches=&quot;tight&quot;, dpi=100)</span>
+
+<span class="c1">#%% Tracer diffusion coefficients</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    
+    <span class="n">A</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x0</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">*</span><span class="n">val</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">))</span>
+        <span class="n">DT</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">DT</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s1">&#39;$\log_</span><span class="se">{{</span><span class="si">{</span><span class="mi">10</span><span class="si">}</span><span class="se">}}</span><span class="s1">\ D_\mathrm</span><span class="se">{{</span><span class="si">{</span><span class="n">A</span><span class="si">}</span><span class="se">}}</span><span class="s1">^*$ (m$^2$/s)&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Si}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+    
+    <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">*</span><span class="n">val</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">))</span>
+        <span class="n">DT</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">DT</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Cr}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Cr}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Si}</span><span class="s1">$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/chemical_potentials_NiCrSi.png"><img alt="_images/chemical_potentials_NiCrSi.png" src="_images/chemical_potentials_NiCrSi.png" style="width: 400px;" />
+</a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>The following example shows how to plot tracer diffusion coefficients and
+intrinsic diffusion coefficients in a binary system. It reproduces Figure 3 in
+<a class="reference internal" href="background.html#gheno-2022" id="id5"><span>[Gheno_2022]</span></a>:</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-number">Listing 6 </span><span class="caption-text">/../../tests/jobs/properties_NiCr/plot.py</span><a class="headerlink" href="#id13" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">simu</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">R</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">AlloySystem</span><span class="p">(</span><span class="s1">&#39;NiCr&#39;</span><span class="p">)</span>
+
+<span class="c1">#%% Prepare data</span>
+
+<span class="n">comps</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">comps</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;Va&#39;</span><span class="p">]</span>
+
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-9</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x0</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+<span class="n">DT</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">MU</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">MU_fun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">MU</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x0</span><span class="p">)</span>
+<span class="n">DI</span> <span class="o">=</span> <span class="n">DT</span><span class="o">*</span><span class="n">phi</span>
+
+<span class="c1">#%% Plot</span>
+
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tab:blue&#39;</span><span class="p">,</span> <span class="s1">&#39;tab:orange&#39;</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="o">/</span><span class="mf">1.5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comps</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">DT</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">DI</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x_\mathrm</span><span class="si">{Cr}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">\ D_k$ (m$^2$/s)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">14.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">13.2</span><span class="p">)</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">14</span>
+<span class="n">xpos</span> <span class="o">=</span> <span class="mf">0.25</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\bar</span><span class="si">{D}</span><span class="s1">_\mathrm</span><span class="si">{Ni}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">xpos</span><span class="p">,</span> <span class="o">-</span><span class="mf">13.92</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$D^*_\mathrm</span><span class="si">{Ni}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">xpos</span><span class="p">,</span> <span class="o">-</span><span class="mf">14.16</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\bar</span><span class="si">{D}</span><span class="s1">_\mathrm</span><span class="si">{Cr}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">xpos</span><span class="p">,</span> <span class="o">-</span><span class="mf">13.48</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$D^*_\mathrm</span><span class="si">{Cr}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">xpos</span><span class="p">,</span> <span class="o">-</span><span class="mf">13.72</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+<span class="c1"># plt.savefig(&#39;diffusivities_NiCr.png&#39;, bbox_inches=&quot;tight&quot;, dpi=100)</span>
+</pre></div>
+</div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/diffusivities_NiCr.png"><img alt="_images/diffusivities_NiCr.png" src="_images/diffusivities_NiCr.png" style="width: 400px;" />
+</a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="working-with-model-systems">
+<h2><a class="toc-backref" href="#id35" role="doc-backlink">Working with model systems</a><a class="headerlink" href="#working-with-model-systems" title="Link to this heading"></a></h2>
+<p>Users can easily explore the effects of thermodynamic and diffusion properties
+on the shape of concentration profiles by creating their own database files.
+The examples below shows how the known solution to the diffusion problem
+is recovered when the system properties follow a particular set of constraints.</p>
+<p>Let us consider a single-phase binary system AB, where the average molar volume
+is composition-independent. In 1D, the diffusion problem may be written in the
+following form:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\frac{1}{V_\mathrm{m}}\frac{\partial x_B}{\partial t}
+= -\frac{\partial \tilde{J}_B}{\partial z}\\\tilde{J}_B = -\frac{\tilde{D}}{V_\mathrm{m}}\frac{\partial x_B}{\partial z}\end{aligned}\end{align} \]</div>
+<p>This problem has analytical solutions when the interdiffusion coefficient is
+constant — in this case:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial x_B}{\partial t} = \tilde{D}\frac{\partial^2 x_B}{\partial z^2}\]</div>
+<p>If A and B are both substitutional constituents of a disordered phase,
+the interdiffusion coefficient is given by Darken’s formula:</p>
+<div class="math notranslate nohighlight">
+\[\tilde{D} = (x_A D_B^* + x_B D_A^*)\phi\]</div>
+<p>where <span class="math notranslate nohighlight">\(\phi\)</span> is the thermodynamic factor:</p>
+<div class="math notranslate nohighlight">
+\[\phi = \frac{x_B}{RT}\frac{\partial \mu_B}{\partial x_B}\]</div>
+<p>The simplest way for <span class="math notranslate nohighlight">\(\tilde{D}\)</span> to be composition-independent is that the
+system follows the following set of conditions:</p>
+<ul class="simple">
+<li><p>AB is an ideal solution: <span class="math notranslate nohighlight">\(\mu_B = \mu_B^0 + RT\ln{x_B}\)</span>, which yields
+<span class="math notranslate nohighlight">\(\frac{\partial \mu_B}{\partial x_B} = \frac{RT}{x_B}\)</span> and
+<span class="math notranslate nohighlight">\(\phi = 1\)</span>;</p></li>
+<li><p>A and B have equal diffusivities: <span class="math notranslate nohighlight">\(D_A^* = D_B^*\)</span>;</p></li>
+<li><p>The diffusivities are composition-independent: <span class="math notranslate nohighlight">\(D_B^* \neq f(x_B)\)</span>.</p></li>
+</ul>
+<p>This yields <span class="math notranslate nohighlight">\(\tilde{D} = D_B^*\)</span>.</p>
+<p>These conditions are fullfilled for the model AB system provided in the test
+base, with databases named “thermo_bin_ideal” and “mob_bin_ideal”.</p>
+<p>A number of diffusion problems involving a binary system with
+composition-independent molar volume and diffusivity have analytical solutions.
+Some typical initial distributions and boundary conditions are illustrated
+below.</p>
+<section id="diffusion-couple-planar-geometry">
+<h3><a class="toc-backref" href="#id36" role="doc-backlink">Diffusion couple (planar geometry)</a><a class="headerlink" href="#diffusion-couple-planar-geometry" title="Link to this heading"></a></h3>
+<p>In the case of an infinitely-thick planar diffusion couple:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}&amp;t = 0,\ z &lt; z_\mathrm{step},\ x_B = x_B^\mathrm{left}\\
+&amp;t = 0,\ z &gt; z_\mathrm{step},\ x_B = x_B^\mathrm{right}\\
+&amp;t &gt; 0,\ \left.\frac{\partial x_B}{\partial z}\right|_{z\rightarrow -\infty}
+= \left.\frac{\partial x_B}{\partial z}\right|_{z\rightarrow +\infty} = 0,\end{split}\]</div>
+<p>the analytical solution to the diffusion problem is (<a class="reference internal" href="#crank-1975" id="id6"><span>[Crank_1975]</span></a>, p. 14):</p>
+<div class="math notranslate nohighlight">
+\[\frac{x_B(z, t) - x_B^\mathrm{right}}{x_B^\mathrm{left} - x_B^\mathrm{right}}
+= \frac{1}{2} \mathrm{erfc}\left(\frac{z - z_\mathrm{step}}{2\sqrt{\tilde{D}t}}\right)\]</div>
+<p>This is compared with the Noda simulation in the example named “couple_AB”:</p>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-number">Listing 7 </span><span class="caption-text">/../../tests/jobs/couple_AB/couple_AB-input.txt</span><a class="headerlink" href="#id14" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Thermodynamic and mobility databases</span>
+<span class="n">thermo_db</span> <span class="o">=</span> <span class="n">thermo_bin_ideal</span>
+<span class="n">mob_db</span>    <span class="o">=</span> <span class="n">mob_bin_ideal</span>
+
+<span class="c1"># System constituents</span>
+<span class="n">independent</span>    <span class="o">=</span> <span class="n">B</span>
+<span class="n">dependent</span>      <span class="o">=</span> <span class="n">A</span>
+
+<span class="c1"># System conditions</span>
+<span class="n">phase</span>     <span class="o">=</span> <span class="n">fcc</span>
+<span class="n">TC</span>        <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="c1"># Simulation conditions</span>
+<span class="n">th</span>        <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Initial space grid</span>
+<span class="n">zmin</span>      <span class="o">=</span> <span class="mi">0</span>
+<span class="n">zmax</span>      <span class="o">=</span> <span class="mf">2e-4</span>
+<span class="n">nz</span>        <span class="o">=</span> <span class="mi">100</span>
+
+<span class="c1"># Initial atom fraction profile</span>
+<span class="n">x_profile</span> <span class="o">=</span> <span class="n">step</span> <span class="mf">0.5</span>
+<span class="n">x_left</span>    <span class="o">=</span> <span class="n">B</span><span class="p">:</span> <span class="mf">0.1</span>
+<span class="n">x_right</span>   <span class="o">=</span> <span class="n">B</span><span class="p">:</span> <span class="mf">0.9</span>
+
+<span class="c1"># Boundary conditions</span>
+<span class="n">JBC_left</span>   <span class="o">=</span> <span class="n">A</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">JBC_right</span>  <span class="o">=</span> <span class="n">A</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="mi">0</span>
+
+<span class="c1"># Space discretization</span>
+<span class="n">stencil</span> <span class="o">=</span> <span class="n">H</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-number">Listing 8 </span><span class="caption-text">/../../tests/jobs/couple_AB/run.py</span><a class="headerlink" href="#id15" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">erfc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">simu</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">NewSimulation</span><span class="p">(</span><span class="s1">&#39;couple_AB&#39;</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1">#%% Comparison with analytical solution</span>
+
+<span class="n">x_left</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">x_init</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">x_right</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">x_init</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">x_any</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">]])</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">(</span><span class="n">x_any</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">zmid</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">x_ana</span> <span class="o">=</span> <span class="n">x_right</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_left</span> <span class="o">-</span> <span class="n">x_right</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="o">*</span><span class="n">erfc</span><span class="p">((</span><span class="n">r</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">zmid</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">D</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">ts</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                               <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                               <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">x_ana</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;analytical solution&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;tab:orange&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Noda&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$x_B$&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_ana</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$z$ ($\mu$m)&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x_B^\mathrm</span><span class="si">{Noda}</span><span class="s1"> - x_B^\mathrm</span><span class="si">{ana}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># plt.savefig(&#39;couple_AB.png&#39;, bbox_inches=&quot;tight&quot;, dpi=100)</span>
+
+<span class="c1">#%% Validation</span>
+
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">x_ana</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/couple_AB.png"><img alt="_images/couple_AB.png" src="_images/couple_AB.png" style="width: 400px;" />
+</a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="constant-surface-concentration-planar-geometry">
+<h3><a class="toc-backref" href="#id37" role="doc-backlink">Constant surface concentration (planar geometry)</a><a class="headerlink" href="#constant-surface-concentration-planar-geometry" title="Link to this heading"></a></h3>
+<p>In the case of a semi-infinite planar solid initially at a uniform concentration
+<span class="math notranslate nohighlight">\(x_B^\mathrm{bulk}\)</span>, with its left-hand surface maintained at a constant
+concentration <span class="math notranslate nohighlight">\(x_B^\mathrm{surf}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}&amp;t = 0,\ x_B = x_B^\mathrm{bulk}\\
+&amp;t &gt; 0,\ z = 0,\ x_B = x_B^\mathrm{surf},\end{split}\]</div>
+<p>the solution reads (<a class="reference internal" href="#crank-1975" id="id7"><span>[Crank_1975]</span></a>, p. 32):</p>
+<div class="math notranslate nohighlight">
+\[\frac{x_B(z, t) - x_B^\mathrm{bulk}}{x_B^\mathrm{surf} - x_B^\mathrm{bulk}}
+= \mathrm{erfc}\left(\frac{z}{2\sqrt{\tilde{D}t}}\right)\]</div>
+<p>This is compared with the Noda simulation in the example named
+“source_AB”, which illustrates the use of a geometric grid, well suited to
+the Dirichlet boundary condition:</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-number">Listing 9 </span><span class="caption-text">/../../tests/jobs/source_AB/source_AB-input.txt</span><a class="headerlink" href="#id16" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Thermodynamic and mobility databases</span>
+<span class="n">thermo_db</span> <span class="o">=</span> <span class="n">thermo_bin_ideal</span>
+<span class="n">mob_db</span>    <span class="o">=</span> <span class="n">mob_bin_ideal</span>
+
+<span class="c1"># System constituents</span>
+<span class="n">independent</span>    <span class="o">=</span> <span class="n">B</span>
+<span class="n">dependent</span>      <span class="o">=</span> <span class="n">A</span>
+
+<span class="c1"># System conditions</span>
+<span class="n">phase</span>     <span class="o">=</span> <span class="n">fcc</span>
+<span class="n">TC</span>        <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="c1"># Simulation conditions</span>
+<span class="n">th</span>        <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Initial space grid</span>
+<span class="n">grid</span>      <span class="o">=</span> <span class="n">geo</span>
+<span class="n">q</span>         <span class="o">=</span> <span class="mf">1.02</span>
+<span class="n">zmin</span>      <span class="o">=</span> <span class="mi">0</span>
+<span class="n">zmax</span>      <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">nz</span>        <span class="o">=</span> <span class="mi">50</span>
+
+<span class="c1"># Initial atom fraction profile</span>
+<span class="n">x_profile</span> <span class="o">=</span> <span class="n">flat</span>
+<span class="n">x_left</span>    <span class="o">=</span> <span class="n">B</span><span class="p">:</span> <span class="mf">1e-4</span>
+
+<span class="c1"># Boundary conditions</span>
+<span class="n">xBC_left</span> <span class="o">=</span> <span class="n">B</span><span class="p">:</span> <span class="mf">0.3</span>
+<span class="n">xBC_right</span> <span class="o">=</span> <span class="n">B</span><span class="p">:</span> <span class="mf">1e-4</span>
+
+<span class="c1"># Space discretization</span>
+<span class="n">stencil</span> <span class="o">=</span> <span class="n">G</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-number">Listing 10 </span><span class="caption-text">/../../tests/jobs/source_AB/run.py</span><a class="headerlink" href="#id17" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">erfc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">simu</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">NewSimulation</span><span class="p">(</span><span class="s1">&#39;source_AB&#39;</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1">#%% Comparison with analytical solution</span>
+
+<span class="n">x_bulk</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">x_init</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">x_surf</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">BC</span><span class="p">[</span><span class="s1">&#39;c_left&#39;</span><span class="p">](</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">mid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">x_any</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">]])</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">(</span><span class="n">x_any</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">x_ana</span> <span class="o">=</span> <span class="n">x_bulk</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_surf</span> <span class="o">-</span> <span class="n">x_bulk</span><span class="p">)</span><span class="o">*</span><span class="n">erfc</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">D</span><span class="o">*</span><span class="n">s</span><span class="o">.</span><span class="n">ts</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                               <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                               <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">x_ana</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;analytical solution&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;tab:orange&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Noda&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$x_B$&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_ana</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$z$ ($\mu$m)&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$x_B^\mathrm</span><span class="si">{Noda}</span><span class="s1"> - x_B^\mathrm</span><span class="si">{ana}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># plt.savefig(&#39;source_AB.png&#39;, bbox_inches=&quot;tight&quot;, dpi=100)</span>
+
+<span class="c1">#%% Validation</span>
+
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">x_ana</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/source_AB.png"><img alt="_images/source_AB.png" src="_images/source_AB.png" style="width: 400px;" />
+</a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="constant-surface-concentration-spherical-geometry">
+<h3><a class="toc-backref" href="#id38" role="doc-backlink">Constant surface concentration (spherical geometry)</a><a class="headerlink" href="#constant-surface-concentration-spherical-geometry" title="Link to this heading"></a></h3>
+<p>If a sphere of radius <span class="math notranslate nohighlight">\(R\)</span> is initially at a uniform concentration
+<span class="math notranslate nohighlight">\(x_B^\mathrm{bulk}\)</span>, and its surface is maintained at a constant
+concentration <span class="math notranslate nohighlight">\(x_B^\mathrm{surf}\)</span>, the concentration at distance
+<span class="math notranslate nohighlight">\(r\)</span> from the center is (<a class="reference internal" href="#crank-1975" id="id8"><span>[Crank_1975]</span></a>, p. 91):</p>
+<div class="math notranslate nohighlight">
+\[\frac{x_B(r, t) - x_B^\mathrm{bulk}}{x_B^\mathrm{surf} - x_B^\mathrm{bulk}}
+= 1 + \frac{2R}{\pi r} \sum_{n=1}^{\infty} \frac{(-1)^n}{n}
+\sin{\left(\frac{n\pi r}{R}\right)} \exp\left(\frac{-Dn^2\pi^2t}{R^2}\right)\]</div>
+<p>This is compared with the Noda simulation after different diffusion times in
+the example named “sphere_AB”:</p>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-number">Listing 11 </span><span class="caption-text">/../../tests/jobs/sphere_AB/sphere_AB-input.txt</span><a class="headerlink" href="#id18" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Thermodynamic and mobility databases</span>
+<span class="n">thermo_db</span>        <span class="o">=</span> <span class="n">thermo_bin_ideal</span>
+<span class="n">mob_db</span>           <span class="o">=</span> <span class="n">mob_bin_ideal</span>
+
+<span class="c1"># System constituents</span>
+<span class="n">independent</span>      <span class="o">=</span> <span class="n">B</span>
+<span class="n">dependent</span>        <span class="o">=</span> <span class="n">A</span>
+
+<span class="c1"># System conditions</span>
+<span class="n">phase</span>            <span class="o">=</span> <span class="n">fcc</span>
+<span class="n">TC</span>               <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="c1"># Simulation conditions</span>
+<span class="n">th</span>               <span class="o">=</span> <span class="mi">10</span>
+<span class="n">nt_multiplier</span>    <span class="o">=</span> <span class="mf">1.2</span>
+<span class="n">num_out</span>          <span class="o">=</span> <span class="mi">11</span>
+
+<span class="c1"># Initial space grid</span>
+<span class="n">geometry</span>         <span class="o">=</span> <span class="n">spherical</span>
+<span class="n">zmin</span>             <span class="o">=</span> <span class="mi">0</span>
+<span class="n">zmax</span>             <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">nz</span>               <span class="o">=</span> <span class="mi">61</span>
+
+<span class="c1"># Initial atom fraction profile</span>
+<span class="n">x_profile</span> <span class="o">=</span> <span class="n">flat</span>
+<span class="n">x_left</span>    <span class="o">=</span> <span class="n">B</span><span class="p">:</span> <span class="mf">0.1</span>
+
+<span class="c1"># Boundary conditions</span>
+<span class="n">JBC_left</span> <span class="o">=</span> <span class="n">B</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">xBC_right</span> <span class="o">=</span> <span class="n">B</span><span class="p">:</span> <span class="mf">0.9</span>
+
+
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-number">Listing 12 </span><span class="caption-text">/../../tests/jobs/sphere_AB/run.py</span><a class="headerlink" href="#id19" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">simu</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">analytical_solution</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">x_bulk</span><span class="p">,</span> <span class="n">x_surf</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="nb">sum</span><span class="p">(((</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">)</span>
+                  <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="n">R</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">n</span><span class="o">*</span><span class="n">r</span><span class="p">,</span>
+                              <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">r</span><span class="o">!=</span><span class="mi">0</span><span class="p">))</span>
+                  <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">D</span><span class="o">*</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">ts</span><span class="o">/</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                  <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x_bulk</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_surf</span> <span class="o">-</span> <span class="n">x_bulk</span><span class="p">)</span><span class="o">*</span><span class="n">f</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">simu</span><span class="o">.</span><span class="n">NewSimulation</span><span class="p">(</span><span class="s1">&#39;sphere_AB&#39;</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1">#%% Comparison with analytical solution</span>
+
+<span class="n">x_bulk</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">x_init</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">x_surf</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">BC</span><span class="p">[</span><span class="s1">&#39;c_right&#39;</span><span class="p">](</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">mid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">zmax</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">z_init</span>
+
+<span class="n">x_any</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">]])</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">DT_fun</span><span class="p">(</span><span class="n">x_any</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">th_targets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;salmon&#39;</span><span class="p">,</span> <span class="s1">&#39;gold&#39;</span><span class="p">,</span> <span class="s1">&#39;paleturquoise&#39;</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">th_target</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">th_targets</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+    <span class="n">th</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">saved_times</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">th_target</span> <span class="o">-</span> <span class="n">s</span><span class="o">.</span><span class="n">saved_times</span><span class="p">))]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">th</span><span class="o">=</span><span class="n">th</span><span class="p">)</span>
+    <span class="n">x_ana</span> <span class="o">=</span> <span class="n">analytical_solution</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">th</span><span class="o">*</span><span class="mi">3600</span><span class="p">,</span> <span class="n">x_bulk</span><span class="p">,</span> <span class="n">x_surf</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">x_ana</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">th</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;radius ($\mu$m)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$x_B$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;time (h)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_dpi</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="c1"># plt.savefig(&#39;sphere_AB.png&#39;, bbox_inches=&quot;tight&quot;, dpi=100)</span>
+
+<span class="c1">#%% Validation</span>
+
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="n">x_ana</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/sphere_AB.png"><img alt="_images/sphere_AB.png" src="_images/sphere_AB.png" style="width: 400px;" />
+</a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="crank-1975" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Crank_1975<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id7">2</a>,<a role="doc-backlink" href="#id8">3</a>)</span>
+<p>J. Crank, The mathematics of diffusion, 2nd ed., Oxford University Press,
+Oxford, 1975</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="advanced_use.html" class="btn btn-neutral float-right" title="Advanced use" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
