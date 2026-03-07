@@ -1,4 +1,4 @@
-# Copyright 2025 Onera
+# Copyright 2025-2026 Onera
 # This file is part of the Noda package
 # SPDX-License-Identifier: GPL-3.0-or-later
 
