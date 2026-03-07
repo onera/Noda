@@ -125,7 +125,7 @@ def parse_log(ref, sdir):
         data[x] = float(data[x].split('#')[0].rstrip())
     try:  # back-compatibility: older versions did not have zstep saved
         data['zstep'] = float(data['zstep'].split('#')[0].rstrip())
-    except KeyError:
+    except (KeyError, ValueError):
         data['zstep'] = None
 
     res_match = re.findall(r"RESULTS: (.*)", raw)
