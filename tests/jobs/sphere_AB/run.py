@@ -12,25 +12,25 @@ def analytical_solution(r, R, D, ts, x_bulk, x_surf, N=100):
     x = x_bulk + (x_surf - x_bulk)*f
     return x
 
-s = simu.NewSimulation('sphere_AB')
+s = simu.NewSimulation(file='sphere_AB.toml')
 s.run()
 
 #%% Comparison with analytical solution
 
-x_bulk = s.x_init['B'][0]
-x_surf = s.BC['c_right'](0).x.mid[0]
-R = s.zmax
-r = s.z_init
+x_bulk = s.init.x['B'][0]
+x_surf = s.BC['right'].cvar_fun(0).x.mid[0]
+R = s.space.zmax
+r = s.space.z_init
 
 x_any = np.array([[0.5]])
-D = s.DT_fun(x_any)[0]
+D = s.mob.DT_fun(x_any)[0]
 
 th_targets = [1, 5, 10]
 colors = ['salmon', 'gold', 'paleturquoise']
 
 fig, ax = plt.subplots()
 for th_target, c in zip(th_targets, colors):
-    th = s.saved_times[np.argmin(abs(th_target - s.saved_times))]
+    th = s.time.saved_th[np.argmin(abs(th_target - s.time.saved_th))]
     res = s.result(th=th)
     x_ana = analytical_solution(r, R, D, th*3600, x_bulk, x_surf)
     ax.plot(r*1e6, x_ana, 'k')

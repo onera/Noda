@@ -18,9 +18,10 @@ from noda.paths import pkg_data_dir
 
 def get_user_data(data_dir, logger):
     """
-    Get user data from toml file.
+    Get user data from 'user_data.toml' file.
     
-    If toml file is not found in data folder, 
+    If 'user_data.toml' file is not found in the user data folder, use the
+    package-provided file instead.
 
     Parameters
     ----------
@@ -61,16 +62,16 @@ def get_volume_data(volume_databases, volume_db, comps, logger):
     volume_db : str
         Name of partial molar volume database.
     comps : list of str
-        System constituents.
+        System components.
     logger : :class:`log_utils.CustomLogger`
         Logger.
 
     Raises
     ------
-    Exception
-        If database is not present in databases dict.
-    Exception
-        If database entry is formatted incorrectly.
+    :class:`utils.UserInputError`
+    
+        | If database is not present in databases dict ;
+        | if database entry is formatted incorrectly.
 
     Returns
     -------
@@ -95,19 +96,13 @@ def get_volume_data(volume_databases, volume_db, comps, logger):
                 res[k] = di['default']
                 msg = (f"No entry for {k} in molar volume database "
                        f"'{volume_db}'. Using default entry in the database.")
-                if k in ('Va', 'pore'):
-                    logger.data(msg)
-                else:
-                    logger.info(msg)
+                logger.info(msg, stream=False)
             else:
                 res[k] = factory['partial_molar_volume']
                 msg = (f"Molar volume database '{volume_db}' contains no data "
                        f"for {k}, and no default value. Using system-wide "
                        f"default value (Vm = {res[k]} m3/mol) instead.")
-                if k in ('Va', 'pore'):
-                    logger.data(msg)
-                else:
-                    logger.info(msg)
+                logger.info(msg, stream=False)
         if k in ('Va', 'pore'):
             if not (isinstance(res[k], float) or res[k] == 'local'):
                 msg = (f"Invalid entry for species {k} in molar volume "
@@ -130,20 +125,20 @@ def get_vacancy_formation_energy(vacancy_databases, vacancy_db, phase, comps,
 
     Parameters
     ----------
-    volume_databases : dict
+    vacancy_databases : dict
         Available vacancy formation energy data.
     vacancy_db : str
         Name of database with vacancy formation energy in pure metals.
     phase : str
         Name of metal phase.
     comps : list of str
-        System constituents.
+        System components.
     logger : :class:`log_utils.CustomLogger`
         Logger.
 
     Raises
     ------
-    Exception
+    ut.UserInputError
         If database is not included in databases dict.
 
     Returns
@@ -170,14 +165,14 @@ def get_vacancy_formation_energy(vacancy_databases, vacancy_db, phase, comps,
                 msg = (f"No entry for {phase}-{k} in vacancy formation energy "
                        f"database '{vacancy_db}'. Using default entry in the "
                        "database.")
-                logger.info(msg)
+                logger.info(msg, stream=False)
             else:
                 di_phase[k] = factory['vacancy_formation_energy']
                 msg = (f"Vacancy formation energy database '{vacancy_db}' "
                        f"contains no data for {k}, and no default value. "
                        f"Using system-wide default value ({di_phase[k]}) "
                        "instead.")
-                logger.info(msg)
+                logger.info(msg, stream=False)
 
     res = {k: [v*co.EV*co.NA for v in di_phase[k]] for k in comps}
     return res
@@ -201,7 +196,7 @@ def get_thermo_from_file(fpath, phase, comps, TK, logger):
     phase : str
         Name of metal phase.
     comps : list of str
-        System constituents.
+        System components.
     TK : float
         Temperature in Kelvin.
     logger : :class:`log_utils.CustomLogger`
@@ -475,7 +470,7 @@ def get_mob_from_file(fpath, comps, TK, logger):
     fpath : pathlib.Path
         Path of file with mobility database.
     comps : list of str
-        System constituents.
+        System components.
     TK : float
         Temperature in Kelvin.
     logger : :class:`log_utils.CustomLogger`
@@ -541,7 +536,7 @@ def get_mob_from_spreadsheet(fpath, comps, TK):
     fpath : pathlib.Path
         Path of file with mobility database.
     comps : list of str
-        System constituents.
+        System components.
     TK : float
         Temperature in Kelvin.
 
@@ -580,7 +575,7 @@ def get_mob_from_json(fpath, comps, TK):
     fpath : pathlib.Path
         Path of file with mobility database.
     comps : list of str
-        System constituents.
+        System components.
     TK : float
         Temperature in Kelvin.
 

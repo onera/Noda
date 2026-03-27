@@ -2,7 +2,7 @@ import numpy as np
 
 from noda import simu
 
-foo = simu.AlloySystem('NiCrSi')
+foo = simu.NewSimulation(file='NiCrSi.toml')
 
 # The independent constituents are Cr and Si, in alphabetical order:
 assert foo.inds == ['Cr', 'Si']
@@ -17,13 +17,13 @@ x_Si = np.array([0.1, 0.1, 0.01])
 x = np.vstack((x_Cr, x_Si))
 
 # Compute Gibbs free energy, shape = (n_points,)
-G = foo.G_fun(x)
+G = foo.thermo.G_fun(x)
 
 # Compute chemical potentials, shape = (n ind. constituents, n_points)
-MU = foo.MU_fun(x)
+MU = foo.thermo.MU_fun(x)
 
 # Compute tracer diffusion coefficients, shape = (n ind. constituents, n_points)
-DT = foo.DT_fun(x)
+DT = foo.mob.DT_fun(x)
 
 
 #%% Validation

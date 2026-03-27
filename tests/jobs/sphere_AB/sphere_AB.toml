@@ -1,0 +1,31 @@
+[databases]
+thermo = "thermo_bin_ideal"
+mobility = "mob_bin_ideal"
+
+[system]
+components = "A, B"
+phases = "fcc"
+
+[temperature]
+TC = 1000
+
+[time]
+th = 10
+nt_multiplier = 1.2
+num_out = 11
+
+[space]
+geometry = "spherical"
+zmin = 0
+zmax = 1e-4
+nz = 61
+
+[initial_conditions]
+[initial_conditions.atom_fraction]
+shape = "flat"
+left.B = 0.1
+
+[boundary_conditions]
+left.flux.B = 0
+left.flux.A = 0
+right.atom_fraction.B = 0.9

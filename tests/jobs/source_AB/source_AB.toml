@@ -1,0 +1,34 @@
+[databases]
+thermo = "thermo_bin_ideal"
+mobility = "mob_bin_ideal"
+
+[system]
+components = "A, B"
+phases = "fcc"
+
+[temperature]
+TC = 1000
+
+[time]
+th = 1
+
+[space]
+grid_type = "geo"
+q = 1.02
+zmin = 0
+zmax = 1e-4
+nz = 50
+
+[initial_conditions]
+[initial_conditions.atom_fraction]
+shape = "flat"
+left.B = 1e-4
+
+[boundary_conditions]
+left.atom_fraction.B = 0.3
+right.atom_fraction.B = 1e-4
+
+[options]
+
+# Space discretization
+stencil = "G"

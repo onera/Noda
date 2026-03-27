@@ -35,15 +35,15 @@ factory_default_parameters = {
    'min_atom_fraction': 1e-9,
    'min_number_time_steps': 20,
    'num_out': 2,
-   'grid': 'linear',
-   'number_space_steps': 51,
+   'grid_type': 'linear',
+   'number_space_steps': 60,
    'common_ratio': 1.02,
    'Fourier_number': 0.4,
    'geometry': 'planar',
    'stencil': 'A',
-   'volume_db': 'standard',
+   'molar_volume_database': 'standard',
    'partial_molar_volume': 1e-5,
-   'vacancy_db': 'standard',
+   'vacancy_database': 'standard',
    'vacancy_formation_energy': [2, 3e-04],
                              }
 """
@@ -68,11 +68,11 @@ dict: Factory default parameters.
     Domain geometry (see :ref:`domain_geometry`).
 'stencil' : str
     Space discretization stencil (see :ref:`stencil`).
-'volume_db' : str
+'molar_volume_database' : str
     Partial molar volume database.
 'partial_molar_volume' : float
     Partial molar volume in m3/mol.
-'vacancy_db' : str
+'vacancy_database' : str
     Vacancy formation energy database.
 'vacancy_formation_energy' : list of floats
     Vacancy formation energy, GfV = HfV - T*SfV with [HfV, SfV] in [eV, eV/K]

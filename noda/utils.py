@@ -51,6 +51,15 @@ def format_element_symbol(s):
     raise UserInputError(msg) from None
 
 
+def get_or_raise(dictionary, key):
+    """Get value or raise exception if key not present in dictionary."""
+    try:
+        val = dictionary[key]
+    except KeyError:
+        msg = f"Entry '{key}' not found in 'user_data.toml' file."
+        raise UserInputError(msg) from None
+    return val
+
 # =============================================================================
 # Combinations
 

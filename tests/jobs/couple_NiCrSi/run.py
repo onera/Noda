@@ -2,7 +2,7 @@ import numpy as np
 
 from noda import simu
 
-foo = simu.NewSimulation('couple_NiCrSi')
+foo = simu.NewSimulation(file='couple_NiCrSi.toml')
 foo.run()
 
 #%% Plot

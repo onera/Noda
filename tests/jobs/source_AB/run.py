@@ -4,19 +4,19 @@ import matplotlib.pyplot as plt
 
 from noda import simu
 
-s = simu.NewSimulation('source_AB')
+s = simu.NewSimulation(file='source_AB.toml')
 s.run()
 
 #%% Comparison with analytical solution
 
-x_bulk = s.x_init['B'][0]
-x_surf = s.BC['c_left'](0).x.mid[0]
+x_bulk = s.init.x['B'][0]
+x_surf = s.BC['left'].cvar_fun(0).x.mid[0]
 
 x_any = np.array([[0.5]])
-D = s.DT_fun(x_any)[0]
+D = s.mob.DT_fun(x_any)[0]
 
 r = s.results[-1]
-x_ana = x_bulk + (x_surf - x_bulk)*erfc(r.z/np.sqrt(4*D*s.ts))
+x_ana = x_bulk + (x_surf - x_bulk)*erfc(r.z/np.sqrt(4*D*s.time.ts))
 
 fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1,
                                figsize=(5, 5),

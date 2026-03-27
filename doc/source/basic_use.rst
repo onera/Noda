@@ -16,7 +16,7 @@ Setting up a simulation
 
 A typical input file contains the following:
 
-.. literalinclude:: /../../tests/jobs/couple_NiCrSi/couple_NiCrSi-input.txt
+.. literalinclude:: /../../tests/jobs/couple_NiCrSi/couple_NiCrSi.toml
    :caption:
 
 Blank lines and code located after the comment character ``#`` are ignored when
@@ -245,7 +245,7 @@ A new simulation is created using the :class:`simu.NewSimulation` class::
    from noda import simu
    foo = simu.NewSimulation('couple_NiCrSi')
    
-This supposes that an input file named ``couple_NiCrSi-input.txt`` is present
+This supposes that an input file named ``couple_NiCrSi.toml`` is present
 in the working directory. When the simulation is created, some information is
 logged:
 
@@ -421,7 +421,7 @@ a system object with the :class:`alloy_system.AlloySystem` class::
 The input file for :class:`alloy_system.AlloySystem` instances only requires
 the following parameters:
 
-.. literalinclude:: /../../tests/jobs/properties_NiCrSi/NiCrSi-input.txt
+.. literalinclude:: /../../tests/jobs/properties_NiCrSi/NiCrSi.toml
    :caption:
 
 The following example illustrates how properties are computed:
@@ -536,7 +536,7 @@ the analytical solution to the diffusion problem is ([Crank_1975]_, p. 14):
 
 This is compared with the Noda simulation in the example named "couple_AB":
 
-.. literalinclude:: /../../tests/jobs/couple_AB/couple_AB-input.txt
+.. literalinclude:: /../../tests/jobs/couple_AB/couple_AB.toml
    :caption:
 
 .. literalinclude:: /../../tests/jobs/couple_AB/run.py
@@ -571,7 +571,7 @@ This is compared with the Noda simulation in the example named
 "source_AB", which illustrates the use of a geometric grid, well suited to
 the Dirichlet boundary condition:
 
-.. literalinclude:: /../../tests/jobs/source_AB/source_AB-input.txt
+.. literalinclude:: /../../tests/jobs/source_AB/source_AB.toml
    :caption:
 
 .. literalinclude:: /../../tests/jobs/source_AB/run.py
@@ -600,7 +600,7 @@ concentration :math:`x_B^\mathrm{surf}`, the concentration at distance
 This is compared with the Noda simulation after different diffusion times in
 the example named "sphere_AB":
 
-.. literalinclude:: /../../tests/jobs/sphere_AB/sphere_AB-input.txt
+.. literalinclude:: /../../tests/jobs/sphere_AB/sphere_AB.toml
    :caption:
 
 .. literalinclude:: /../../tests/jobs/sphere_AB/run.py

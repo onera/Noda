@@ -1,0 +1,10 @@
+[databases]
+thermo = "schuster2000"
+mobility = "du2001"
+
+[system]
+components = "Ni, Cr, Si"
+phases = "fcc"
+
+[temperature]
+TC = 1200

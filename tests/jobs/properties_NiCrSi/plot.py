@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from noda import simu
 
-s = simu.AlloySystem('NiCrSi')
+s = simu.NewSimulation(file='NiCrSi.toml')
 
 #%% Gibbs free energy
 
@@ -12,7 +12,7 @@ for val in [0.01, 0.05, 0.1]:
     x0 = np.linspace(1e-3, 0.4)
     x1 = np.ones(x0.size)*val
     x = np.vstack((x0, x1))
-    G = s.G_fun(x)
+    G = s.thermo.G_fun(x)
     ax.plot(x0, G/1000, label=f'{val:.2f}')
 ax.set_xlabel(r'$x_\mathrm{Cr}$')
 ax.set_ylabel('$G$ (kJ/mol)')
@@ -34,7 +34,7 @@ for i in range(3):
     for j, val in enumerate(targets):
         x1 = np.ones(x0.size)*val
         x = np.vstack((x0, x1))
-        MU = s.MU_fun(x)[i]/1000
+        MU = s.thermo.MU_fun(x)[i]/1000
         ax1.plot(x0, MU, label=f'{val:.2f}')
     
     ax1.set_ylabel(rf'$\mu_\mathrm{{{A}}}$ (kJ/mol)')
@@ -46,7 +46,7 @@ for i in range(3):
     for j, val in enumerate(targets):
         x0 = np.ones(x1.size)*val
         x = np.vstack((x0, x1))
-        MU = s.MU_fun(x)[i]/1000
+        MU = s.thermo.MU_fun(x)[i]/1000
         ax2.plot(x1, MU, label=f'{val:.2f}')
     
     ax2.legend(title=r'$x_\mathrm{Cr}$', loc='upper left')
@@ -72,7 +72,7 @@ for i in range(3):
     for j, val in enumerate(targets):
         x1 = np.ones(x0.size)*val
         x = np.vstack((x0, x1))
-        DT = s.DT_fun(x)[i]
+        DT = s.mob.DT_fun(x)[i]
         ax1.plot(x0, np.log10(DT), label=f'{val:.2f}')
     
     ax1.set_ylabel(rf'$\log_{{{10}}}\ D_\mathrm{{{A}}}^*$ (m$^2$/s)')
@@ -84,7 +84,7 @@ for i in range(3):
     for j, val in enumerate(targets):
         x0 = np.ones(x1.size)*val
         x = np.vstack((x0, x1))
-        DT = s.DT_fun(x)[i]
+        DT = s.mob.DT_fun(x)[i]
         ax2.plot(x1, np.log10(DT), label=f'{val:.2f}')
     
     ax2.legend(title=r'$x_\mathrm{Cr}$', loc='upper left')

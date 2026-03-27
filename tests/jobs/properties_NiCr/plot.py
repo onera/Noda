@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from noda import simu
 from noda.constants import R
 
-s = simu.AlloySystem('NiCr')
+s = simu.NewSimulation(file='NiCr.toml')
 
 #%% Prepare data
 

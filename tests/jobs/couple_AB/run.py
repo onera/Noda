@@ -4,20 +4,20 @@ import matplotlib.pyplot as plt
 
 from noda import simu
 
-s = simu.NewSimulation('couple_AB')
+s = simu.NewSimulation(file='couple_AB.toml')
 s.run()
 
 #%% Comparison with analytical solution
 
-x_left = s.x_init['B'][0]
-x_right = s.x_init['B'][-1]
+x_left = s.init.x['B'][0]
+x_right = s.init.x['B'][-1]
 
 x_any = np.array([[0.5]])
-D = s.DT_fun(x_any)[0]
+D = s.mob.DT_fun(x_any)[0]
 
 r = s.results[-1]
 zmid = (r.z[-1] + r.z[0])/2
-x_ana = x_right + (x_left - x_right)*0.5*erfc((r.z - zmid)/np.sqrt(4*D*s.ts))
+x_ana = x_right + (x_left - x_right)*0.5*erfc((r.z - zmid)/np.sqrt(4*D*s.time.ts))
 
 fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1,
                                figsize=(5, 5),

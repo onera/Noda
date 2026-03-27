@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'noda'
-copyright = '2025, Onera'
+copyright = '2025-2026, Onera'
 author = 'T. Gheno'
 
 # The full version, including alpha/beta/rc tags

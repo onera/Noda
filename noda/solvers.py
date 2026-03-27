@@ -17,10 +17,8 @@ from noda.utils import div
 # Solver
 
 
-def solver(z_init, geometry, cvar, MU_fun, L_fun, yVa_fun, nt, dt,
-           ideal_lattice, k_dislo, k_pores, rho_dislo, rho_pores, DVa_fun,
-           Va_method, saved_steps, BC, show_completion, verbose, stencil,
-           logger):
+def solver(thermo, mob, space, init, BC, time_grid, lattice, show_completion,
+           verbose, stencil, logger):
     """
     Solve diffusion equation.
 
@@ -29,54 +27,33 @@ def solver(z_init, geometry, cvar, MU_fun, L_fun, yVa_fun, nt, dt,
 
     Parameters
     ----------
-    z_init : 1D array
-        Initial node positions, shape (`nz`,).
-    geometry : str
-        Domain geometry (planar, cylindrical or spherical).
-    cvar : :class:`composition_variables.CompositionVariables`
-        Composition variables (x, y, c, Vm, ...).
-    MU_fun : function
-        Compute chemical potential from site fractions (see `MU_funy` in
-        :class:`simu.System`).
-    L_fun : func
-        Same for phenomenological coefficients.
-    yVa_fun : function
-        Compute equilibrium vacancy site fraction, see
-        :meth:`simu.System.add_Va_model`.
-    nt : int
-        Number of time steps, including time 0.
-    dt : float
-        Time step (s).
-    ideal_lattice : bool
-        Whether lattice is ideal, i.e., vacancy fraction is kept at
-        equilibrium.
-    k_dislo : float or str
-        Sink strength associated with dislocation climb (str should be a valid
-        file name in current job folder)
-    k_pores : float or str
-        Sink strength associated with pore growth (str should be a valid file
-        name in current job folder)
-    rho_dislo : float or str
-        Dislocation density, used to compute k_dislo from local DVa.
-    rho_pores : float
-        Density used to compute k_pores from local DVa.
-    DVa_fun : function
-        Compute vacancy diffusion coefficient from atom fractions and site
-        fractions, see :func:`thermo_functions.make_DVa_fun`.
-    Va_method : str
-        Type of function for equilibrium vacancy site fraction. Determined
-        based on `thermo_method` in :meth:`simu.System.add_thermo_functions`.
-    saved_steps : list
-        Steps for which results are returned.
-    BC : dict
-        Types and functions of left and right BC, see
-        :meth:`simu.Simulation.add_BC`.
+    thermo : :class:`thermodynamics.Thermodynamics`
+        Thermodynamic properties.
+    mob : :class:`mobility.Mobility`
+        Mobility properties.
+    space : :class:`space.SpaceGrid`
+        Space grid.
+    init : :class:`initial_conditions.InitialConditions`
+        Initial conditions.
+    BC : dict of :class:`boundary_conditions.BoundaryConditions`
+        Boundary conditions.
+    time_grid : :class:`time.TimeGrid`
+        Time parameters.
+    lattice : :class:`lattice.Lattice`
+        Parameters related to sink strength.
     show_completion : bool
         Print completion rate while solver is running.
     verbose : str
         Verbosity level.
     stencil : str
         Name of discretization stencil. See :func:`compute_resistance`.
+    logger : :class:`log_utils.CustomLogger`
+        Logger.
+
+    Raises
+    ------
+    :class:`utils.AtomFractionError`
+        If any site fraction goes below 0 or above 1.
 
     Returns
     -------
@@ -111,19 +88,22 @@ def solver(z_init, geometry, cvar, MU_fun, L_fun, yVa_fun, nt, dt,
 
     """
     start_time = time.time()
-
+    cvar = init.cvar
     comps = cvar.comps
     V_partial = cvar.V_partial
     Vk = cvar.Vk_arr
-
-    z = z_init.copy()
+    z = space.z_init.copy()
     dz = np.diff(z)
     dz_min = dz.min()
     dz_max = dz.max()
     deformation = np.zeros(dz.size)
-
+    nt = time_grid.nt
+    dt = time_grid.dt
+    k_dislo = lattice.k_dislo
+    k_pores = lattice.k_pores
+    rho_dislo = lattice.rho_dislo
+    rho_pores = lattice.rho_pores
     res = {0: {'z': z.copy(), 'c': cvar.c.mid, 'fp': cvar.fp.mid}}
-
     completion_rates = np.arange(0.1, 1, step=0.1)
     completion_steps = [np.round((nt - 1)*r) for r in completion_rates]
     if show_completion:
@@ -146,7 +126,7 @@ def solver(z_init, geometry, cvar, MU_fun, L_fun, yVa_fun, nt, dt,
         V0 = V_partial['Va'] if V_partial['Va'] != 'local' else Vm
         Vp = V_partial['pore'] if V_partial['pore'] != 'local' else Vm
 
-        if n in saved_steps:
+        if n in time_grid.saved_steps:
             res[n] = {}
             res[n]['z'] = z.copy()
             res[n]['c'] = c.copy()
@@ -156,34 +136,35 @@ def solver(z_init, geometry, cvar, MU_fun, L_fun, yVa_fun, nt, dt,
             raise ut.AtomFractionError(n)
 
         # Compute chemical potentials
-        MU = MU_fun(y[:-1])
+        MU = thermo.MU_funy(y[:-1])
         MU_diff = MU[1:] - MU[0]
-        yVa_eq = yVa_fun(x[:-1])
+        yVa_eq = thermo.yVa_fun(x[:-1])
 
         # Compute Onsager coeffs, factor in yVa
         # Note: since c is the global concentration, L_eq includes fm. This is
         # only valid inasmuch as L_ij = 0 in the pores
-        L_eq = L_fun(c[1:], x[:-1])
+        L_eq = mob.L_fun(c[1:], x[:-1])
         L = L_eq * y[0]/yVa_eq
 
         # Compute diffusion fluxes
         RL = compute_resistance(comps[1:], L, dz, stencil)
 
         Jbulk = -np.diff(MU_diff)/RL
-        Jleft, Jright = compute_boundary_fluxes(n*dt, MU_diff, dz, BC, MU_fun,
-                                                L, L_fun, Vk)
+        Jleft, Jright = compute_boundary_fluxes(n*dt, MU_diff, dz, BC,
+                                                thermo.MU_funy,
+                                                L, mob.L_fun, Vk)
         Jlat = np.hstack((Jleft[None].T, Jbulk, Jright[None].T))
 
-        if ideal_lattice:
+        if lattice.ideal:
             alphas = compute_alpha_ideal(z, cvar.c.nod(z), c, y[0], dt, Jlat,
-                                         Vk, V0, Vp, V, Vm, yVa_fun, Va_method,
-                                         geometry)
+                                         Vk, V0, Vp, V, Vm, thermo.yVa_fun,
+                                         space.geometry)
         else:
-            if rho_dislo is not None or rho_pores is not None:
-                D0 = DVa_fun(y, x[:-1])
-                if rho_dislo is not None:
+            if rho_dislo or rho_pores:
+                D0 = mob.DVa_fun(y, x[:-1])
+                if rho_dislo:
                     k_dislo = rho_dislo * D0
-                if rho_pores is not None:
+                if rho_pores:
                     k_pores = rho_pores * D0
             alphas = la.compute_alpha_nonideal(dt, y[0], yVa_eq, V, Vp, fm,
                                                k_dislo, k_pores)
@@ -191,7 +172,7 @@ def solver(z_init, geometry, cvar, MU_fun, L_fun, yVa_fun, nt, dt,
 
         c, v, gamma_V, gamma = solver_core(z, cvar.c.nod(z), c, y[0], dt, Jlat,
                                            Vk, V0, Vp, V, Vm, alpha_d, alpha_p,
-                                           geometry)
+                                           space.geometry)
         deformation += gamma*dt
 
         # New boundary positions
@@ -208,7 +189,7 @@ def solver(z_init, geometry, cvar, MU_fun, L_fun, yVa_fun, nt, dt,
         cvar.c.mid = c
 
         # Record variables
-        if n in saved_steps:
+        if n in time_grid.saved_steps:
             res[n]['mu'] = MU
             res[n]['Jlat'] = Jlat
             res[n]['yVa_eq'] = yVa_eq
@@ -262,7 +243,7 @@ def solver_core(z, cnod, c, y_Va, dt, Jlat, Vk, V0, Vp, V, Vm,
 
 
 def compute_alpha_ideal(z, cnod, c, y_Va, dt, Jlat, Vk, V0, Vp, V, Vm,
-                        yVa_fun, Va_method, geometry):
+                        yVa_fun, geometry):
     """
     Compute ideal sink terms.
 
@@ -284,14 +265,15 @@ def compute_alpha_ideal(z, cnod, c, y_Va, dt, Jlat, Vk, V0, Vp, V, Vm,
     alpha_d = V/(1 - y_Va)*div(Jlat_Va, z, geometry)
     alpha_p = np.zeros(alpha_d.size)
 
-    if Va_method != 'cst':
-        for _ in range(2):
-            c_, _, _, _ = solver_core(z, cnod, c, y_Va, dt, Jlat, Vk, V0,
-                                      Vp, V, Vm, alpha_d, alpha_p, geometry)
-            y_ = c_/sum(c_)
-            x_ = y_[1:]/(1 - y_[0])
-            yVa_eq_ = yVa_fun(x_[:-1])
-            alpha_d += (yVa_eq_ - y_[0])/dt/(1 - y_[0])
+    # TODO : this can be made optional if yVa_eq is constant, ie when all L_kVa
+    # interaction parameters are the same.
+    for _ in range(2):
+        c_, _, _, _ = solver_core(z, cnod, c, y_Va, dt, Jlat, Vk, V0,
+                                  Vp, V, Vm, alpha_d, alpha_p, geometry)
+        y_ = c_/sum(c_)
+        x_ = y_[1:]/(1 - y_[0])
+        yVa_eq_ = yVa_fun(x_[:-1])
+        alpha_d += (yVa_eq_ - y_[0])/dt/(1 - y_[0])
 
     return alpha_d, alpha_p
 
@@ -338,8 +320,8 @@ def compute_boundary_fluxes(t, MU_diff, dz, BC, MU_fun, L, L_fun, Vk):
         sign = 1 if side == 'left' else -1
         i0 = 0 if side == 'left' else -1
 
-        if BC[f'{side}'] == 'Dirichlet':
-            cvar_BC = BC[f'c_{side}'](t)
+        if BC[f'{side}'].type == 'Dirichlet':
+            cvar_BC = BC[side].cvar_fun(t)
             y_BC = cvar_BC.y.mid
             MU_BC = MU_fun(y_BC[:-1])
             MU_diff_BC = MU_BC[1:] - MU_BC[0]
@@ -354,7 +336,7 @@ def compute_boundary_fluxes(t, MU_diff, dz, BC, MU_fun, L, L_fun, Vk):
             # Compensate volume change by setting flux of dependent constituent
             J[f'{side}'][-1] = (-sum(J[f'{side}'][:-1]*Vk[1:-1])/Vk[-1]).item()
         else:
-            J[f'{side}'] = sign*BC[f'J_{side}'](t)
+            J[f'{side}'] = sign*BC[side].J_fun(t)
 
     return J['left'], J['right']
 

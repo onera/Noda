@@ -163,8 +163,8 @@ def add_profile(z, var, varname, zunit='um', extra_legend=None):
         ax.legend()
 
 
-def plot_profile_quartet(result, title, suptitle,
-                         zunit='um', ylim=None, exclude_dep=True):
+def plot_profile_quartet(result, title, zunit='um', ylim=None,
+                         exclude_dep=True):
     """
     Plot composition and flux profiles.
 
@@ -222,8 +222,7 @@ def plot_profile_quartet(result, title, suptitle,
     lines3 = []
     lines4 = []
 
-    fig.suptitle(suptitle)
-    ax1.set_title(title, loc='left')
+    fig.suptitle(title)
 
     x_plot_list = list(x)[:-1] if exclude_dep else list(x)
     for k in x_plot_list:
@@ -286,7 +285,7 @@ class StaticProfile:
 
     """
 
-    def __init__(self, res, step, th, title):
+    def __init__(self, res, step, th):
         """
         Class constructor.
 
@@ -305,7 +304,6 @@ class StaticProfile:
         self.res = res
         self.step = step
         self.th = th
-        self.title = title
 
     def single(self, varname='x', title=None, plot_dep=False, **kwargs):
         """
@@ -340,7 +338,7 @@ class StaticProfile:
                 var = {k: var[k] for k in inds}
 
         if title is None:
-            title = self.title + f'\nstep {self.step:3}, {self.th:3.1f} h'
+            title = f'\nstep {self.step:3}, {self.th:3.1f} h'
         fig, ax = plot_profile_single(self.res.z, var, varname, title, **kwargs)
         return fig, ax
 
@@ -362,9 +360,7 @@ class StaticProfile:
         """
         if title is None:
             title = f'step {self.step:3}, {self.th:3.1f} h'
-        suptitle = self.title
-        fig, axes, lines = plot_profile_quartet(self.res, title, suptitle,
-                                                **kwargs)
+        fig, axes, lines = plot_profile_quartet(self.res, title, **kwargs)
         return fig, axes, lines
 
 
@@ -414,8 +410,7 @@ def calculate_view_limits(results, varname):
 class InteractivePlot():
     """Interactive plot of simulation results."""
 
-    def __init__(self, varname, comps, results, saved_times, saved_steps,
-                 title):
+    def __init__(self, varname, comps, results, saved_times, saved_steps):
         """
         Class constructor.
 
@@ -451,7 +446,7 @@ class InteractivePlot():
         xlim = [results[0].z[0]*1e6, results[0].z[-1]*1e6]
         ylim = calculate_view_limits(self.results, varname)
 
-        self.fig, self.ax, self.lines = self.setup_plot(title, xlim, ylim)
+        self.fig, self.ax, self.lines = self.setup_plot(xlim, ylim)
 
         slider_ax = plt.axes([0.4, 0.895, 0.4, 0.02],
                              facecolor='lightgoldenrodyellow')
@@ -466,7 +461,7 @@ class InteractivePlot():
         self.fig.canvas.mpl_connect('scroll_event', self.on_scroll)
         self.slider.on_changed(self.update_slider)
 
-    def setup_plot(self, title, xlim, ylim):
+    def setup_plot(self, xlim, ylim):
         """
         Make figure with empty lines.
 
@@ -490,8 +485,7 @@ class InteractivePlot():
 
         """
         fig, ax = plt.subplots(figsize=(7, 8/1.5), constrained_layout=True)
-        fig.suptitle(title)
-        ax.set_title(' ', loc='left')
+        fig.suptitle(' ')
 
         lines = []
 
@@ -544,7 +538,7 @@ class InteractivePlot():
         var = getattr(res, self.varname)
         z = res.z*1e6
 
-        title = self.ax.set_title(f'step {n:3}, {th:3.1f} h', loc='left')
+        title = self.fig.suptitle(f'step {n:3}, {th:3.1f} h')
 
         if isinstance(var, np.ndarray):
             self.lines[0].set_data(z, var*self.varmult)
@@ -568,7 +562,7 @@ class InteractivePlotQuartet():
 
     """
 
-    def __init__(self, comps, results, saved_times, saved_steps, title):
+    def __init__(self, comps, results, saved_times, saved_steps):
         """
         Class constructor.
 
@@ -601,8 +595,7 @@ class InteractivePlotQuartet():
         ylim = {varname: calculate_view_limits(self.results, varname)
                 for varname in ['x', 'ryVa', 'fp', 'Jlat']}
 
-        self.fig, self.axes, self.lines = self.setup_plot(title,
-                                                          xlim, ylim)
+        self.fig, self.axes, self.lines = self.setup_plot(xlim, ylim)
         self.ax1, self.ax2, self.ax3, self.ax4 = self.axes
         self.lines1, self.lines2, self.lines3, self.lines4 = self.lines
 
@@ -619,7 +612,7 @@ class InteractivePlotQuartet():
         self.fig.canvas.mpl_connect('scroll_event', self.on_scroll)
         self.slider.on_changed(self.update_slider)
 
-    def setup_plot(self, title, xlim, ylim):
+    def setup_plot(self, xlim, ylim):
         """
         Make figure with empty lines.
 
@@ -649,8 +642,7 @@ class InteractivePlotQuartet():
         ax3 = fig.add_subplot(gs[0, 1])
         ax4 = fig.add_subplot(gs[1, 1])
 
-        fig.suptitle(title)
-        ax1.set_title(' ', loc='left')
+        fig.suptitle(' ')
 
         lines1 = []
         lines2 = []
@@ -725,7 +717,7 @@ class InteractivePlotQuartet():
         x = res.x
         Jlat = res.Jlat
 
-        title = self.ax1.set_title(f'step {n:3}, {th:3.1f} h', loc='left')
+        title = self.fig.suptitle(f'step {n:3}, {th:3.1f} h')
 
         for k, line in zip(self.comps[1:], self.lines1):
             line.set_data(z, x[k])

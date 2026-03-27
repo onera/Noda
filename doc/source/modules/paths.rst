@@ -1,5 +1,5 @@
 :mod:`paths`
-==================
+============
 
 .. automodule:: paths
     :members:

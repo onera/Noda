@@ -1,5 +1,5 @@
 :mod:`results`
-==================
+==============
 
 .. automodule:: results
     :members:

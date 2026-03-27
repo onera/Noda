@@ -1,0 +1,40 @@
+[databases]
+thermo = "schuster2000"
+mobility = "du2001"
+
+[system]
+components = "Ni, Cr, Si"
+phases = "fcc"
+
+[temperature]
+TC = 1200               # temperature (Celsius)
+
+[time]
+th = 10                 # simulation time (h)
+num_out = 11            # number of saved time steps, optional
+
+[space]
+geometry = "planar"     # domain geometry, optional
+zmin = 0                # position of left-hand domain border (m), optional
+zmax = 5e-4             # position of right-hand domain border (m)
+nz = 60                 # number of space steps, optional
+grid_type = "linear"    # grid type, optional
+
+[initial_conditions]
+[initial_conditions.atom_fraction]
+shape = "step"          # profile shape
+step_fraction = 0.5     # step position (fraction of domain size), optional
+left.Cr = 0.3
+left.Si = 0
+right.Cr = 0
+right.Si = 0.1
+
+[boundary_conditions]
+[boundary_conditions.left]
+flux.Cr = 0
+flux.Si = 0
+flux.Ni = 0
+[boundary_conditions.right]
+flux.Cr = 0
+flux.Si = 0
+flux.Ni = 0

@@ -29,7 +29,7 @@ def vec_to_nod(x, z):
     return f(z)
 
 
-def arr_to_nod(x, z, interpkind='cubic'):
+def arr_to_nod(x, z):
     """
     Evaluate `x` (defined on midpoints) on nodes by linear interpolation.
 
@@ -159,7 +159,7 @@ class CompositionVariables:
 
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, comps, x_init, yVa_init, V_partial, fm):
+    def __init__(self, comps, x_dct, yVa, V_partial, fm):
         """
         Class constructor.
 
@@ -172,9 +172,9 @@ class CompositionVariables:
         ----------
         comps : list of str
             System constituents, ordered: ['Va'] + inds + [dep].
-        x_init : dict
+        x_dct : dict
             Initial atom fractions, dict of 1D arrays of shape (`nz` - 1,).
-        yVa_init : 1D array
+        yVa : 1D array
             Initial vacancy site fraction, shape (`nz` - 1,).
         V_partial : dict
             Partial molar volumes.
@@ -186,12 +186,12 @@ class CompositionVariables:
         dep = comps[-1]
         self.V_partial = V_partial
 
-        x_dep = 1 - sum(x_init.values())
-        x_full = {k: x_init[k] for k in inds}
+        x_dep = 1 - sum(x_dct.values())
+        x_full = {k: x_dct[k] for k in inds}
         x_full[dep] = x_dep
 
-        y_full = {k: x_full[k]*(1 - yVa_init) for k in comps[1:]}
-        y_full['Va'] = yVa_init
+        y_full = {k: x_full[k]*(1 - yVa) for k in comps[1:]}
+        y_full['Va'] = yVa
 
         if V_partial['Va'] == 'local':
             Vm = sum(x_full[k]*V_partial[k] for k in comps[1:])

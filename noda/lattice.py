@@ -2,11 +2,111 @@
 # This file is part of the Noda package
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""Compute variables describing the evolution of the crystal lattice."""
+"""Parameters and functions describing the evolution of the crystal lattice."""
 
 import numpy as np
 
-from noda.utils import div, integrate
+from noda.utils import div, integrate, UserInputError
+
+
+class Lattice:
+    """
+    Store parameters relative to vacancy annihilation/creation.
+
+    Attributes
+    ----------
+    k_dislo : float
+        Sink strength related to dislocations (s-1).
+    k_pores : float
+        Sink strength related to pores (s-1).
+    rho_dislo : float
+        Line density used to compute k_dislo from local DVa (m-2).
+    rho_pores : float
+        Line density used to compute k_pores from local DVa (m-2).
+    ideal : bool
+        Whether lattice is ideal, in the sense that vacancies are maintained at
+        equilibrium.
+
+    """
+    def __init__(self, params, work_dir, logger):
+        """
+        Class constructor.
+
+        Parameters
+        ----------
+        params : dict
+            Input parameters related to sink strength.
+        work_dir : pathlib.Path
+            Work directory.
+        logger : :class:`log_utils.CustomLogger`
+            Logger.
+
+        """
+        self.k_dislo = params.get('k_dislo', None)
+        self.k_pores = params.get('k_pores', None)
+        self.rho_dislo = params.get('rho_dislo', None)
+        self.rho_pores = params.get('rho_pores', None)
+        self.ideal = self.is_ideal(logger)
+        if self.ideal is False:
+            dct = self.process_sink_terms(params, work_dir, logger)
+            self.k_dislo = dct['dislo']['k']
+            self.k_pores = dct['pores']['k']
+            self.rho_dislo = dct['dislo']['rho']
+            self.rho_pores = dct['pores']['rho']
+
+    def is_ideal(self, logger):
+        """
+        Check whether lattice is ideal and print info messages.
+
+        If the input files contains no value for k_dislo, k_pores, rho_dislo or
+        rho_pores, the lattice is ideal. If either parameter is given, the
+        lattice is non-ideal.
+
+        """
+        if (self.k_dislo is None and self.k_pores is None
+            and self.rho_dislo is None and self.rho_pores is None):
+            msg = ("Ideal lattice: sink term set to maintain vacancy fraction "
+                   "at equilibrium. No pore will form.")
+            logger.info(msg, stream=False)
+            res = True
+        else:
+            msg = ("Non-ideal lattice: the Kirkendall effect may produce "
+                   "non-equilibrium vacancy fractions and porosity.")
+            logger.info(msg, stream=False)
+            res = False
+        return res
+
+    def process_sink_terms(self, params, work_dir, logger):
+        """
+        Process user input for non-ideal lattice parameters.
+
+        Parameters of interest: k_dislo, k_pores, rho_dislo, rho_pores. Input
+        can be a float or a string indicating a file name. If neither k_dislo
+        or rho_dislo is given, k_dislo defaults to 0. Same for k_pores and
+        rho_pores. (This will occur if k_dislo is specified but k_pores is not,
+        or vice versa.)
+
+        """
+        dct = {'dislo' : {}, 'pores' : {}}
+        for name in dct:
+            if f'rho_{name}' in params and f'k_{name}' in params:
+                msg = f"Cannot specify both k_{name} and rho_{name}."
+                raise UserInputError(msg) from None
+            k = getattr(self, f"k_{name}")
+            rho = getattr(self, f"rho_{name}")
+            if k is None and rho is None:
+                k = 0
+                msg = f"No value found for k_{name}, defaults to 0."
+                logger.warning(msg)
+            if isinstance(k, str):
+                fpath = work_dir / k
+                k = np.genfromtxt(fpath)
+            if isinstance(rho, str):
+                fpath = work_dir / rho
+                rho = np.genfromtxt(fpath)
+            dct['name']['k'] = k
+            dct['name']['rho'] = rho
+        return dct
 
 
 def compute_alpha_nonideal(dt, yVa, yVa_eq, V, Vp, fm,

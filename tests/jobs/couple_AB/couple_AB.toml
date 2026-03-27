@@ -1,0 +1,38 @@
+[databases]
+thermo = "thermo_bin_ideal"
+mobility = "mob_bin_ideal"
+
+[system]
+components = "A, B"
+phases = "fcc"
+
+[temperature]
+TC = 1000
+
+[time]
+th = 1
+
+[space]
+zmin = 0
+zmax = 2e-4
+nz = 100
+
+[initial_conditions]
+[initial_conditions.atom_fraction]
+shape = "step"
+step_fraction = 0.5
+left.B = 0.1
+right.B = 0.9
+
+[boundary_conditions]
+[boundary_conditions.left]
+flux.A = 0
+flux.B = 0
+[boundary_conditions.right]
+flux.A = 0
+flux.B = 0
+
+[options]
+
+# Space discretization
+stencil = "H"

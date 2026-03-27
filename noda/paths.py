@@ -25,19 +25,19 @@ def get_data_dir(work_dir, logger):
     """
     if is_in_tests_dir(work_dir):
         data_dir = pkg_data_dir
-        msg = f"Using data from package installation directory ({data_dir})."
+        msg = f"Using data from package installation directory ('{data_dir}')."
         logger.info(msg)
     else:
         if 'NODA_HOME' in os.environ:
             data_dir = Path(os.environ['NODA_HOME']) / 'data'
             if data_dir.exists():
-                msg = f"Using user-provided data in {data_dir}."
+                msg = f"Using user-provided data in '{data_dir}'."
                 logger.info(msg)
             else:
                 msg = (f"The directory indicated by the environment variable "
                        f"'NODA_HOME', {data_dir}, was not found. Using "
                        "data from package installation directory instead "
-                       f"({pkg_data_dir}).")
+                       f"('{pkg_data_dir}').")
                 logger.warning(msg)
                 data_dir = pkg_data_dir
 
@@ -45,7 +45,7 @@ def get_data_dir(work_dir, logger):
             data_dir = pkg_data_dir
             msg = ("The environment variable 'NODA_HOME' was not found. "
                    "Cannot use user-provided data. Using data from package "
-                   "installation directory instead ({pkg_data_dir}).")
+                   "installation directory instead ('{pkg_data_dir}').")
             logger.warning(msg)
 
     return data_dir

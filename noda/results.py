@@ -18,8 +18,8 @@ class SimulationResults:
     Attributes
     ----------
     saved_steps : list
-        Steps for which simulation results are stored in resdict.
-    saved_times : 1D array
+        Steps for which simulation results are stored.
+    saved_th : 1D array
         Times in h (rounded) that correspond to the saved steps.
     comps : list of str
         System constituents, with 'Va' first and dependent constituent
@@ -35,23 +35,20 @@ class SimulationResults:
 
     """
 
-    def __init__(self, simu_parameters):
+    def __init__(self, params):
         """
         Class constructor.
 
         Parameters
         ----------
-        resdict : dict
-            Simulation results (dict).
-        simu_parameters : dict
+        params : dict
             Simulation parameters, see class attributes.
 
         """
-        self.saved_times = simu_parameters['saved_times']
-        self.comps = simu_parameters['comps']
+        self.saved_th = params['saved_th']
+        self.comps = params['comps']
         self.inds = self.comps[1:-1]
-        self.V_partial = simu_parameters['V_partial']
-        self.title = simu_parameters['title']
+        self.V_partial = params['V_partial']
         self.results = {}
         self.saved_steps = None
 
@@ -65,8 +62,8 @@ class SimulationResults:
         self.saved_steps = list(resdict.keys())
         for n in self.saved_steps:
             res = UnitResult(resdict[n], self.V_partial)
-            th = self.saved_times[self.saved_steps.index(n)]
-            res.static_prof = plots.StaticProfile(res, n, th, self.title)
+            th = self.saved_th[self.saved_steps.index(n)]
+            res.static_prof = plots.StaticProfile(res, n, th)
             self.results[n] = res
         self.results[-1] = self.results[self.saved_steps[-1]]
 
@@ -88,9 +85,10 @@ class SimulationResults:
 
         Raises
         ------
-        Exception
-            If the user specifies both step_index and th.
-            If step_index is not an integer or is out of range.
+        :class:`utils.UserInputError`
+
+            | If the user specifies both step_index and th ;
+            | if step_index is not an integer or is out of range.
 
         """
         if self.saved_steps is None:
@@ -104,7 +102,7 @@ class SimulationResults:
             msg = "'step_index' must be an integer."
             raise ut.ResultsError(msg)
         if th is not None:
-            step_index = np.argmin(abs(self.saved_times - th))
+            step_index = np.argmin(abs(self.saved_th - th))
         try:
             step = self.saved_steps[step_index]
         except IndexError as exc:
@@ -170,12 +168,10 @@ class SimulationResults:
         if variable == 'quartet':
             ip = plots.InteractivePlotQuartet(
                             self.comps, self.results,
-                            self.saved_times, self.saved_steps,
-                            self.title)
+                            self.saved_th, self.saved_steps)
         else:
             ip = plots.InteractivePlot(variable, self.comps, self.results,
-                                       self.saved_times, self.saved_steps,
-                                       self.title)
+                                       self.saved_th, self.saved_steps)
         return ip
 
     def add_mass_balance(self):
@@ -232,7 +228,7 @@ class SimulationResults:
 class UnitResult:
     """
     Gather composition variables from one time step of a simulation.
-    
+
     Most attributes below are available in three versions:
     * x_mid: variable x evaluated on mid points
     * x_nod: variable x evaluated on nodes
