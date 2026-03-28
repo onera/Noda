@@ -135,10 +135,7 @@ class Simulation:
                                    self.default_parameters,
                                    work_dir,
                                    logger)
-        if 'boundary_conditions' in config:
-            self.BC = self.get_boundary_conditions(
-                                  config['boundary_conditions'],
-                                  min_atom_fraction)
+        self.BC = self.get_boundary_conditions(min_atom_fraction)
         options = config.get('options', {})
         self.lattice = Lattice(options, work_dir, logger)
         if self.lattice.ideal is False:
@@ -319,14 +316,12 @@ class Simulation:
         self.logger.info(msg)
         return Mobility(params, self.comps[1:], self.TK)
 
-    def get_boundary_conditions(self, params, min_atom_fraction):
+    def get_boundary_conditions(self, min_atom_fraction):
         """
         Make dict of :class:`boundary_conditions.BoundaryConditions` instances.
 
         Parameters
         ----------
-        params : dict
-            Boundary conditions-related input parameters.
         min_atom_fraction : min_atom_fraction : float
             Minimum atom fraction accepted.
 
@@ -336,6 +331,7 @@ class Simulation:
             :class:`boundary_conditions.BoundaryConditions` instances.
 
         """
+        params = self.config.get('boundary_conditions', {})
         dct = {}
         for side in ['left', 'right']:
             side_params = params.get(side, {})
