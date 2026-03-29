@@ -131,6 +131,7 @@ def solver(thermo, mob, space, init, BC, time_grid, lattice, show_completion,
             res[n]['z'] = z.copy()
             res[n]['c'] = c.copy()
             res[n]['fm'] = fm.copy()
+            res[n]['deformation'] = deformation.copy()
 
         if (y < 0).any() or (y > 1).any() or (y == np.nan).any():
             raise ut.AtomFractionError(n)
@@ -199,7 +200,6 @@ def solver(thermo, mob, space, init, BC, time_grid, lattice, show_completion,
             res[n]['alpha_d'] = alpha_d
             res[n]['alpha_p'] = alpha_p
             res[n]['L'] = L
-            res[n]['deformation'] = deformation
 
         if show_completion:
             if n in completion_steps:
