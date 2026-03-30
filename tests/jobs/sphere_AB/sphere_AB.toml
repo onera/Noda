@@ -1,6 +1,6 @@
 [databases]
-thermo = "thermo_bin_ideal"
-mobility = "mob_bin_ideal"
+thermo = "AB_thermo_ideal"
+mobility = "AB_mob_ideal"
 
 [system]
 components = "A, B"

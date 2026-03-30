@@ -1,5 +1,3 @@
-.. _basic_use:
-
 Basic use
 =========
 
@@ -14,53 +12,108 @@ Basic use
 Setting up a simulation
 -----------------------
 
-A typical input file contains the following:
+A typical configuration file contains the following:
 
 .. literalinclude:: /../../tests/jobs/couple_NiCrSi/couple_NiCrSi.toml
    :caption:
 
-Blank lines and code located after the comment character ``#`` are ignored when
-the file is parsed. Parameters are to be entered with the following syntax: 
-``key = value``, with any number of spaces around the ``=`` sign. Some keys
-have an accepted alias (shorter name), as shown below.
+Input files use the `TOML <https://toml.io>`__ format. Th text located after the
+comment character ``#`` is ignored. Parameters are entered with a 
+``key = value`` syntax ; string values need quotes, while numerical values do
+not. The format uses nested tables, according to these equivalen syntaxes::
+
+   [table]
+   [table.subtable]
+   parameter1 = "something"
+   parameter2 = "something else"
+
+or::
+
+   [table]
+   subtable.parameter1 = "something"
+   subtable.parameter2 = "something else"
+
+or::
+
+   [table]
+   subtable = {parameter1 = "something", parameter2 = "something else"}
+
+When the configuration file is read, its content is converted to a Python
+dictionary using the native tomllib library. Nested tables then become nested 
+dictionaries. The configuration file given above is equivalent to the following
+Python dictionary::
+
+   config = {'databases': {'thermo': 'Schuster2000',
+                           'mobility': 'Du2001'
+                           },
+            'system': {'components': 'Ni, Cr, Si', 'phases': 'fcc'},
+            'temperature': {'TC': 1200},
+            'time': {'th': 10, 'num_out': 11},
+            'space': {'zmin': 0, 'zmax': 5e-4, 'nz': 60, 'grid_type': 'linear'},
+            'initial_conditions':
+               {'atom_fraction':
+                  {'shape': 'step',
+                  'step_fraction': 0.5,
+                  'left': {'Cr': 0.3, 'Si': 0},
+                  'right': {'Cr': 0, 'Si': 0.1}
+                  }
+               },
+            'boundary_conditions':
+               {'left': {'flux': {'Cr': 0, 'Si': 0, 'Ni': 0}},
+                'right': {'flux': {'Cr': 0, 'Si': 0, 'Ni': 0}}
+               }
+            }
 
 Element symbols are case-insensitive --- for instance, ``fe`` is a valid symbol
-for iron.
+for iron. Some of the parameters are optional. When an optional parameter is
+not present in the input file, a default value is assigned. "Factory" default
+values are defined in the package installation but can be overridden by
+user-defined values (see :ref:`default_parameters`).
 
-Some of the parameters are optional. When an optional parameter is not present
-in the input file, a default value is assigned. "Factory" default values are
-defined in the package installation but can be overridden by user-defined
-values (see :ref:`default_parameters`).
+The configuration contains the following tables and subtables:
 
-Thermodynamic and mobility databases
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``thermo_db``: name of the thermodynamic database to be used in the calculation.
-* ``mob_db``: name of the mobility database to be used in the calculation.
-
-These names must be associated with database files in ``user_data.toml``.
-
-System constituents
-^^^^^^^^^^^^^^^^^^^
-
-* ``independent``: name independent constituents, with the following syntax:|br|
-  ``element1, element2, ...``. Alias: ``inds``.
-* ``dependent``: name of the dependent constituent. This is typically the alloy
-  base element.|br|
-  Alias: ``dep``.
-
-System conditions
-^^^^^^^^^^^^^^^^^
-
-* ``phase``: name of the phase.
-* ``TC``: temperature in Celsius.
-
-.. _simulation_conditions:
-
-Simulation conditions
+Databases [databases]
 ^^^^^^^^^^^^^^^^^^^^^
 
-* ``th``: simulation time in h.
+* ``thermo``: name of the thermodynamic database.
+* ``mobility``: name of the mobility database.
+* ``molar_volume``: name of the database of partial molar volumes, optional
+  (factory default : ``standard``, which has the same value for all atom
+  species, see :ref:`user_data`).
+* ``vacancy_database``: name of the vacancy formation energy database, optional
+  (factory default: ``standard``, which has thge same values for all atom
+  species, see :ref:`user_data`).
+
+Like the other optional parameters, the factory default values can be overridden
+by user-specified default values (see :ref:`default_parameters`).
+
+These names given here must be associated with databases in ``user_data.toml``.
+
+System [system]
+^^^^^^^^^^^^^^^
+
+* ``components``: name of the atomic species, with the following syntax:|br|
+  ``element1, element2, ...``. The first element of the list is considered the
+  dependent component : its atom fraction should not be included in initial and
+  boundary conditions.
+* ``phases``: name of the phases. The present version is limited to one phase.
+
+Temperature [temperature]
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``TC``: temperature in Celsius.
+
+Use ``TK`` to enter the temperature in Kelvin.
+
+.. _time:
+
+Time [time]
+^^^^^^^^^^^
+
+* ``th``: simulation time in hour.
+
+Use ``ts`` to enter the time in second.
+
 * ``num_out``: number of saved time steps, optional (factory default: 2). A
   simulation often requires a large number of time steps; only the number of
   steps specified by ``num_out`` are saved to file, and accessible after the
@@ -75,61 +128,47 @@ Simulation conditions
    ``num_out = 3``. This will save results at 0, 1 and 2 h of simulation
    (``saved_times = [0, 1, 2]``).
 
-.. _domain_geometry:
+.. _space:
 
-Domain geometry
-^^^^^^^^^^^^^^^
+Space [space]
+^^^^^^^^^^^^^
 
-Noda solves the diffusion problem along one space coordinate, in either of three
-geometric configurations:
-
-    * planar : a slab of given thickness in one direction
-      and translational symmetry in the two other directions, described in
-      Cartesian coordinates.
-    * cylindrical : a cylinder with translational and rotational
-      symmetry with respect to its axis, described in cylindrical coordinates.
-    * spherical : a sphere with rotational symmetry with respect
-      to its center, described in spherical coordinates.
-
-The ``geometry`` parameter takes either argument ('planar', 'cylindrical' or
-'spherical'). It is optional (factory default: 'planar').
-
-.. note::
-
-   The rotational symmetry in the cylindrical and spherical geometries has
-   implications regarding the choice of the domain boundary positions and
-   boundary conditions (see :ref:`initial_space_grid`).
-
-.. _initial_space_grid:
-
-Initial space grid
-^^^^^^^^^^^^^^^^^^
-
-* ``zmin``: position of left-hand domain boundary in m, optional (system
+* ``zmin``: position of left-hand domain boundary in meter, optional (factory
   default: 0).
-* ``zmax``: position of right-hand domain boundary in m.
-* ``nz``: number of space steps, optional (factory default: 51).
-* ``grid``: optional (factory default: 'linear'). Can be either a standard grid
-  type or a file name:
+* ``zmax``: position of right-hand domain boundary in meter.
+* ``nz``: number of space steps, optional (factory default: 60).
+* ``q``: common ratio for geometric grids, optional (factory default: 1.02).
+* ``grid_type``: grid point distribution, optional (factory default:
+  'linear'). Possible values:
 
     * 'linear': linear grid from ``zmin`` to ``zmax`` with size ``nz``.
-    * 'geo': geometric grid from ``zmin`` to ``zmax`` with size ``nz`` and
-      common ratio ``q``:|br|:math:`\Delta z_{i+1} = q \Delta z_{i}`. The
-      common ratio is indicated as an additional parameter, for example
-      ``q = 1.02``. It is optional (factory default: 1.02).
-    * filename: read grid positions from file in the current job folder. The
-      file can be in any format readable by the Numpy ``genfromtxt`` method.
-      ``zmin``, ``zmax`` and ``nz`` are inferred from the grid file, and must
-      not be included in the input file.
+    * 'geometric': geometric grid from ``zmin`` to ``zmax`` with size ``nz`` and
+      common ratio ``q``:|br|:math:`\Delta z_{i+1} = q \Delta z_{i}`.
+
+* ``file``: read grid positions from file in the current job folder. The
+  file can be in any format readable by the Numpy ``genfromtxt`` method.
+  ``zmin``, ``zmax`` and ``nz`` are inferred from the grid file, and must
+  not be included in the configuration file.
+* ``geometry``: domain geometry, optional (factory default: 'planar'). Noda
+  solves the diffusion problem in 1D, in the sense that it handles only one space
+  coordinate. However, this coordinate can describe distances in different 3D
+  geometries:
+
+    * ``planar`` : an infinitely wide plate of given thickness (Cartesian
+      coordinate).
+    * ``cylindrical`` : an infinitely long cylinder of given radius
+      (cylindrical coordinate).
+    * ``spherical`` : a sphere of given radius (spherical coordinate).
 
 .. note::
 
-   As shown in :ref:`implementation_diffusion`, grid positions correspond to the
-   edges of the volumes (nodes, noted ``z``). Fluxes are evaluated on nodes.
-   Composition and related variables (concentrations, atom fractions, chemical
-   potentials, molar volumes, ...) are evaluated in the center of the volumes,
-   noted ``zm``. For instance, with ``grid = linear``, ``nz = 4`` and ``zmax = 3``
-   will produce |br| ``z = [0, 1, 2, 3]`` and ``zm = [0.5, 1.5, 2.5]``.
+   Grid positions correspond to the edges of the volumes (nodes, noted ``z``).
+   Fluxes are evaluated on nodes. Composition and related variables
+   (concentrations, atom fractions, chemical potentials, molar volumes, ...)
+   are evaluated in the center of the volumes, noted ``zm``. For instance, with
+   ``grid_type = linear``, ``nz = 4`` and ``zmax = 3`` will produce
+   ``z = [0, 1, 2, 3]`` and |br| ``zm = [0.5, 1.5, 2.5]`` (see Background
+   section on :ref:`implementation_diffusion`).
 
 .. note::
 
@@ -141,11 +180,11 @@ Initial space grid
 
 .. note::
 
-   In the cylindrical and spherical geometries:
+   In the cylindre and spherical geometries:
 
    * The space coordinate is named  :math:`z`, instead of the usual :math:`\rho` 
      or :math:`r`, to favor compatibility across the three geometries.
-   * The simulation domain is represented by positive radial coordinates, and
+   * The simulation domain is represented by a radial coordinate, and
      the left-hand domain border is closest to the centre of symmetry.
      Therefore the following is enforced:
      :math:`0 \leq z_\mathrm{min} < z_\mathrm{max}`.
@@ -155,66 +194,63 @@ Initial space grid
    * It is possible to represent a hollow cylinder (or sphere) by giving a
      strictly positive value to ``zmin``.
 
-.. _initial_atom_fraction:
+.. _initial_conditions:
 
-Initial atom fraction profile
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Initial conditions [initial_conditions]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``x_profile``: can be either a standard profile type or a file name:
-      
-    * 'step' followed by a float argument: heaviside profile with step at
-      ``zstep``. |br|
-      If the argument is > 0.1, it is interpreted as a fraction of the domain
-      length |br|
-      :math:`\rightarrow` ``zstep = zmin + arg * (zmax - zmin)``. |br|
-      If the argument is < 0.1, it is interpreted as ``zstep`` in m. |br|
-      The atom fractions on the left and right sides of the step are read from
-      the ``x_left`` and ``x_right`` parameters (both required).
-    * 'smooth step' followed by a float: same with an error function instead of
-      heaviside.
-    * 'flat': flat profile. The atom fractions are read from the ``x_left``
-      parameter (required).
-    * filename: read values from file in the current job folder. The file can be
-      in any format readable by the Numpy ``genfromtxt`` method. It must have
-      the independent constituent profiles arranged by columns, with the
-      constituent names on the first line. The size of the columns must match
-      that of ``zm`` (i.e., ``nz - 1``). ``x_left`` and ``x_right`` must not be
-      used.
+The initial system composition is specified using an ``atom_fraction`` table,
+which contains the following:
+   
+* ``shape`` : shape of initial profile. Possible values:
 
-* ``x_left``: name and atom fractions of each independent constituent on the
+   * ``step`` : heaviside profile. The step position can be specified with
+     either ``step_position`` or ``step_fraction``. The atom fractions on
+     the left and right sides of the step are read from the ``left`` and
+     ``right`` tables (both required).
+   * ``smooth step`` same with an error function instead of heaviside.
+   * ``flat``: flat profile. The atom fractions are read from the ``left``
+     parameter (required).
+
+* ``step_position`` : absolute step position in meter.
+* ``step_fraction`` : relative step position (between 0 and 1).
+* ``left``: name and atom fractions of each independent constituent on the
   left-hand side, with the following syntax: ``element1: value, element2: value, ...``.
-* ``x_right``: same on the right-hand side.
+* ``right``: same on the right-hand side.
+* ``file``: read values from file in the current job folder. The file can be
+  in any format readable by the Numpy ``genfromtxt`` method. It must have
+  the independent component profiles arranged by columns, with the
+  component names on the first line. The size of the columns must match
+  that of ``zm`` (i.e., ``nz - 1``).
 
-Boundary conditions
-^^^^^^^^^^^^^^^^^^^
+Boundary conditions [boundary_conditions]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Noda supports Neumann (fixed flux) and Dirichlet (fixed composition)
 boundary conditions. For each of the left and right boundary, the user can
-specify a composition (atom fractions of the independent constituents) or fluxes
-(of all atom constituents). If no condition is given, a zero flux condition is
+specify a composition (atom fractions of the independent components) or fluxes
+(of all components). If no condition is given, a zero flux condition is
 applied.
 
-* ``JBC_left``: flux of atom constituents on left boundary, with the following
-  syntax: |br|
-  ``element1: value, element2: value, ...`` |br|
-  The value is in SI units (mol/m2/s). It can also be an expression of time
-  (noted ``t``) with basic Python operators, which will be evaluated with
-  ``eval``, ex: ``(3*t + 2)**(1/2)``. If ``JBC_left`` is used, values must be
-  given for all atom constituents.
-* ``JBC_right``: same on right boundary.
-* ``xBC_left``: atom fractions of independent constituents on left boundary,
-  with the following syntax: ``element1: value, element2: value, ...`` |br|
-  It can also be an expression of time (noted ``t``) with basic Python
-  operators. If ``xBC_left`` is used, values must be given for all independent
-  constituents.
-* ``xBC_right``: same on right boundary.
+* ``left``: left boundary condition, optional (defaults to 0-flux). Possible
+  values :
+
+   * ``atom_fraction``: atom fraction of the independent components.
+   * ``flux``: flux of all components in mol/m2/s.
+
+* ``right`` : same on the right-hand side.
+
+The conditions are specified using tables with the following syntax : |br|
+``element1: value, element2: value, ...``. Values can be numbers or expressions
+of time (noted ``t``) with basic Python operators, which will be evaluated with
+``eval``, ex: ``(3*t + 2)**(1/2)``.
 
 .. note::
 
    Internally, Dirichlet boundary conditions are implemented by setting fluxes
-   of the independent constituants in the lattice reference frame. By default,
-   a flux of the dependent constituent is set so that the sum of the volumetric
-   fluxes at the boundary is 0:
+   of the independent components in the lattice reference frame. A flux of the
+   dependent component is set so that the sum of the volumetric fluxes at the
+   boundary is 0:
    
    .. math::
    
@@ -224,41 +260,38 @@ applied.
    simulation domain is conserved. The quantity of atom matter (in mol) may
    change due to differences in the partial molar volumes.
 
-Optional parameters
-^^^^^^^^^^^^^^^^^^^
+Options [options]
+^^^^^^^^^^^^^^^^^
 
-The user may also specify:
-
-* A partial molar volume database, with key ``volume_db``. The factory default is
-  ``standard``.
-* A vacancy formation energy database, with key ``vacancy_db``. The factory
-  default is ``standard``.
-
-Like the other optional parameters, the factory default values can be overridden
-by user-specified default values (see :ref:`default_parameters`).
+See :doc:`advanced_use`.
 
 Running a diffusion simulation
 ------------------------------
 
-A new simulation is created using the :class:`simu.NewSimulation` class::
+A new simulation is created using the :class:`simu.NewSimulation` class,
+from either a configuration file or dictionary::
 
    from noda import simu
-   foo = simu.NewSimulation('couple_NiCrSi')
+   simu1 = simu.NewSimulation(file='couple_NiCrSi.toml')
+   simu2 = simu.NewSimulation(config=config)
    
-This supposes that an input file named ``couple_NiCrSi.toml`` is present
-in the working directory. When the simulation is created, some information is
-logged:
+The configuration file can be specified using a string or a pathlib.Path
+instance, and it can be relative to the script being run or absolute. The file
+location defines the work directory, where the log file will be saved. By default,
+the log file uses the same name as the configuration file, with the ``.nod``
+extension. A different name can be specified with the 'ref' keyword argument.
+Part of the log is printed to screen and saved to the log file (here
+``couple_NiCrSi.nod``): file paths, default choices for parameters not present
+in the configuration file. The log file also includes the configuration
+dictionary and the simulation results.
 
-* Part of it (with the `INFO` level) is printed to screen and saved to the log
-  file (here ``couple_NiCrSi.nod``): this indicates what default choices are
-  made for all parameters not present in the input file, and gives general
-  information as to how thermodynamics and mobility functions are generated.
-* Another part (with the `DATA` level) is only saved to the log file: this
-  contains data that will be used when loading the simulation.
+When a simulation is created using a configuration dictionary, the work directory
+is that of the script being run, and by default the log file name is a timedate
+stamp --- again this can be changed with the 'ref' keyword argument.
 
 The simulation is then run with the :meth:`simu.Simulation.run` method::
 
-   foo.run()
+   simu1.run()
 
 Once the calculation is done, Noda logs the run time (screen and log file) and
 the results (to the log file only).
@@ -267,42 +300,42 @@ Accessing and plotting simulation results
 -----------------------------------------
 
 Simulation results may be accessed either directly after a new simulation is
-run (see above), or by loading the log file from a simulation run in a previous
+run, or by loading the log file from a simulation run in a previous
 session. In the latter case, the simulation is created using the
 :class:`simu.ReadSimulation` class::
 
-   foo = simu.ReadSimulation('couple_NiCrSi')
+   simu1 = simu.ReadSimulation('couple_NiCrSi.nod')
    
-This supposes that a log file named ``couple_NiCrSi.nod`` is present in the
-working directory.
+The file name can be relative or absolute.
 
 The simulation results are stored at a number of time steps. The steps and the
-associated simulation times (in h) can be accessed using the ``saved_steps``
-and ``saved_times`` attributes of the simulation object:
+associated simulation times (in h) can be accessed using the ``time.saved_steps``
+and ``time.saved_th`` attributes of the simulation object:
 
->>> foo.saved_steps
+>>> simu1.time.saved_steps
 array([  0,  47,  94, 141, 188, 235, 282, 329, 376, 423, 470])
->>> foo.saved_times
+>>> simu1.time.saved_th
 array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10.])
 
 .. note::
-   The unit of ``saved_times`` is hours. Here, there are 11 saved steps
+   The unit of ``saved_th`` is hour. Here, there are 11 saved steps
    including the initial step (:math:`t=0`), and the simulated time is 10 h.
    However, the time step is not exactly a rational number multiplied by 3600.
    It follows that the saved times are not necessarily integer numbers of hours.
 
-Other useful attributes are:
+Other useful time-related attributes are:
 
->>> foo.th       # time (h)
+>>> simu1.time.th       # time (h)
 10.0
->>> foo.ts       # time (s)
+>>> simu1.time.ts       # time (s)
 36000.0
->>> foo.dt       # time step (s)
+>>> simu1.time.dt       # time step (s)
 76.59574468085107
->>> foo.nt       # number of time steps
+>>> simu1.time.nt       # number of time steps
 471
->>> foo.num_out  # number of saved time steps
+>>> simu1.time.num_out  # number of saved time steps
 11
+
 
 Accessing results
 ^^^^^^^^^^^^^^^^^
@@ -321,15 +354,15 @@ dictionary is called ``results`` and uses time steps as keys.
 
 To wrap up, these are three ways to access the results after 4 h of simulation::
 
-   bar = foo.result(step_index=4)
-   bar = foo.result(th=4)
-   bar = foo.results[188]
+   res = simu1.result(step_index=4)
+   res = simu1.result(th=4)
+   res = simu1.results[188]
 
 Both ``step_index`` and ``th`` are optional arguments of
 :meth:`results.SimulationResults.result`. If no argument is given, the method
 uses the default ``step_index = -1``, which is an alias for the last time step,
-i.e., ``foo.result()`` returns the results at the last time step. Similarly,
-``foo.results[-1]`` returns the results at the last time step.
+i.e., ``simu1.result()`` returns the results at the last time step. Similarly,
+``simu1.results[-1]`` returns the results at the last time step.
 
 The results objects (instances of :class:`results.UnitResult`) have attributes
 which store the simulation variables as Numpy arrays (or dictionaries of Numpy
@@ -348,14 +381,14 @@ arrays). Commonly used attributes are:
     
 Composition variables such as ``x`` or ``c`` are stored as dictionaries of 1D
 arrays, with the relevant constituents as keys. The relevant constituents are
-vacancies and all atom constituents, except for atom fractions ``x`` which only
-apply to atom constituents:
+vacancies and atom species, except for atom fractions ``x`` which only
+apply to atom species:
 
->>> bar.x.keys()
+>>> res.x.keys()
 dict_keys(['Cr', 'Si', 'Ni'])
->>> bar.c.keys()
+>>> res.c.keys()
 dict_keys(['Va', 'Cr', 'Si', 'Ni'])
->>> bar.Jlat.keys()
+>>> res.Jlat.keys()
 dict_keys(['Va', 'Cr', 'Si', 'Ni'])
 
 Composition variables are also accessible as 2D arrays of shape ``(nc, nz - 1)``
@@ -369,17 +402,17 @@ Profiles of the simulated variables can be plotted using the
 :meth:`results.UnitResult.plot` method. The variable is specified with the
 optional argument ``varname``, which defaults to ``x``:
 
-* ``bar.plot(varname='Jlat')`` will plot fluxes in the lattice reference frame.
-* ``bar.plot()`` will plot atom fractions.
+* ``res.plot(varname='Jlat')`` will plot fluxes in the lattice reference frame.
+* ``res.plot()`` will plot atom fractions.
 
 It is also possible to call plot directly from the simulation object; in this
 case, the time step is specified with the optional arguments ``th`` or
 ``step_index``, which defaults to the last time step:
 
-* ``foo.plot(varname='v', th=3)`` will plot the lattice velocity after 3 h.
-* ``foo.plot(th=3)`` will plot atom fractions after 3 h.
-* ``foo.plot(varname='mu')`` will plot chemical potentials at the last time step.
-* ``foo.plot()`` will plot atom fractions at the last time step.
+* ``simu1.plot(varname='v', th=3)`` will plot the lattice velocity after 3 h.
+* ``simu1.plot(th=3)`` will plot atom fractions after 3 h.
+* ``simu1.plot(varname='mu')`` will plot chemical potentials at the last time step.
+* ``simu1.plot()`` will plot atom fractions at the last time step.
 
 .. figure:: /../../tests/jobs/couple_NiCrSi/couple_NiCrSi.png
     :width: 400px
@@ -387,11 +420,11 @@ case, the time step is specified with the optional arguments ``th`` or
 
 |
 
-The :meth:`results.UnitResult.plot` method returns matplotlib figure and axis
+The :meth:`results.UnitResult.plot` method returns Matplotlib figure and axis
 objects. This allows modifying the graph settings after it is generated, for
 example::
 
-   fig, ax = foo.plot()
+   fig, ax = simu1.plot()
    ax.set_title('Custom title')
 
 The :meth:`results.SimulationResults.interactive_plot` method allows accessing
@@ -399,8 +432,8 @@ time steps dynamically on a plot using a slider. Again the variable to be
 plotted is specified with the optional argument ``varname``, which defaults to
 ``x``, and a shortcut is accessible from the simulation object:
 
-* ``foo.interactive_plot(varname='mu')`` will plot chemical potentials.
-* ``foo.interactive_plot()`` will plot atom fractions.
+* ``simu1.interactive_plot(varname='mu')`` will plot chemical potentials.
+* ``simu1.interactive_plot()`` will plot atom fractions.
 
 .. note::
    Interactive plots require an interactive graphics backend. If you are using
@@ -411,15 +444,8 @@ Accessing thermodynamic and diffusion properties
 ------------------------------------------------
 
 Noda contains methods to compute the thermodynamic and diffusion properties of
-a system, at given compositions. This can be done from a simulation object (an
-instance of the :class:`simu.NewSimulation` class, see above), or by creating
-a system object with the :class:`alloy_system.AlloySystem` class::
-
-   from Noda import alloy_system
-   foo = alloy_system.AlloySystem('NiCrSi')
-
-The input file for :class:`alloy_system.AlloySystem` instances only requires
-the following parameters:
+a system, at given compositions. To do so, the configuration file only requires
+the following tables:
 
 .. literalinclude:: /../../tests/jobs/properties_NiCrSi/NiCrSi.toml
    :caption:
@@ -429,11 +455,8 @@ The following example illustrates how properties are computed:
 .. literalinclude:: /../../tests/jobs/properties_NiCrSi/run.py
    :caption:
 
-The methods shown here are also accessible from :class:`simu.NewSimulation`
-instances.
-
-Thermodynamic and diffusion properties are obtained as ndarrays and may be
-plotted using standard matplotlib commands:
+Thermodynamic and diffusion properties are obtained as Numpy arrays and may be
+plotted using standard Matplotlib commands:
 
 .. literalinclude:: /../../tests/jobs/properties_NiCrSi/plot.py
    :caption:
@@ -465,8 +488,9 @@ on the shape of concentration profiles by creating their own database files.
 The examples below shows how the known solution to the diffusion problem
 is recovered when the system properties follow a particular set of constraints.
 
-Let us consider a single-phase binary system AB, where the average molar volume
-is composition-independent. In 1D, the diffusion problem may be written in the
+Let us consider a single-phase binary system AB, where the partial molar
+volumes of A abd B are equal (therefore the average molar volume is
+composition-independent). In 1D, the diffusion problem may be written in the
 following form:
 
 .. math::
@@ -508,7 +532,7 @@ system follows the following set of conditions:
 This yields :math:`\tilde{D} = D_B^*`.
 
 These conditions are fullfilled for the model AB system provided in the test
-base, with databases named "thermo_bin_ideal" and "mob_bin_ideal".
+base, with databases named "AB_thermo_ideal" and "AB_mob_ideal".
 
 A number of diffusion problems involving a binary system with
 composition-independent molar volume and diffusivity have analytical solutions.
@@ -551,7 +575,7 @@ This is compared with the Noda simulation in the example named "couple_AB":
 Constant surface concentration (planar geometry)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the case of a semi-infinite planar solid initially at a uniform concentration
+In the case of a semi-infinite solid initially at a uniform concentration
 :math:`x_B^\mathrm{bulk}`, with its left-hand surface maintained at a constant
 concentration :math:`x_B^\mathrm{surf}`:
 

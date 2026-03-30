@@ -86,9 +86,9 @@ class SimulationResults:
         Raises
         ------
         :class:`utils.UserInputError`
-
-            | If the user specifies both step_index and th ;
-            | if step_index is not an integer or is out of range.
+            If the user specifies both step_index and th.
+        :class:`utils.UserInputError`
+            If step_index is not an integer or is out of range.
 
         """
         if self.saved_steps is None:

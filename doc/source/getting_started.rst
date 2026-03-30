@@ -17,16 +17,16 @@ The package root directory (or installation directory) is structured as follows:
        │   │   alloy_system.py
        │   │   ...
        │   └───data
-       │           fcc-AB-mob-bin_ideal.ods
-       │           fcc-AB-thermo-bin_ideal.ods
-       │           fcc-NiCrSi-mob-du2001.ods
-       │           fcc-NiCrSi-thermo-schuster2000.ods
+       │           fcc-AB-mob-ideal.ods
+       │           fcc-AB-thermo-ideal.ods
+       │           fcc-NiCrSi-mob-Du2001.ods
+       │           fcc-NiCrSi-thermo-Schuster2000.ods
        │           user_data.toml
        └───tests
            │   conftest.py
            └───jobs
                ├───ideal_couple
-               │       ideal_couple-input.txt
+               │       ideal_couple.toml
                │       ideal_couple.png
                │       run.py
                │       run_test.py
@@ -50,15 +50,17 @@ in the file system::
        │       user_data.toml
        └───jobs
             └───fancy_simulation
-                    fancy1-input.txt
-                    fancy2-input.txt
+                    simulation1.toml
+                    simulation2.toml
                     make_fancy_graphs.py
 
-Running a simulation requires an input file, which must be a txt file named with
-a reference followed by ``-input.txt`` (for example, ``fancy1-input.txt``).
-Simulations can be run from a Python script (for example,
-``make_fancy_graphs.py``) or interactively. The contents of the input file and
-common use cases are described in :ref:`basic_use`.
+Simulations are created from a Python script (for example,
+``make_fancy_graphs.py``) or interactively in a Python interpreter. The
+configuration (system properties, simulation conditions) is provided
+through an input file with the `TOML <https://toml.io>`__ format (for example,
+``simulation1.toml``) or directly through a Python dictionary. The
+contents of the configuration and common use cases are described in
+:doc:`basic_use`.
 
 When a simulation is run, if the ``NODA_HOME`` environment variable is provided
 and a ``data`` folder is found in the user directory, Noda will look for data
@@ -82,7 +84,7 @@ are compared with reference results, including results from analytical
 solutions in the cases where these exist. Running simulations requires data ---
 this is why Noda ships with some example data. Jobs in the ``tests`` folder are
 always run using the data in the ``noda/data`` folder. Test jobs are also used as
-examples in the documentation: see :ref:`basic_use`. The data and job files
+examples in the documentation: see :doc:`basic_use`. The data and job files
 are a good starting point to prepare your own data and jobs.
 
 As shown above, in addition to an input file and a running script, test job
@@ -90,6 +92,8 @@ folders contain a script named ``run_test.py``: this is used as part of the
 automatic testing procedure, which relies on the Pytest framework
 (https://docs.pytest.org). Some test job folders also contain image files used
 in the documentation.
+
+.. _user_data:
 
 User data
 ---------
@@ -115,7 +119,7 @@ For example, the "user_data.toml" file included in the installation directory
 
 Two partial molar volume databases are present, named ``standard`` and
 ``Vegard``. When creating a simulation, Noda looks for the partial molar
-volume of all system constituents in the selected database. If a constituent is
+volume of all components in the selected database. If a component is
 not present, it looks for the ``default`` key. If no ``default`` key is
 provided in the selected database, it falls back to a system-wide default value
 \ [#f1]_. Here, if using the ``standard`` database, all constituents will be

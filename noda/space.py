@@ -62,11 +62,9 @@ class SpaceGrid:
         """
         Make initial space grid from input file or parameters.
 
-        Behavior controlled by the 'grid' parameter:
-
-
-        * filename: read from sdir/filename using np.genfromtxt (zmin, zmax and
-          nz are inferred from the grid).
+        If 'file' is given, the grid is read from work_dir/filename using
+        np.genfromtxt, and zmin, zmax and nz are inferred from the grid.
+        If not, see :meth:`make_grid_from_dict`.
 
         Raises
         ------
@@ -91,26 +89,26 @@ class SpaceGrid:
         Make grid from parameters.
 
         The type of grid is specified via the optional parameter 'grid_type',
-        which can be 'linear' or 'geo' and defaults to 'linear' :
+        which can be 'linear' or 'geometric' and defaults to 'linear' :
 
-        * 'linear': linear grid from zmin to zmax with size nz
-        * 'geo': geometric grid from zmin to zmax with size nz and common ratio
-          q
+        * 'linear': linear grid from zmin to zmax with size nz.
+        * 'geometric': geometric grid from zmin to zmax with size nz and common
+          ratio q.
 
         In both cases :
 
-        * zmax must be included in input
-        * zmin is optional and defaults to 0
-        * nz is optional and defaults to value in default_params (can be set in
-          'user_data.toml').
-        * q is optional and defaults to value in default_params.
+        * 'zmax' must be included in input
+        * 'zmin' is optional and defaults to 0
+        * 'nz' is optional and defaults to value in default_params (can be set
+          in 'user_data.toml').
+        * 'q' is optional and defaults to value in default_params.
 
         Raises
         ------
         :class:`utils.UserInputError`
-
-            | If 'zmax' is not found in input dict ;
-            | if zmin or zmax are not compatible with the domain geometry.
+            If 'zmax' is not found in input dict.
+        :class:`utils.UserInputError`
+            If 'zmin' or 'zmax' are not compatible with the domain geometry.
 
         """
         grid_type = get_and_log(params, 'grid_type', 'linear', self.logger)
@@ -125,7 +123,7 @@ class SpaceGrid:
                          self.logger)
         if grid_type == 'linear':
             z_init = np.linspace(zmin, zmax, num=nz)
-        elif grid_type == 'geo':
+        elif grid_type == 'geometric':
             q = get_and_log(params, 'q',
                             self.default_params['common_ratio'],
                             self.logger)

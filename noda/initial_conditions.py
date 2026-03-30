@@ -198,9 +198,9 @@ class InitialConditions:
         Raises
         ------
         :class:`utils.UserInputError`
-
-            | If left or right parameter is specified in input dict ;
-            | if the profile length is not compatible with the space grid.
+            If left or right parameter is specified in input dict.
+        :class:`utils.UserInputError`
+            If the profile length is not compatible with the space grid.
 
         Returns
         -------
@@ -269,13 +269,16 @@ class InitialConditions:
         Raises
         ------
         :class:`utils.UserInputError`
-
-            | If parameter 'left' or 'right' is missing ;
-            | if a value is smaller than 0 or larger than 1 ;
-            | if parameters 'step_fraction' and 'step_position' are missing, or
-              if both are given ;
-            | if 'step_fraction' is smaller than 0 or larger than 1 ;
-            | if 'step_position' is outside domain.
+            If parameter 'left' or 'right' is missing.
+        :class:`utils.UserInputError`
+            If a value is smaller than 0 or larger than 1.
+        :class:`utils.UserInputError`
+            If parameters 'step_fraction' and 'step_position' are missing, or
+            if both are given ;
+        :class:`utils.UserInputError`
+            If 'step_fraction' is smaller than 0 or larger than 1.
+        :class:`utils.UserInputError`
+            If 'step_position' is outside domain.
 
         Returns
         -------
@@ -342,9 +345,9 @@ class InitialConditions:
         Raises
         ------
         :class:`utils.UserInputError`
-
-            | If parameter 'left' is missing ;
-            | if parameter 'right' is provided.
+            If parameter 'left' is missing.
+        :class:`utils.UserInputError`
+            If parameter 'right' is provided.
 
         Returns
         -------

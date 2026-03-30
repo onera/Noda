@@ -1,6 +1,6 @@
 [databases]
-thermo = "schuster2000"
-mobility = "du2001"
+thermo = "Schuster2000"
+mobility = "Du2001"
 
 [system]
 components = "Ni, Cr, Si"

@@ -54,18 +54,18 @@ dict: Factory default parameters.
 'min_number_time_steps' : int
     Minimum number of time steps.
 'num_out' : int
-    Number of saved time steps (see :ref:`simulation_conditions`).
+    Number of saved time steps (see :ref:`time`).
 'grid': str
-    Type of space grid (see :ref:`initial_space_grid`).
+    Type of space grid (see :ref:`space`).
 'number_space_steps' : int
-    Number of space steps (nz in input file, see :ref:`initial_space_grid`).
+    Number of space steps (nz in input file, see :ref:`space`).
 'common_ratio' : float
     Common ratio for geometric grid (q in input file, see
-    :ref:`initial_space_grid`).
+    :ref:`space`).
 'Fourier_number' : float
     Fourier number (see :ref:`time_step`).
 'geometry' : str
-    Domain geometry (see :ref:`domain_geometry`).
+    Domain geometry (see :ref:`space`).
 'stencil' : str
     Space discretization stencil (see :ref:`stencil`).
 'molar_volume_database' : str

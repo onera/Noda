@@ -1,6 +1,6 @@
 [databases]
-thermo = "thermo_bin_ideal"
-mobility = "mob_bin_ideal"
+thermo = "AB_thermo_ideal"
+mobility = "AB_mob_ideal"
 
 [system]
 components = "A, B"
@@ -13,7 +13,7 @@ TC = 1000
 th = 1
 
 [space]
-grid_type = "geo"
+grid_type = "geometric"
 q = 1.02
 zmin = 0
 zmax = 1e-4

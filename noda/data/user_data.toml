@@ -36,23 +36,23 @@ fcc-B = [2, 3e-04]
 
 [thermodynamics]
 
-[thermodynamics.schuster2000]
+[thermodynamics.Schuster2000]
 # Database for CrNiSi system
 # Source: Schuster and Du 2000, https://doi.org/10.1007/s11661-006-0248-y
-file = "fcc-NiCrSi-thermo-schuster2000.ods"
+file = "fcc-NiCrSi-thermo-Schuster2000.ods"
 
-[thermodynamics.thermo_bin_ideal]
+[thermodynamics.AB_thermo_ideal]
 # Made-up data for an ideal A-B binary system
-file = "fcc-AB-thermo-bin_ideal.ods"
+file = "fcc-AB-thermo-ideal.ods"
 
 [mobility]
 
-[mobility.du2001]
+[mobility.Du2001]
 # Database for fcc phase of CrNiSi system
 # Source: Du and Schuster, "Assessment of Diffusional Mobilities of Cr, Ni, and
 # Si in fcc Cr-Ni-Si Alloys", Zeitschrift fur Metallkunde 92 (2001) 28-31
-file = "fcc-NiCrSi-mob-du2001.ods"
+file = "fcc-NiCrSi-mob-Du2001.ods"
 
-[mobility.mob_bin_ideal]
+[mobility.AB_mob_ideal]
 # Made-up data for an ideal A-B binary system
-file = "fcc-AB-mob-bin_ideal.ods"
+file = "fcc-AB-mob-ideal.ods"

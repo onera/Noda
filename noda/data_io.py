@@ -69,9 +69,9 @@ def get_volume_data(volume_databases, volume_db, comps, logger):
     Raises
     ------
     :class:`utils.UserInputError`
-    
-        | If database is not present in databases dict ;
-        | if database entry is formatted incorrectly.
+        If database is not present in databases dict.
+    :class:`utils.UserInputError`
+        If database entry is formatted incorrectly.
 
     Returns
     -------

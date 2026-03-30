@@ -69,9 +69,9 @@ class TimeGrid:
         Raises
         ------
         :class:`utils.UserInputError`
-
-            | If params contains both th and ts ;
-            | if params contains both nt_multipler and dt_multiplier.
+            If params contains both th and ts.
+        :class:`utils.UserInputError`
+            If params contains both nt_multipler and dt_multiplier.
 
         """
         if 'th' in params and 'ts' in params:

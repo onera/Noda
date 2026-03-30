@@ -37,6 +37,9 @@ Three discretization schemes are provided with the parameter ``stencil``
 
      R_i = \frac{1}{2}\frac{\Delta z_i + \Delta z_{i - 1}}{\sqrt{L_iL_{i - 1}}}.
 
+This parameter can be supplied in the ``options`` table of the configuration
+file/dictionary.
+
 .. _time_step:
 
 Time step
@@ -53,14 +56,13 @@ where :math:`\mathrm{Fo}` is the Fourier number (factory default: 0.4),
 :math:`\Delta z_\mathrm{min}` is the minimum value of the initial
 :math:`\Delta z` array and :math:`D^*_\mathrm{max}` is the maximum :math:`D^*`
 value among all atom species over the initial concentration profile (see
-:meth:`simu.Simulation.add_time` for implementation details). The actual time
-time step is obtained by multiplying :math:`\Delta t_\mathrm{default}` by an
-optional input parameter ``dt_multiplier``. This is usually used to reduce the
-time step when the solver is unstable (``dt_multiplier`` < 1). Alternatively,
-the time step may be modified with input parameter ``nt_multiplier`` (alias
-``nt_mult``), which is used as the inverse of ``dt_multiplier``. One would
-decrease the time step (i.e., increase the number of time steps) with
-``nt_mult`` > 1.
+:meth:`time_grid.TimeGrid.make_time_steps` for implementation details). The
+actual time time step is obtained by multiplying :math:`\Delta t_\mathrm{default}`
+by an optional input parameter ``dt_multiplier``. This is usually used to reduce
+the time step when the solver is unstable (``dt_multiplier`` < 1). Alternatively,
+the time step may be modified with input parameter ``nt_multiplier``, which is
+used as the inverse of ``dt_multiplier``. One would decrease the time step
+(i.e., increase the number of time steps) with ``nt_multiplier`` > 1.
 
 Unstabilities mostly arise in two cases:
 
@@ -69,6 +71,9 @@ Unstabilities mostly arise in two cases:
 
 * When running simulations with finite sink strengths
   (see :ref:`non_ideal`).
+
+Parameters ``nt_multiplier`` or ``dt_multiplier`` can be supplied in the
+``time`` table of the configuration file/dictionary.
 
 .. _non_ideal:
 
@@ -110,11 +115,27 @@ The lattice is considered non-ideal when either ``k_dislo``, ``k_pores``,
 ``rho_dislo`` or ``rho_pores`` is specified. If only one :math:`k_i` is given a
 value (via ``k_xxxxx`` or ``rho_xxxxx``), the other takes the default value 0.
 
+Parameters ``k_dislo``, ``k_pores``, ``rho_dislo`` or ``rho_pores`` can be
+supplied in the ``options`` table of the configuration file/dictionary.
+
 With a non-ideal lattice, the user can specify initial vacancy site fraction
-and pore volume fraction profiles, using input parameters ``yVa_profile`` and
-``fp_profile``, respectively. The syntax is the same as that applying to initial
-atom fractions (see :ref:`initial_atom_fraction`), using keys ``yVa_left``,
-``yVa_right``, ``fp_left``, ``fp_right``.
+and pore volume fraction profiles, using tables ``vacancy_fraction`` and
+``pore_fraction``, respectively, in the ``initial_conditions`` table of the
+configuration file/dictionary. The syntax is the same as that applying to initial
+atom fractions (see :ref:`initial_conditions`), for instance::
+
+  config = {...
+            'initial_conditions':
+                {'atom_fractions' : {...},
+                'vacancy_fraction':
+                  {'shape': 'step',
+                  'step_fraction': 0.5,
+                  'left': 1e-6,
+                  'right': 1e-2
+                  }
+               },
+            ...
+            }
 
 The :meth:`results.UnitResult.plot_quartet` method produces a 2 x 2 grid of
 subplots with profiles of the following variables:
@@ -132,14 +153,13 @@ It is convenient to analyse the results of non-ideal lattice simulations.
    Non-ideal lattice simulations require much smaller time steps than ideal lattice
    simulations: typically, ``nt_multiplier`` should be in the order of
    :math:`1/y_0^\mathrm{eq}`, which can be in the order of :math:`10^4 - 10^6`.
-   These simulations take several hours to complete.
+   These simulations may take several hours to complete.
 
 .. warning::
    Non-ideal lattice simulations may produce results that are difficult to
-   interpret and should be run with caution. This type of simulation has not
-   been thoroughly tested. Users are encouraged to be well acquainted with
-   ideal lattice simulations and to read the :ref:`background` Section before
-   working with non-ideal cases.
+   interpret and should be run with caution. Users are encouraged to be well
+   acquainted with ideal lattice simulations and to read the :ref:`background`
+   Section before working with non-ideal cases.
 
 Run options
 -----------
@@ -169,22 +189,30 @@ for example::
    [default_parameters]
 
    number_space_steps = 100
-   volume_db = 'Vegard'
+   molar_volume_database = 'Vegard'
 
 In this case, when ``nz`` is absent from the input file, it will take the value
-100. Likewise, ``volume_db`` will default to ``Vegard``.
+100. Likewise, ``molar_volume_database`` will default to ``Vegard``.
 
 In addition to optional parameters, :data:`constants.factory_default_parameters`
 includes numerical parameters that cannot be set on a per-job basis, but can be
 set system-wide via the ``default_parameters`` table in “user_data.toml”:
 
-   * ``min_atom_fraction``: Noda solves the diffusion problem using transport
-     coefficients which are proportional to concentrations (see Eq. 
-     :eq:`Onsager_coefficients` in :ref:`mobility`). As a consequence, Noda
-     cannot handle concentrations strictly equal to 0. Atom fractions given by
-     the user to specify initial profiles and boundary conditions are therefore
-     clipped between a lower bound, ``min_atom_fraction``, and a higher bound,
-     ``1 - min_atom_fraction``.  The factory default is 1e-9.
-   
-   * ``min_number_time_steps``: this is a lower bound for the number of time
-     steps. The factory default is 20.
+  * ``min_atom_fraction``: Noda solves the diffusion problem using transport
+    coefficients which are proportional to concentrations (see Eq. 
+    :eq:`Onsager_coefficients` in :ref:`mobility`). As a consequence, Noda
+    cannot handle concentrations strictly equal to 0. Atom fractions given by
+    the user to specify initial profiles and boundary conditions are therefore
+    clipped between a lower bound, ``min_atom_fraction``, and a higher bound,
+    ``1 - min_atom_fraction``.  The factory default is 1e-9.
+  * ``min_number_time_steps``: this is a lower bound for the number of time
+    steps. The factory default is 20.
+  * ``partial_molar_volume`` : this is the default partial molar volume (m3/mol)
+    assigned to a species when it is absent from a ``molar_volume_database``,
+    and the database contains no ``default`` entry. The factory default is
+    1e-5.
+  * ``vacancy_formation_energy`` : same with the vacancy formation energy in
+    pure metals. The factory default is [2, 3e-04] (GfV = HfV - T*SfV with
+    [HfV, SfV] in [eV, eV/K]).
+
+     
