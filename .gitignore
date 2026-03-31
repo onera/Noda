@@ -6,6 +6,9 @@ __pycache__
 *.pdf
 *.lnk
 make_html.bat
+run_test_suite.bat
+sandbox.py
+.pylintrc
 .spyproject
 /.VSCodeCounter
 noda.egg-info
