@@ -74,7 +74,7 @@ class SimulationResults:
         Parameters
         ----------
         step_index : int
-            Index of required time step in saved_steps/saved_times.
+            Index of required time step in saved_steps/saved_th.
         th : float
             Required time in hour.
 
@@ -126,7 +126,7 @@ class SimulationResults:
         varname : str
             Name of variable to be plotted.
         step_index : int
-            Index of required time step in saved_steps/saved_times.
+            Index of required time step in saved_steps/saved_th.
         th : float
             Required time in hour.
 
@@ -150,7 +150,7 @@ class SimulationResults:
         Parameters
         ----------
         step_index : int
-            Index of required time step in saved_steps/saved_times.
+            Index of required time step in saved_steps/saved_th.
         th : float
             Required time in hour.
 

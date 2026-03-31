@@ -68,7 +68,7 @@ class Simulation:
     TC : float
         Temperature in Celsius
     databases : dict
-        Names of user-specified databases (thermo, mobility, optional :
+        Names of databases used in the simulation (thermo, mobility,
         molar_volume, vacancy_formation_energy)
     volume_db : str
         Name of partial molar volume database.
@@ -76,15 +76,16 @@ class Simulation:
         Partial molar volumes.
     thermo : :class:`thermodynamics.Thermodynamics`
         Thermodynamic properties.
-    mob : :class:`mobility.Mobility`
+    mobility : :class:`mobility.Mobility`
         Mobility properties.
     space : :class:`space.SpaceGrid`
         Space grid parameters.
-    BC : :class:`boundary_conditions.BoundaryConditions`
-        Boundary conditions.
+    boundary_conditions : dict
+        Instances of :class:`boundary_conditions.BoundaryConditions`, with
+        'left' and 'right' as keys.
     lattice : :class:`lattice.Lattice`
         Parameters relative to vacancy annihilation/creation.
-    init : :class:`initial_conditions.InitialConditions`
+    initial_conditions : :class:`initial_conditions.InitialConditions`
         Initial conditions.
     time : :class:`time.TimeGrid`
         Time-related parameters.
@@ -123,19 +124,21 @@ class Simulation:
         self.TK = self.temperature.TK
         self.databases = config['databases']
         vacancy_db = self.get_and_log('vacancy', stream=False)
+        self.databases['vacancy_formation_energy'] = vacancy_db
         self.volume_db = self.get_and_log('molar_volume')
+        self.databases['molar_volume'] = self.volume_db
         self.V_partial = da.get_volume_data(volume_databases,
                                             self.volume_db,
                                             self.comps,
                                             logger)
         self.thermo = self.get_thermo_handler(vacancy_databases, vacancy_db)
-        self.mob = self.get_mob_handler()
+        self.mobility = self.get_mob_handler()
         if 'space' in config:
             self.space = SpaceGrid(config['space'],
                                    self.default_parameters,
                                    work_dir,
                                    logger)
-        self.BC = self.get_boundary_conditions(min_atom_fraction)
+        self.boundary_conditions = self.get_boundary_conditions(min_atom_fraction)
         options = config.get('options', {})
         self.lattice = Lattice(options, work_dir, logger)
         if self.lattice.ideal is False:
@@ -143,7 +146,8 @@ class Simulation:
 
         # Need to handle after lattice because depends on thermo.ideal_lattice
         if 'initial_conditions' in config:
-            self.init = InitialConditions(config['initial_conditions'],
+            self.initial_conditions = InitialConditions(
+                                          config['initial_conditions'],
                                           self.V_partial,
                                           self.space,
                                           work_dir,
@@ -152,9 +156,9 @@ class Simulation:
                                           logger)
         if 'time' in config:
             self.time = TimeGrid(config['time'],
-                                 self.init.x,
+                                 self.initial_conditions.x,
                                  self.space.dz_init,
-                                 self.mob.DT_fun,
+                                 self.mobility.DT_fun,
                                  self.default_parameters,
                                  logger)
 
@@ -167,7 +171,7 @@ class Simulation:
         # nested structure both in config and in instance attributes
 
         # Initialize results if simulation is ready to run
-        cats = ['space', 'init', 'time', 'BC']
+        cats = ['space', 'initial_conditions', 'time', 'boundary_conditions']
         self.ready = all(hasattr(self, cat) for cat in cats)
         if self.ready:
             params = {'comps': self.comps,
@@ -434,9 +438,17 @@ class NewSimulation(Simulation):
                     raise ut.UserInputError(msg)
 
         self.prepare_simulation_log()
-        resdict = so.solver(self.thermo, self.mob, self.space, self.init,
-                            self.BC, self.time, self.lattice, show_completion,
-                            verbose, self.stencil, self.logger)
+        resdict = so.solver(self.thermo,
+                            self.mobility,
+                            self.space,
+                            self.initial_conditions,
+                            self.boundary_conditions,
+                            self.time,
+                            self.lattice,
+                            show_completion,
+                            verbose,
+                            self.stencil,
+                            self.logger)
         self.logger.results(resdict)
         self.simres.add_results(resdict)
 

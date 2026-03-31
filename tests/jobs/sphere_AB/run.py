@@ -23,7 +23,7 @@ R = s.space.zmax
 r = s.space.z_init
 
 x_any = np.array([[0.5]])
-D = s.mob.DT_fun(x_any)[0]
+D = s.mobility.DT_fun(x_any)[0]
 
 th_targets = [1, 5, 10]
 colors = ['salmon', 'gold', 'paleturquoise']

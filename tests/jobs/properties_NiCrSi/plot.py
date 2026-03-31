@@ -72,7 +72,7 @@ for i in range(3):
     for j, val in enumerate(targets):
         x1 = np.ones(x0.size)*val
         x = np.vstack((x0, x1))
-        DT = s.mob.DT_fun(x)[i]
+        DT = s.mobility.DT_fun(x)[i]
         ax1.plot(x0, np.log10(DT), label=f'{val:.2f}')
     
     ax1.set_ylabel(rf'$\log_{{{10}}}\ D_\mathrm{{{A}}}^*$ (m$^2$/s)')
@@ -84,7 +84,7 @@ for i in range(3):
     for j, val in enumerate(targets):
         x0 = np.ones(x1.size)*val
         x = np.vstack((x0, x1))
-        DT = s.mob.DT_fun(x)[i]
+        DT = s.mobility.DT_fun(x)[i]
         ax2.plot(x1, np.log10(DT), label=f'{val:.2f}')
     
     ax2.legend(title=r'$x_\mathrm{Cr}$', loc='upper left')

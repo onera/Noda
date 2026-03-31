@@ -410,7 +410,7 @@ def calculate_view_limits(results, varname):
 class InteractivePlot():
     """Interactive plot of simulation results."""
 
-    def __init__(self, varname, comps, results, saved_times, saved_steps):
+    def __init__(self, varname, comps, results, saved_th, saved_steps):
         """
         Class constructor.
 
@@ -424,14 +424,14 @@ class InteractivePlot():
             Simulation results.
         saved_steps : list
             Steps for which simulation results are stored in steps.
-        saved_times : 1D array
+        saved_th : 1D array
             Times in h (rounded) that correspond to the saved steps.
         title : str
             Plot title.
 
         """
         self.comps = comps
-        self.saved_times = saved_times
+        self.saved_th = saved_th
         self.saved_steps = saved_steps
         self.num_out = len(saved_steps)
         self.i = 0
@@ -532,7 +532,7 @@ class InteractivePlot():
 
     def update(self):
         """Update and draw the figure."""
-        th = self.saved_times[self.i]
+        th = self.saved_th[self.i]
         n = self.saved_steps[self.i]
         res = self.results[n]
         var = getattr(res, self.varname)
@@ -562,7 +562,7 @@ class InteractivePlotQuartet():
 
     """
 
-    def __init__(self, comps, results, saved_times, saved_steps):
+    def __init__(self, comps, results, saved_th, saved_steps):
         """
         Class constructor.
 
@@ -574,7 +574,7 @@ class InteractivePlotQuartet():
             Simulation results.
         saved_steps : list
             Steps for which simulation results are stored in steps.
-        saved_times : 1D array
+        saved_th : 1D array
             Times in h (rounded) that correspond to the saved steps.
         title : str
             Plot title.
@@ -582,7 +582,7 @@ class InteractivePlotQuartet():
         """
         self.comps = comps
         self.results = deepcopy(results)
-        self.saved_times = saved_times
+        self.saved_th = saved_th
         self.saved_steps = saved_steps
         self.num_out = len(saved_steps)
         self.i = 0
@@ -710,7 +710,7 @@ class InteractivePlotQuartet():
 
     def update(self):
         """Update and draw the figure."""
-        th = self.saved_times[self.i]
+        th = self.saved_th[self.i]
         n = self.saved_steps[self.i]
         res = self.results[n]
         z = res.z*1e6
@@ -754,9 +754,9 @@ def plot_mass_balance(results):
     fig, ax = plt.subplots()
     for i, k in zip(range(1, len(results.comps)), results.comps[1:]):
         rdN = [results.steps[n].rdIN[i] for n in results.saved_steps]
-        ax.plot(results.saved_times, rdN, label=k)
+        ax.plot(results.saved_th, rdN, label=k)
     rdNv = [results.steps[n].rdINv for n in results.saved_steps]
-    ax.plot(results.saved_times, rdNv, label='Va + pore + void')
+    ax.plot(results.saved_th, rdNv, label='Va + pore + void')
     ax.legend()
     ax.set_xlabel('$t$ (h)')
     ax.set_ylabel('$(N_t - N_0)/N_0$')

@@ -2,17 +2,17 @@ import numpy as np
 
 from noda import simu
 
-foo = simu.NewSimulation(file='couple_NiCrSi.toml')
-foo.run()
+simu1 = simu.NewSimulation(file='couple_NiCrSi.toml')
+simu1.run()
 
 #%% Plot
 
-fig, ax = foo.plot()
+fig, ax = simu1.plot()
 
 #%% Validation
 
-bar = foo.result()
-x_simu = np.array(list(bar.x.values()))
+res = simu1.result()
+x_simu = np.array(list(res.x.values()))
 
 ref = np.genfromtxt('couple_NiCrSi-ref.txt', skip_header=1, delimiter=',')
 x_ref = ref.T[1:]

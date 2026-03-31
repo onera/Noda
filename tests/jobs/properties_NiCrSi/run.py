@@ -23,7 +23,7 @@ G = s.thermo.G_fun(x)
 MU = s.thermo.MU_fun(x)
 
 # Compute tracer diffusion coefficients, shape = (n ind. components, n_points)
-DT = s.mob.DT_fun(x)
+DT = s.mobility.DT_fun(x)
 
 
 #%% Validation

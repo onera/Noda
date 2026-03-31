@@ -72,8 +72,8 @@ user-defined values (see :ref:`default_parameters`).
 
 The configuration contains the following tables and subtables:
 
-Databases [databases]
-^^^^^^^^^^^^^^^^^^^^^
+Databases ``[databases]``
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``thermo``: name of the thermodynamic database.
 * ``mobility``: name of the mobility database.
@@ -81,7 +81,7 @@ Databases [databases]
   (factory default : ``standard``, which has the same value for all atom
   species, see :ref:`user_data`).
 * ``vacancy_database``: name of the vacancy formation energy database, optional
-  (factory default: ``standard``, which has thge same values for all atom
+  (factory default: ``standard``, which has the same values for all atom
   species, see :ref:`user_data`).
 
 Like the other optional parameters, the factory default values can be overridden
@@ -89,8 +89,8 @@ by user-specified default values (see :ref:`default_parameters`).
 
 These names given here must be associated with databases in ``user_data.toml``.
 
-System [system]
-^^^^^^^^^^^^^^^
+System ``[system]``
+^^^^^^^^^^^^^^^^^^^
 
 * ``components``: name of the atomic species, with the following syntax:|br|
   ``element1, element2, ...``. The first element of the list is considered the
@@ -98,21 +98,21 @@ System [system]
   boundary conditions.
 * ``phases``: name of the phases. The present version is limited to one phase.
 
-Temperature [temperature]
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Temperature ``[temperature]``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``TC``: temperature in Celsius.
 
-Use ``TK`` to enter the temperature in Kelvin.
+Use ``TK`` instead to enter the temperature in Kelvin.
 
 .. _time:
 
-Time [time]
-^^^^^^^^^^^
+Time ``[time]``
+^^^^^^^^^^^^^^^
 
 * ``th``: simulation time in hour.
 
-Use ``ts`` to enter the time in second.
+Use ``ts`` instead to enter the time in second.
 
 * ``num_out``: number of saved time steps, optional (factory default: 2). A
   simulation often requires a large number of time steps; only the number of
@@ -126,12 +126,12 @@ Use ``ts`` to enter the time in second.
    instance, if the simulation time is 2 h and one wants to access the results 
    that correspond to 1 h of simulation, one may use |br|
    ``num_out = 3``. This will save results at 0, 1 and 2 h of simulation
-   (``saved_times = [0, 1, 2]``).
+   (``saved_th = [0, 1, 2]``).
 
 .. _space:
 
-Space [space]
-^^^^^^^^^^^^^
+Space ``[space]``
+^^^^^^^^^^^^^^^^^
 
 * ``zmin``: position of left-hand domain boundary in meter, optional (factory
   default: 0).
@@ -148,7 +148,7 @@ Space [space]
 * ``file``: read grid positions from file in the current job folder. The
   file can be in any format readable by the Numpy ``genfromtxt`` method.
   ``zmin``, ``zmax`` and ``nz`` are inferred from the grid file, and must
-  not be included in the configuration file.
+  not be included in the [space] table.
 * ``geometry``: domain geometry, optional (factory default: 'planar'). Noda
   solves the diffusion problem in 1D, in the sense that it handles only one space
   coordinate. However, this coordinate can describe distances in different 3D
@@ -196,8 +196,8 @@ Space [space]
 
 .. _initial_conditions:
 
-Initial conditions [initial_conditions]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Initial conditions ``[initial_conditions]``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The initial system composition is specified using an ``atom_fraction`` table,
 which contains the following:
@@ -221,10 +221,11 @@ which contains the following:
   in any format readable by the Numpy ``genfromtxt`` method. It must have
   the independent component profiles arranged by columns, with the
   component names on the first line. The size of the columns must match
-  that of ``zm`` (i.e., ``nz - 1``).
+  that of ``zm`` (i.e., ``nz - 1``). The other parameters (``shape``,
+  ``step_position``, ...) must not be included in the initial_conditions table.
 
-Boundary conditions [boundary_conditions]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Boundary conditions ``[boundary_conditions]``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Noda supports Neumann (fixed flux) and Dirichlet (fixed composition)
 boundary conditions. For each of the left and right boundary, the user can
@@ -260,8 +261,8 @@ of time (noted ``t``) with basic Python operators, which will be evaluated with
    simulation domain is conserved. The quantity of atom matter (in mol) may
    change due to differences in the partial molar volumes.
 
-Options [options]
-^^^^^^^^^^^^^^^^^
+Options ``[options]``
+^^^^^^^^^^^^^^^^^^^^^
 
 See :doc:`advanced_use`.
 
@@ -308,6 +309,9 @@ session. In the latter case, the simulation is created using the
    
 The file name can be relative or absolute.
 
+Simulation parameters
+^^^^^^^^^^^^^^^^^^^^^
+
 The simulation results are stored at a number of time steps. The steps and the
 associated simulation times (in h) can be accessed using the ``time.saved_steps``
 and ``time.saved_th`` attributes of the simulation object:
@@ -336,6 +340,26 @@ Other useful time-related attributes are:
 >>> simu1.time.num_out  # number of saved time steps
 11
 
+The system parameters and simulation conditions are stored in attributes of the
+:class:`simu.ReadSimulation` instance that bear the names of the configuration
+tables. For instance:
+
+>>> simu1.databases               # names of the databases in use
+{'thermo': 'Schuster2000',
+ 'mobility': 'Du2001',
+ 'vacancy_formation_energy': 'standard',
+ 'molar_volume': 'standard'}
+>>> simu1.space.z_init            # initial node positions (where fluxes are evaluated)
+array([0.00000000e+00, 8.47457627e-06, ..., 4.91525424e-04, 5.00000000e-04])
+>>> simu1.initial_conditions.x    # initial atom fractions of independent components
+{'Cr': array([3.0e-01, 3.0e-01, ..., 1.0e-09, 1.0e-09]),
+ 'Si': array([1.e-09, 1.e-09, ..., 1.e-01, 1.e-01])}
+>>> simu1.boundary_conditions['left'].type
+'Neumann'
+
+The ``thermo`` and ``mobility`` attributes contain functions used to calculate
+quantities such as chemical potentials or tracer diffusion coefficients : their
+use is illustrated in :ref:`accessing_properties`.
 
 Accessing results
 ^^^^^^^^^^^^^^^^^
@@ -368,16 +392,16 @@ The results objects (instances of :class:`results.UnitResult`) have attributes
 which store the simulation variables as Numpy arrays (or dictionaries of Numpy
 arrays). Commonly used attributes are:
 
-* z : Node positions (m).
-* zm : Midpoint positions (m).
-* c : Concentrations (mol/m3).
-* y : Metal site fractions.
-* x : Metal atom fractions.
-* Vm : Average molar volume of metal (m3/mol).
-* mu : Chemical potentials (J/mol).
-* Jlat : Fluxes in lattice-fixed frame (mol m-2 s-1).
-* v : Velocity field of lattice relative to laboratory frame (m/s).
-* deformation : Relative length variation.
+* ``z`` : Node positions (m).
+* ``zm`` : Midpoint positions (m).
+* ``c`` : Concentrations (mol/m3).
+* ``y`` : Site fractions.
+* ``x`` : Atom fractions.
+* ``Vm`` : Average molar volume of metal (m3/mol).
+* ``mu`` : Chemical potentials (J/mol).
+* ``Jlat`` : Fluxes in lattice-fixed frame (mol m-2 s-1).
+* ``v`` : Velocity field of lattice relative to laboratory frame (m/s).
+* ``deformation`` : Relative length variation.
     
 Composition variables such as ``x`` or ``c`` are stored as dictionaries of 1D
 arrays, with the relevant constituents as keys. The relevant constituents are
@@ -425,7 +449,7 @@ objects. This allows modifying the graph settings after it is generated, for
 example::
 
    fig, ax = simu1.plot()
-   ax.set_title('Custom title')
+   ax.set_title('Ni-30Cr vs. Ni-10Si at 1200 °C')
 
 The :meth:`results.SimulationResults.interactive_plot` method allows accessing
 time steps dynamically on a plot using a slider. Again the variable to be
@@ -439,6 +463,8 @@ plotted is specified with the optional argument ``varname``, which defaults to
    Interactive plots require an interactive graphics backend. If you are using
    Spyder, you will need to set the graphics backend to 'Automatic' rather than
    'Inline' (see Tools/Preferences/IPython console/Graphics/Graphics backend).
+
+.. _accessing_properties:
 
 Accessing thermodynamic and diffusion properties
 ------------------------------------------------

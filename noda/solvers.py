@@ -17,8 +17,8 @@ from noda.utils import div
 # Solver
 
 
-def solver(thermo, mob, space, init, BC, time_grid, lattice, show_completion,
-           verbose, stencil, logger):
+def solver(thermo, mobility, space, init, BC, time_grid, lattice,
+           show_completion, verbose, stencil, logger):
     """
     Solve diffusion equation.
 
@@ -29,7 +29,7 @@ def solver(thermo, mob, space, init, BC, time_grid, lattice, show_completion,
     ----------
     thermo : :class:`thermodynamics.Thermodynamics`
         Thermodynamic properties.
-    mob : :class:`mobility.Mobility`
+    mobility : :class:`mobility.Mobility`
         Mobility properties.
     space : :class:`space.SpaceGrid`
         Space grid.
@@ -144,7 +144,7 @@ def solver(thermo, mob, space, init, BC, time_grid, lattice, show_completion,
         # Compute Onsager coeffs, factor in yVa
         # Note: since c is the global concentration, L_eq includes fm. This is
         # only valid inasmuch as L_ij = 0 in the pores
-        L_eq = mob.L_fun(c[1:], x[:-1])
+        L_eq = mobility.L_fun(c[1:], x[:-1])
         L = L_eq * y[0]/yVa_eq
 
         # Compute diffusion fluxes
@@ -153,7 +153,7 @@ def solver(thermo, mob, space, init, BC, time_grid, lattice, show_completion,
         Jbulk = -np.diff(MU_diff)/RL
         Jleft, Jright = compute_boundary_fluxes(n*dt, MU_diff, dz, BC,
                                                 thermo.MU_funy,
-                                                L, mob.L_fun, Vk)
+                                                L, mobility.L_fun, Vk)
         Jlat = np.hstack((Jleft[None].T, Jbulk, Jright[None].T))
 
         if lattice.ideal:
@@ -162,7 +162,7 @@ def solver(thermo, mob, space, init, BC, time_grid, lattice, show_completion,
                                          space.geometry)
         else:
             if rho_dislo or rho_pores:
-                D0 = mob.DVa_fun(y, x[:-1])
+                D0 = mobility.DVa_fun(y, x[:-1])
                 if rho_dislo:
                     k_dislo = rho_dislo * D0
                 if rho_pores:
