@@ -9,8 +9,8 @@ s.run()
 
 #%% Comparison with analytical solution
 
-x_bulk = s.init.x['B'][0]
-x_surf = s.BC['left'].cvar_fun(0).x.mid[0]
+x_bulk = s.initial_conditions.x['B'][0]
+x_surf = s.boundary_conditions['left'].x_fun(0)[0]
 
 x_any = np.array([[0.5]])
 D = s.mobility.DT_fun(x_any)[0]

@@ -17,8 +17,8 @@ s.run()
 
 #%% Comparison with analytical solution
 
-x_bulk = s.init.x['B'][0]
-x_surf = s.BC['right'].cvar_fun(0).x.mid[0]
+x_bulk = s.initial_conditions.x['B'][0]
+x_surf = s.boundary_conditions['right'].x_fun(0)[0]
 R = s.space.zmax
 r = s.space.z_init
 

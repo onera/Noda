@@ -136,8 +136,7 @@ class BoundaryConditions:
         * the pore fraction is 0.
 
         """
-        self.check_BC_components(xparams.keys(), self.inds,
-                                      'atom_fraction')
+        self.check_BC_components(xparams.keys(), self.inds, 'atom_fraction')
         xparams = self.clip_xBC_values(xparams)
         fun_dct = {k: lambda t, s=xparams[k]: eval(s) for k in self.inds}
 
@@ -178,3 +177,7 @@ class BoundaryConditions:
                 self.logger.info(msg)
                 xparams[k] = str(max_val)
         return xparams
+    
+    def x_fun(self, t):
+        """Atom fractions on boundary."""
+        return self.cvar_fun(t).x.mid

@@ -141,9 +141,9 @@ class CompositionVariables:
     Attributes
     ----------
     x : 2D array
-        Metal atom fractions.
+        Atom fractions.
     y : 2D array
-        Metal site fractions.
+        Site fractions.
     V : 1D array
         Average system molar volume.
     Vm : 1D array
@@ -173,9 +173,9 @@ class CompositionVariables:
         comps : list of str
             System constituents, ordered: ['Va'] + inds + [dep].
         x_dct : dict
-            Initial atom fractions, dict of 1D arrays of shape (`nz` - 1,).
+            Atom fractions, dict of 1D arrays of shape (`nz` - 1,).
         yVa : 1D array
-            Initial vacancy site fraction, shape (`nz` - 1,).
+            Vacancy site fraction, shape (`nz` - 1,).
         V_partial : dict
             Partial molar volumes.
         fm : 1D array
@@ -231,7 +231,7 @@ class CompositionVariables:
     @property
     def y(self):
         """
-        Site fractions of all metal constituents evaluated on midpoints.
+        Site fractions of all constituents evaluated on midpoints.
 
         Returns
         -------

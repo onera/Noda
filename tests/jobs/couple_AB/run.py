@@ -9,8 +9,8 @@ s.run()
 
 #%% Comparison with analytical solution
 
-x_left = s.init.x['B'][0]
-x_right = s.init.x['B'][-1]
+x_left = s.initial_conditions.x['B'][0]
+x_right = s.initial_conditions.x['B'][-1]
 
 x_any = np.array([[0.5]])
 D = s.mobility.DT_fun(x_any)[0]
