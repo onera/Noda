@@ -52,7 +52,7 @@ The default time step is calculated as:
    \Delta t_\mathrm{default} = \mathrm{Fo}
                                \frac{\Delta z^2_\mathrm{min}}{D^*_\mathrm{max}}
 
-where :math:`\mathrm{Fo}` is the Fourier number (factory default: 0.4),
+where :math:`\mathrm{Fo}` is the Fourier number (factory default: 0.25),
 :math:`\Delta z_\mathrm{min}` is the minimum value of the initial
 :math:`\Delta z` array and :math:`D^*_\mathrm{max}` is the maximum :math:`D^*`
 value among all atom species over the initial concentration profile (see

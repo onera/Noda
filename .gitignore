@@ -12,3 +12,4 @@ sandbox.py
 .spyproject
 /.VSCodeCounter
 noda.egg-info
+make_ref_data.py

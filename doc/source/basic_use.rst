@@ -317,7 +317,7 @@ associated simulation times (in h) can be accessed using the ``time.saved_steps`
 and ``time.saved_th`` attributes of the simulation object:
 
 >>> simu1.time.saved_steps
-array([  0,  47,  94, 141, 188, 235, 282, 329, 376, 423, 470])
+array([  0,  75, 150, 226, 301, 376, 451, 526, 602, 677, 752])
 >>> simu1.time.saved_th
 array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10.])
 
@@ -330,13 +330,13 @@ array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10.])
 Other useful time-related attributes are:
 
 >>> simu1.time.th       # time (h)
-10.0
+10
 >>> simu1.time.ts       # time (s)
-36000.0
+36000
 >>> simu1.time.dt       # time step (s)
-76.59574468085107
+47.87234042553192
 >>> simu1.time.nt       # number of time steps
-471
+753
 >>> simu1.time.num_out  # number of saved time steps
 11
 

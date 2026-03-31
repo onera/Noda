@@ -17,7 +17,7 @@ grid_type = "geometric"
 q = 1.02
 zmin = 0
 zmax = 1e-4
-nz = 50
+nz = 60
 
 [initial_conditions]
 [initial_conditions.atom_fraction]

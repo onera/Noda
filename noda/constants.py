@@ -38,7 +38,7 @@ factory_default_parameters = {
    'grid_type': 'linear',
    'number_space_steps': 60,
    'common_ratio': 1.02,
-   'Fourier_number': 0.4,
+   'Fourier_number': 0.25,
    'geometry': 'planar',
    'stencil': 'A',
    'molar_volume_database': 'standard',
