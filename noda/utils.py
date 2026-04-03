@@ -16,17 +16,6 @@ def is_string_value(x, val):
     return (isinstance(x, str) and x == val)
 
 
-def isfilename(s):
-    """
-    Guess if string is a file name.
-
-    True if s contains a dot and no space.
-
-    """
-    res = '.' in s and ' ' not in s
-    return res
-
-
 def kd(a, b):
     """
     Kronecker delta.

@@ -12,15 +12,16 @@ Basic use
 Setting up a simulation
 -----------------------
 
-A typical configuration file contains the following:
+Configuration files use the `TOML <https://toml.io>`__ format and typically
+contain the following:
 
 .. literalinclude:: /../../tests/jobs/couple_NiCrSi/couple_NiCrSi.toml
    :caption:
 
-Input files use the `TOML <https://toml.io>`__ format. Th text located after the
-comment character ``#`` is ignored. Parameters are entered with a 
-``key = value`` syntax ; string values need quotes, while numerical values do
-not. The format uses nested tables, according to these equivalen syntaxes::
+The text located after the comment character ``#`` is ignored. Parameters are
+entered with a ``key = value`` syntax ; string values need quotes, while
+numerical values do not. The format uses nested tables, according to these
+equivalent syntaxes::
 
    [table]
    [table.subtable]
@@ -41,7 +42,7 @@ or::
 When the configuration file is read, its content is converted to a Python
 dictionary using the native tomllib library. Nested tables then become nested 
 dictionaries. The configuration file given above is equivalent to the following
-Python dictionary::
+dictionary::
 
    config = {'databases': {'thermo': 'Schuster2000',
                            'mobility': 'Du2001'
@@ -75,8 +76,10 @@ The configuration contains the following tables and subtables:
 Databases ``[databases]``
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``thermo``: name of the thermodynamic database.
-* ``mobility``: name of the mobility database.
+* ``thermo``: name of the thermodynamic database, or path pointing to the
+  database file.
+* ``mobility``: name of the mobility database, or path pointing to the
+  database file.
 * ``molar_volume``: name of the database of partial molar volumes, optional
   (factory default : ``standard``, which has the same value for all atom
   species, see :ref:`user_data`).
@@ -87,7 +90,8 @@ Databases ``[databases]``
 Like the other optional parameters, the factory default values can be overridden
 by user-specified default values (see :ref:`default_parameters`).
 
-These names given here must be associated with databases in ``user_data.toml``.
+The database names given here must be associated with database file names in
+``user_data.toml`` (see :ref:`user_data`).
 
 System ``[system]``
 ^^^^^^^^^^^^^^^^^^^

@@ -1,0 +1,16 @@
+﻿# Made-up data for an ideal binary system,,,,,
+,,,,,
+Elements,,,,,
+,A,B,,,
+-,-2000,-5000,,,
+T,150,120,,,
+T*ln(T),-20,-20,,,
+T^2,1.00E-03,-5.00E-03,,,
+T^3,-1.00E-06,0,,,
+1/T,140000,0,,,
+Tcritical,400,600,,,
+beta,0.8,0.5,,,
+,,,,,
+Interactions,,,,,
+variable,solvent,A,B,C,D
+L,AB,0,0,0,0

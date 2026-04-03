@@ -286,16 +286,17 @@ class Simulation:
             Thermodynamic properties handler.
 
         """
-        db_name = self.databases['thermo'].lower()
-        db = ut.get_or_raise(self.db_register, db_name)
-        fpath = self.data_dir / db["file"]
+        name = self.databases['thermo'].lower()
+        if Path(name).is_file():
+            fpath = Path(name)
+        else:
+            db = ut.get_or_raise(self.db_register, name)
+            fpath = self.data_dir / db["file"]
         params = da.get_thermo_from_file(fpath, self.phase,
                                          self.comps[1:],
                                          self.TK,
                                          self.logger)
-        db_file = ut.get_or_raise(self.db_register[db_name], 'file')
-        msg = ("Thermodynamic functions built from database file "
-               f"('{db_file}').")
+        msg = f"Reading thermodynamic data in '{fpath.resolve()}'."
         self.logger.info(msg)
         return Thermodynamics(params, self.comps, self.phase, self.TK,
                               vacancy_databases, vacancy_db, self.logger)
@@ -310,13 +311,15 @@ class Simulation:
             Mobility properties handler.
 
         """
-        db_name = self.databases['mobility'].lower()
-        db = ut.get_or_raise(self.db_register, db_name)
-        fpath = self.data_dir / db["file"]
+        name = self.databases['mobility'].lower()
+        if Path(name).is_file():
+            fpath = Path(name)
+        else:
+            db = ut.get_or_raise(self.db_register, name)
+            fpath = self.data_dir / db["file"]
         params = da.get_mob_from_file(fpath, self.comps[1:], self.TK,
                                       self.logger)
-        db_file = ut.get_or_raise(self.db_register[db_name], 'file')
-        msg = f"Mobility functions built from database file ('{db_file}')."
+        msg = f"Reading mobility data in '{fpath.resolve()}'."
         self.logger.info(msg)
         return Mobility(params, self.comps[1:], self.TK)
 

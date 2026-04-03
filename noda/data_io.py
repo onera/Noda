@@ -6,6 +6,8 @@
 
 import json
 import tomllib
+import re
+import io
 
 import pandas as pd
 
@@ -19,7 +21,7 @@ from noda.paths import pkg_data_dir
 def get_user_data(data_dir, logger):
     """
     Get user data from 'user_data.toml' file.
-    
+
     If 'user_data.toml' file is not found in the user data folder, use the
     package-provided file instead.
 
@@ -27,7 +29,7 @@ def get_user_data(data_dir, logger):
     ----------
     data_dir : pathlib.Path
         Path of data folder.
-    
+
     logger : :class:`log_utils.CustomLogger`
         Logger.
 
@@ -179,15 +181,13 @@ def get_vacancy_formation_energy(vacancy_databases, vacancy_db, phase, comps,
 
 
 # =============================================================================
-# Begin code from OPTIMOB
-# =============================================================================
-
-# =============================================================================
 # Thermodynamic parameters
 
 def get_thermo_from_file(fpath, phase, comps, TK, logger):
     """
-    Get parameters needed to calculate Gibbs free energy from spreadsheet file.
+    Get parameters needed to calculate Gibbs free energy from database file.
+
+    Data retrieved from csv or spreadsheet file.
 
     Parameters
     ----------
@@ -233,21 +233,67 @@ def get_thermo_from_file(fpath, phase, comps, TK, logger):
                    "Please provide a thermodynamic database file.")
             raise ut.UserInputError(msg) from None
 
-    G0_para = get_G0_parameters(fpath)
-    G0 = {k: tfu.G0_fun(G0_para[k], TK, phase) for k in comps}
-    solvents = ut.make_combinations(comps)['mix']
-    interactions = get_thermo_interaction_parameters(fpath, solvents, logger)
+    if fpath.suffix == '.csv':
+        dct = get_thermo_from_csv(fpath, comps)
+    else:
+        dct = get_thermo_from_spreadsheet(fpath)
+
+    for key in ['Elements', 'Interactions']:
+        df = dct[key].dropna(how='all')
+        if all(x.startswith('Unnamed') for x in df.columns):
+            df = pd.DataFrame(df.values[1:],
+                              columns=df.iloc[0],
+                              index=df.index[1:])
+        dct[key] = df
+
+    G0 = process_elements_parameters(dct['Elements'], comps, TK, phase)
+    interactions = process_interaction_parameters(dct['Interactions'],
+                                                  comps,
+                                                  logger)
     L_para = interactions['L']
     L = make_L_isotherm(L_para, TK)
     p = {**G0, **L}
     return p
 
 
-def get_G0_parameters(fpath):
+def get_thermo_from_csv(fpath, comps):
     """
-    Get parameters needed to compute Gibbs free energy of endmembers.
+    Get thermodynamic parameters from csv file.
 
-    Data retrieved from spreadsheet file. Requires an external dependency:
+    Parameters
+    ----------
+    fpath : pathlib.Path
+        Path of file with thermodynamic database.
+    comps : list of str
+        System components.
+
+    Returns
+    -------
+    dct : dict of pd.DataFrames
+        Thermodynamic parameters,
+
+        | ``'Elements': parameters related to pure elements``
+        | ``'Interactions' : interactions parameters``
+
+    """
+    with open(fpath, 'r') as file:
+        raw = file.read()
+    parts = re.split('Elements|Interactions', raw)
+    elements = parts[1]
+    df_elements = pd.read_csv(io.StringIO(elements),
+                              skiprows=1,
+                              usecols=range(len(comps) + 1),
+                              index_col=0)
+    interactions = parts[2]
+    df_interactions = pd.read_csv(io.StringIO(interactions), skiprows=1)
+    dct = {'Elements': df_elements, 'Interactions': df_interactions}
+    return dct
+
+def get_thermo_from_spreadsheet(fpath):
+    """
+    Get thermodynamic parameters from spreadsheet file.
+
+    File in ods, xls or xlsx format. Requires an external dependency:
 
     ======  ============
     format  package name
@@ -256,8 +302,6 @@ def get_G0_parameters(fpath):
     xlsx    openpyxl
     ods     odfpy
     ======  ============
-
-    Data is in the form of G - H_SER. See Dinsdale 1991 [#Dinsdale_1991]_.
 
     Parameters
     ----------
@@ -266,28 +310,55 @@ def get_G0_parameters(fpath):
 
     Returns
     -------
+    dct : dict of pd.DataFrames
+        Thermodynamic parameters,
+
+       | ``'Elements': parameters related to pure elements``
+       | ``'Interactions' : interactions parameters``
+
+    """
+    df_elements = pd.read_excel(fpath, sheet_name='Elements', comment='#',
+                                index_col=0)
+    df_interactions = pd.read_excel(fpath, sheet_name='Interactions',
+                                    comment='#')
+    dct = {'Elements': df_elements, 'Interactions': df_interactions}
+    return dct
+
+
+def process_elements_parameters(df, comps, TK, phase):
+    """
+    Compute Gibbs free energy of endmembers at a given temperature.
+
+    Data is in the form of G - H_SER. See Dinsdale 1991 [#Dinsdale_1991]_.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Parameters from :func:`get_thermo_from_csv` or
+        :func:`get_thermo_from_spreadsheet`.
+    comps : list of str
+        System components.
+    TK : float
+        Temperature in Kelvin.
+    phase : str
+        Name of metal phase.
+
+    Returns
+    -------
     dict
-        Parameters, see in file.
+        Thermodynamic parameters,
+
+        ``A: G_A for A in endmembers``
+
     """
-    df = pd.read_excel(fpath, sheet_name='Pure elements',
-                       skiprows=2, index_col=0)
-    di = df.to_dict()
-    return {ut.format_element_symbol(k): v for k, v in di.items()}
+    dct = {ut.format_element_symbol(k): v for k, v in df.to_dict().items()}
+    res = {k: tfu.G0_fun(dct[k], TK, phase) for k in comps}
+    return res
 
 
-def get_thermo_interaction_parameters(fpath, solvents, logger):
+def process_interaction_parameters(df, comps, logger):
     """
-    Get thermodynamic interaction parameters from spreadsheet file.
-
-    Requires an external dependency:
-
-    ======  ============
-    format  package name
-    ======  ============
-    xls     xlrd
-    xlsx    openpyxl
-    ods     odfpy
-    ======  ============
+    Process interaction parameters.
 
     The parameters belong to the following categories (variables) depending
     on the quantity they are related to:
@@ -301,7 +372,7 @@ def get_thermo_interaction_parameters(fpath, solvents, logger):
     * binary interactions (orders 0 and 1)
     * ternary interactions (order 0, with `L1 = 0` for compatibility)
 
-    Parameters are given as:
+    They are given as:
 
     * order 0: A and B in `L0 = A + B*T`
     * order 1: C and D in `L1 = C + D*T`
@@ -311,10 +382,11 @@ def get_thermo_interaction_parameters(fpath, solvents, logger):
 
     Parameters
     ----------
-    fpath : pathlib.Path
-        Path to thermodynamic database file.
-    solvents : list of str
-        Binary and ternary subsystems, concatenated to strings.
+    df : pd.DataFrame
+        Parameters from :func:`get_thermo_from_csv` or
+        :func:`get_thermo_from_spreadsheet`.
+    comps : list of str
+        System components.
     logger : :class:`log_utils.CustomLogger`
         Logger.
 
@@ -325,9 +397,10 @@ def get_thermo_interaction_parameters(fpath, solvents, logger):
 
         ``{var: subdi for var in ['L', 'Tc', 'beta']}``
 
-        where subdi is result of :func:`process_interaction_parameters`.
+        where subdi is result of :func:`unit_process_interactions`.
+
     """
-    df = pd.read_excel(fpath, sheet_name='Interactions', skiprows=2)
+    solvents = ut.make_combinations(comps)['mix']
     di = {}
     for k in ['L', 'Tc', 'beta']:
         sub_df = df.loc[df['variable'] == k]
@@ -335,12 +408,11 @@ def get_thermo_interaction_parameters(fpath, solvents, logger):
             di[k] = {k: 0 for k in solvents}
         else:
             sub_df = sub_df.set_index('solvent')
-            di[k] = process_interaction_parameters(sub_df, fpath, solvents,
-                                                   logger)
+            di[k] = unit_process_interactions(sub_df, solvents, logger)
     return di
 
 
-def process_interaction_parameters(df, fpath, solvents, logger):
+def unit_process_interactions(df, solvents, logger):
     """
     Process dataframe with thermodynamic interaction parameters.
 
@@ -358,7 +430,7 @@ def process_interaction_parameters(df, fpath, solvents, logger):
         Thermodynamic interaction parameters for one variable. Columns:
 
         * variable : either of L, Tc or beta (see
-          :func:`get_thermo_interaction_parameters`).
+          :func:`process_interaction_parameters`).
         * solvent : constituents of subsystem concatenated to string.
         * A, B, C, D : interaction parameters, with
 
@@ -419,8 +491,7 @@ def process_interaction_parameters(df, fpath, solvents, logger):
                     df.loc[k, 'D'] *= -1
 
         else:
-            msg = (f'Input file: "{fpath.name}"\n'
-                   f"{k} interaction parameters for {variable}\n"
+            msg = (f"{k} interaction parameters for {variable}\n"
                    f"Several equivalent solvents given: {kfile_list}")
             raise ut.UserInputError(msg) from None
     di = df.to_dict(orient='index')
@@ -505,10 +576,10 @@ def get_mob_from_file(fpath, comps, TK, logger):
                    "Please provide a mobility database file.")
             raise ut.UserInputError(msg) from None
 
-    ext = fpath.name.split('.')[-1]
-    if ext.startswith('xls') or ext == 'ods':
+    ext = fpath.suffix
+    if ext in ['.xls', '.xlsx', '.ods', '.csv']:
         p = get_mob_from_spreadsheet(fpath, comps, TK)
-    elif ext == 'json':
+    elif ext == '.json':
         p = get_mob_from_json(fpath, comps, TK)
     else:
         msg = f'Input file format (.{ext}) not accepted.'
@@ -519,9 +590,10 @@ def get_mob_from_file(fpath, comps, TK, logger):
 
 def get_mob_from_spreadsheet(fpath, comps, TK):
     """
-    Get mobility parameters from spreadsheet file.
+    Get mobility parameters.
 
-    Requires an external dependency:
+    Data retrieved from csv or spreadsheet file. The latter requires an
+    external dependency:
 
     ======  ============
     format  package name
@@ -548,8 +620,13 @@ def get_mob_from_spreadsheet(fpath, comps, TK):
         subdict: ``{j: val for j in subsystems}``
 
     """
-    di = pd.read_excel(fpath, sheet_name=None, header=3)
-    df = di[list(di)[0]]
+    if fpath.suffix == '.csv':
+        df = pd.read_csv(fpath, comment='#')
+    else:
+        df = pd.read_excel(fpath, comment='#')
+    df = df.dropna(how='all')
+    if all(x.startswith('Unnamed') for x in df.columns):
+        df = pd.DataFrame(df.values[1:], columns=df.iloc[0])
     df.solute = df.solute.apply(ut.format_element_symbol)
 
     solvents = ut.make_combinations(comps)['all']
@@ -660,7 +737,3 @@ def get_reduced_df(df, solvent, solute):
         raise ut.UserInputError(msg) from None
 
     return res
-
-# =============================================================================
-# End code from OPTIMOB
-# =============================================================================

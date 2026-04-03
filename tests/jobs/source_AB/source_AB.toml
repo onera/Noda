@@ -1,6 +1,6 @@
 [databases]
-thermo = "AB_thermo_ideal"
-mobility = "AB_mob_ideal"
+thermo = "fcc-AB-thermo-ideal.csv"
+mobility = "fcc-AB-mob-ideal.csv"
 
 [system]
 components = "A, B"
