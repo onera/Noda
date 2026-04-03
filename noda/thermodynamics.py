@@ -65,8 +65,7 @@ class Thermodynamics:
         array.
 
     """
-    def __init__(self, params, comps, phase, TK, vacancy_databases,
-                 vacancy_db, logger):
+    def __init__(self, params, comps, phase, TK, GfV, logger):
         """
         Class constructor.
 
@@ -94,11 +93,7 @@ class Thermodynamics:
         """
         self.comps = comps
         self.TK = TK
-        self.GfV = da.get_vacancy_formation_energy(vacancy_databases,
-                                                   vacancy_db,
-                                                   phase,
-                                                   comps[1:],
-                                                   logger)
+        self.GfV = GfV
         self.params = self.process_parameters(params)
         self.G_funx = make_G_fun(comps[1:], self.params, TK)
         self.MU_funx = make_MU_fun(comps[1:], self.params, TK)

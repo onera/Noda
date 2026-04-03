@@ -53,18 +53,20 @@ def get_user_data(data_dir, logger):
     return res
 
 
-def get_volume_data(volume_databases, volume_db, comps, logger):
+def get_molar_volume(databases, db_register, comps, default_parameters, logger):
     """
     Get partial molar volumes from specified database.
 
     Parameters
     ----------
-    volume_databases : dict
-        Available molar volume data.
-    volume_db : str
-        Name of partial molar volume database.
+    databases : dict
+        Databases in input configuration.
+    db_register : dict
+        Molar volume databases in 'user_data.toml' file.
     comps : list of str
         System components.
+    default_parameters:
+        Parameters used when not specified in user input.
     logger : :class:`log_utils.CustomLogger`
         Logger.
 
@@ -81,67 +83,62 @@ def get_volume_data(volume_databases, volume_db, comps, logger):
         ``{k: V_k for k in comps}``
 
     """
-    try:
-        di = volume_databases[volume_db]
-    except KeyError:
-        msg = (f"Unknown molar volume database '{volume_db}'. "
-               "Please check the 'molar_volume' table in your "
-               "'user_data.toml' file")
-        raise ut.UserInputError(msg) from None
+    name, dct = get_database('molar_volume',
+                             databases,
+                             db_register,
+                             default_parameters,
+                             logger,
+                             stream=True)
     res = {}
     sorted_keys = comps + ['pore']
     for k in sorted_keys:
         try:
-            res[k] = di[k]
+            res[k] = dct[k]
         except KeyError:
-            if 'default' in di:
-                res[k] = di['default']
+            if 'default' in dct:
+                res[k] = dct['default']
                 msg = (f"No entry for {k} in molar volume database "
-                       f"'{volume_db}'. Using default entry in the database.")
+                       f"'{name}'. Using default entry in the database.")
                 logger.info(msg, stream=False)
             else:
                 res[k] = factory['partial_molar_volume']
-                msg = (f"Molar volume database '{volume_db}' contains no data "
+                msg = (f"Molar volume database '{name}' contains no data "
                        f"for {k}, and no default value. Using system-wide "
                        f"default value (Vm = {res[k]} m3/mol) instead.")
                 logger.info(msg, stream=False)
         if k in ('Va', 'pore'):
             if not (isinstance(res[k], float) or res[k] == 'local'):
                 msg = (f"Invalid entry for species {k} in molar volume "
-                       f"database '{volume_db}' (found '{res[k]}', should be "
+                       f"database '{name}' (found '{res[k]}', should be "
                        "a float or string 'local').")
                 raise ut.UserInputError(msg) from None
         else:
             if not isinstance(res[k], float):
                 msg = (f"Invalid entry for species {k} in database "
-                       f"'{volume_db}' (found '{res[k]}', should be a float).")
+                       f"'{name}' (found '{res[k]}', should be a float).")
                 raise ut.UserInputError(msg) from None
-
     return res
 
 
-def get_vacancy_formation_energy(vacancy_databases, vacancy_db, phase, comps,
-                                 logger):
+def get_vacancy_formation_energy(databases, db_register, phase, comps,
+                                 default_parameters, logger):
     """
     Get vacancy formation energy in pure metals.
 
     Parameters
     ----------
-    vacancy_databases : dict
-        Available vacancy formation energy data.
-    vacancy_db : str
-        Name of database with vacancy formation energy in pure metals.
+    databases : dict
+        Databases in input configuration.
+    db_register : dict
+        Vacancy formation energy databases in 'user_data.toml' file.
     phase : str
         Name of metal phase.
     comps : list of str
         System components.
+    default_parameters:
+        Parameters used when not specified in user input.
     logger : :class:`log_utils.CustomLogger`
         Logger.
-
-    Raises
-    ------
-    ut.UserInputError
-        If database is not included in databases dict.
 
     Returns
     -------
@@ -149,35 +146,89 @@ def get_vacancy_formation_energy(vacancy_databases, vacancy_db, phase, comps,
         ``{k: [enthalpy, entropy] for k in comps}``
 
     """
-    try:
-        di = vacancy_databases[vacancy_db]
-    except KeyError:
-        msg = (f"Unknown vacancy formation energy database '{vacancy_db}'. "
-               "Please check the 'vacancy_formation_energy' table in your "
-               "'user_data.toml' file")
-        raise ut.UserInputError(msg) from None
-
+    name, dct = get_database('vacancy_formation_energy',
+                             databases,
+                             db_register,
+                             default_parameters,
+                             logger,
+                             stream=False)
     di_phase = {}
     for k in comps:
         try:
-            di_phase[k] = di[f"{phase}-{k}"]
+            di_phase[k] = dct[f"{phase}-{k}"]
         except KeyError:
-            if 'default' in di:
-                di_phase[k] = di['default']
+            if 'default' in dct:
+                di_phase[k] = dct['default']
                 msg = (f"No entry for {phase}-{k} in vacancy formation energy "
-                       f"database '{vacancy_db}'. Using default entry in the "
+                       f"database '{name}'. Using default entry in the "
                        "database.")
                 logger.info(msg, stream=False)
             else:
                 di_phase[k] = factory['vacancy_formation_energy']
-                msg = (f"Vacancy formation energy database '{vacancy_db}' "
+                msg = (f"Vacancy formation energy database '{name}' "
                        f"contains no data for {k}, and no default value. "
                        f"Using system-wide default value ({di_phase[k]}) "
                        "instead.")
                 logger.info(msg, stream=False)
-
     res = {k: [v*co.EV*co.NA for v in di_phase[k]] for k in comps}
     return res
+
+
+def get_database(key, databases, db_register, default_parameters, logger,
+                 stream):
+    """
+    Get database as a dictionary.
+
+    Parameters
+    ----------
+    key : str
+        Database type, either 'molar_volume' or 'vacancy_formation_energy'.
+    databases : dict
+        Databases in input configuration.
+    db_register : dict
+        Databases in 'user_data.toml' file.
+    comps : list of str
+        System components.
+    default_parameters:
+        Parameters used when not specified in user input.
+    logger : :class:`log_utils.CustomLogger`
+        Logger.
+    stream : bool
+        Log to screen in addition to file.
+
+    Returns
+    -------
+    name : str
+        Name of database.
+    dct : dict
+        Database parameters as a dict.
+    
+    Raises
+    ------
+    utils.UserInputError
+        If database is not found in 'user_data.toml'.
+    
+    """
+    if key in databases:
+        if isinstance(databases[key], dict):
+            dct = databases[key]
+            name = ''
+        else:
+            name = databases[key]
+            try:
+                dct = db_register[name]
+            except KeyError:
+                msg = (f"Unknown {key} database '{name}'. "
+                       "Please check the '{key}' table in "
+                       "your 'user_data.toml' file")
+                raise ut.UserInputError(msg) from None
+    else:
+        name = default_parameters[key + '_database']
+        dct = db_register[name]
+        text = (f"'{key}' absent from configuration, using '{name}' as "
+                "default.")
+        logger.info(text, stream=stream)
+    return name, dct
 
 
 # =============================================================================
@@ -204,7 +255,7 @@ def get_thermo_from_file(fpath, phase, comps, TK, logger):
 
     Raises
     ------
-    Exception
+    utils.UserInputError
         If file is not found.
 
     Returns
@@ -276,7 +327,7 @@ def get_thermo_from_csv(fpath, comps):
         | ``'Interactions' : interactions parameters``
 
     """
-    with open(fpath, 'r') as file:
+    with open(fpath, 'r', encoding='utf-8') as file:
         raw = file.read()
     parts = re.split('Elements|Interactions', raw)
     elements = parts[1]
@@ -446,7 +497,7 @@ def unit_process_interactions(df, solvents, logger):
 
     Raises
     ------
-    Exception
+    utils.UserInputError
         If several equivalent subsystems (ie permutations of the same
         subsystem) are present in the database.
 

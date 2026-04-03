@@ -80,18 +80,19 @@ Databases ``[databases]``
   database file.
 * ``mobility``: name of the mobility database, or path pointing to the
   database file.
-* ``molar_volume``: name of the database of partial molar volumes, optional
+* ``molar_volume``: partial molar volumes database name or database, optional
   (factory default : ``standard``, which has the same value for all atom
   species, see :ref:`user_data`).
-* ``vacancy_database``: name of the vacancy formation energy database, optional
-  (factory default: ``standard``, which has the same values for all atom
+* ``vacancy_database``: vacancy formation energy database name or database,
+  optional (factory default: ``standard``, which has the same values for all atom
   species, see :ref:`user_data`).
 
-Like the other optional parameters, the factory default values can be overridden
-by user-specified default values (see :ref:`default_parameters`).
+The factory default values can be overridden by user-specified default values
+(see :ref:`default_parameters`).
 
-The database names given here must be associated with database file names in
-``user_data.toml`` (see :ref:`user_data`).
+If providing a database name, it must be listed in ``user_data.toml``
+(see :ref:`user_data`). Alternatively, users can directly provide database
+files or databases here : this is illustrated in :ref:`source_AB`.
 
 System ``[system]``
 ^^^^^^^^^^^^^^^^^^^
@@ -177,14 +178,14 @@ Space ``[space]``
 .. note::
 
    At the moment, Noda only includes an explicit (forward Euler) time
-   integration scheme, which is conditionnally stable. The minimum time step is
+   integration scheme, which is conditionally stable. The minimum time step is
    based on the smallest space step (see :ref:`time_step`). Using a geometric
    grid with a large common ratio will produce locally small space steps and
    therefore require a large number of time steps.
 
 .. note::
 
-   In the cylindre and spherical geometries:
+   In the cylinder and spherical geometries:
 
    * The space coordinate is named  :math:`z`, instead of the usual :math:`\rho` 
      or :math:`r`, to favor compatibility across the three geometries.
@@ -561,7 +562,7 @@ system follows the following set of conditions:
 
 This yields :math:`\tilde{D} = D_B^*`.
 
-These conditions are fullfilled for the model AB system provided in the test
+These conditions are fulfilled for the model AB system provided in the test
 base, with databases named "AB_thermo_ideal" and "AB_mob_ideal".
 
 A number of diffusion problems involving a binary system with
@@ -601,6 +602,8 @@ This is compared with the Noda simulation in the example named "couple_AB":
     :align: center
 
 |
+
+.. _source_AB:
 
 Constant surface concentration (planar geometry)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

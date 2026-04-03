@@ -1,6 +1,7 @@
 [databases]
 thermo = "fcc-AB-thermo-ideal.csv"
 mobility = "fcc-AB-mob-ideal.csv"
+molar_volume = {'A' = 1e-5, 'B' = 1e-5}
 
 [system]
 components = "A, B"

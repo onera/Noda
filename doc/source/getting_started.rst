@@ -98,18 +98,15 @@ in the documentation.
 User data
 ---------
 
-The file "user_data.toml" is used to store several types of data used in the
-simulations. It uses the `TOML <https://toml.io>`__ and
-contains four tables:
+The file "user_data.toml" is a database register. It uses the
+`TOML <https://toml.io>`__ format and contains four tables:
 
 * ``[thermodynamics]`` stores file names of thermodynamic databases.
 * ``[mobility]`` does the same for mobility databases.
-* ``[molar_volume]`` gathers partial molar volumes of pure metals, vacancies and
-  pores.
-* ``[vacancy_formation_energy]`` gathers vacancy formation energies in pure metals.
-
-Each table contains one or more subtables, which define databases users can
-choose from when setting up a simulation (:ref:`setting_up`).
+* ``[molar_volume]`` stores databases of partial molar volumes of pure
+  elements, vacancies and pores.
+* ``[vacancy_formation_energy]`` stores databases of vacancy formation energies
+  in pure elements.
 
 For example, the "user_data.toml" file included in the installation directory
 (``noda/data``) contains the following:
@@ -124,10 +121,11 @@ may provide one of these database names or directly indicate a file path (see
 :ref:`setting_up`). The content of the database files is described next
 (:ref:`thermokin_database_files`).
 
-The ``[molar_volume]`` and ``[vacancy_formation_energy]`` tables contain actual
-data. When creating a simulation, Noda looks for the partial molar
-volume of all components in the selected database. If a component is
-not present, it looks for the ``default`` key. If no ``default`` key is
+The ``[molar_volume]`` and ``[vacancy_formation_energy]`` tables contain
+data. When setting up a simulation, users may provide one of these database
+names or directly provide data (see :ref:`setting_up`). The program looks
+for the partial molar volume of all components in the provided database. If a
+component is not present, it looks for the ``default`` key. If no ``default`` key is
 provided in the selected database, it falls back to a system-wide default value
 \ [#f1]_. Here, if using the ``standard`` molar volume database, all constituents
 will be assigned the value given by the ``default`` key of this database, 1e-5 m3/mol;
@@ -157,7 +155,7 @@ xslx format.
 
 The Gibbs free energy of the metal phase is described with the Calphad method,
 using a Redlich-Kister polynomial for the excess term (see the :ref:`thermo`
-Section). Thermodynamic database files in ods and xslx format contain two sheets:
+Section). Thermodynamic database files in ods and xlsx format contain two sheets:
 
 * `Elements` stores coefficients that describe the temperature
   dependence of the Gibbs free energy of pure elements, in the form
@@ -196,7 +194,10 @@ unary terms, and binary and ternary interaction parameters:
    \phi_\mathrm{solute}^\mathrm{solvent} = A + B \cdot T.
 
 In this context, `solute` is the diffusing species, while `solvent` is the
-endmember in which it diffuses.
+endmember in which it diffuses, or the subsystem that generates interactions.
+For instance, in a Ni-Cr-Al system, there are three solutes (Ni, Cr, Al),
+three endmembers (Ni, Cr, Al), three binary subsystems (NiCr, NiAl, CrAl) and
+one ternary subsystem (NiCrAl).
 
 The parameters that populate the thermodynamics and mobility database files
 are typically found in journal articles. Users are recommended to use the
