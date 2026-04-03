@@ -24,6 +24,7 @@ conditions, one space dimension (planar, cylindrical or spherical geometry).
    installation
    getting_started
    basic_use
+   model_systems
    advanced_use
    background
    credits
