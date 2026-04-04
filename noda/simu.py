@@ -190,11 +190,15 @@ class Simulation:
             if cat not in self.config:
                 msg = f"Missing required '{cat}' entry in input dict."
                 raise ut.UserInputError(msg) from None
-        for cat in ['thermo', 'mobility']:
-            if cat not in self.config['databases']:
-                msg = (f"Missing required '{cat}' entry in input dict, in "
-                       "'databases' subdict.")
-                raise ut.UserInputError(msg) from None
+        possible_keys = ['thermo', 'thermodynamics']
+        if not any(k in self.config['databases'] for k in possible_keys):
+            msg = ("Missing required 'thermo' or 'thermodynamics' entry in "
+                   "input dict, in 'databases' subdict.")
+            raise ut.UserInputError(msg) from None
+        if 'mobility' not in self.config['databases']:
+            msg = ("Missing required 'mobility' entry in input dict, in "
+                   "'databases' subdict.")
+            raise ut.UserInputError(msg) from None
         for cat in ['components', 'phases']:
             if cat not in self.config['system']:
                 msg = (f"Missing required '{cat}' entry in input dict, in "
@@ -259,7 +263,9 @@ class Simulation:
             Thermodynamic properties handler.
 
         """
-        name = self.databases['thermo'].lower()
+        possible_keys = ['thermo', 'thermodynamics']
+        key = (self.databases.keys() & possible_keys).pop()
+        name = self.databases[key].lower()
         if Path(name).is_file():
             fpath = Path(name)
         else:
@@ -414,7 +420,7 @@ class NewSimulation(Simulation):
 
         Raises
         ------
-        ut.UserInputError
+        utils.UserInputError
             If simulation is not ready.
 
         """
