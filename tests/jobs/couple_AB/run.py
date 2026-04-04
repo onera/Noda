@@ -38,4 +38,4 @@ ax2.grid(visible=True)
 
 #%% Validation
 
-assert np.allclose(r.x['B'], x_ana, atol=2e-4)
+assert np.allclose(r.x['B'], x_ana, atol=1e-4)

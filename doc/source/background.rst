@@ -608,17 +608,16 @@ Diffusion
 The time evolution of the system composition is described by Eq.
 :eq:`continuity`. This is solved using an explicit (forward Euler) finite
 difference scheme, in one dimension of space. The total length is
-divided into segments of size :math:`\Delta z_{i}` separated by grid
+divided into volumes of size :math:`\Delta z_{i}` separated by node
 points at positions :math:`z_{i}`. The composition variables
 (:math:`x_k,\ y_k,\ c_k,\ \Omega_{m},\ \Omega,\ f_{m},\mu_k`)
 are associated with positions
-:math:`z_i^\mathrm{m}=z_i + \Delta z_i/2`, and
+:math:`z_i^\mathrm{m}=z_i + \Delta z_i/2` (mid points), and
 represent the average system composition in the :math:`\Delta z_{i}`
-segments. The fluxes (and the velocity field) are evaluated on grid
+volume. The fluxes (and the velocity field) are evaluated on node
 points :math:`z_{i}`; :math:`J_{i}^{\mathrm{lat}}` represents a flux
-between segments :math:`\Delta z_{i - 1}` and
-:math:`\Delta z_{i}`. The discretization is illustrated in
-:numref:`Figure %s <grid>`.
+between volumes :math:`i - 1` and :math:`i`. The discretization is illustrated
+in :numref:`Figure %s <grid>`.
 
 .. _grid:
 
@@ -628,9 +627,8 @@ between segments :math:`\Delta z_{i - 1}` and
 
    Space discretization.
 
-Fluxes are discretized using local averages of the volume size and Onsager
-coefficients. This is done via the concept of the local diffusion resistance.
-The continuous form:
+Fluxes are discretized using local averages of the volume sizes and Onsager
+coefficients. The continuous form:
 
 .. math::
    :label: Jlat_1D
@@ -642,12 +640,12 @@ is discretized into:
 .. math::
    :label: Jlat_discrete
    
-   J^{\mathrm{lat}}_i = - \frac{\mu_i - \mu_{i - 1}}{R_i},
+   J^{\mathrm{lat}}_i = - \bar{L}_i \frac{\mu_i - \mu_{i - 1}}{\Delta z^m_i},
 
-where :math:`R_i` is the resistance between volumes :math:`i - 1` and :math:`i`.
-(In Eq. :eq:`Jlat_discrete`, indices refer to positions on the grid, not chemical
-species.) Noda provides several ways to compute :math:`R_i` from neighboring
-:math:`\Delta z` and :math:`L` values, see :ref:`stencil`.
+where :math:`\Delta z^m_i = z_{i+1}^\mathrm{m} - z_i^\mathrm{m}`, and
+:math:`\bar{L}_i` is the mean of :math:`L` between volumes :math:`i - 1`
+and :math:`i`. The latter can be computed with different kinds of mean, see
+:ref:`L_mean_kind`.
 
 The initial conditions comprise profiles of the atom fractions :math:`x_k`,
 vacancy site fraction :math:`y_0` and metal volume fraction :math:`f_{m}`.

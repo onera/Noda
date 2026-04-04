@@ -29,6 +29,4 @@ left.B = 1e-4
 left.atom_fraction.B = 0.3
 
 [options]
-
-# Space discretization
-stencil = "G"
+L_mean_kind = "geometric"

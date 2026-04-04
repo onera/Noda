@@ -87,8 +87,8 @@ class Simulation:
         Initial conditions.
     time : :class:`time.TimeGrid`
         Time-related parameters.
-    stencil : str
-        Space discretization stencil.
+    L_mean_kind : str
+        Kind of mean used to compute L values at nodes.
     ready : bool
         Whether simulation is ready to run.
     simres : :class:`results.SimulationResults`
@@ -159,10 +159,8 @@ class Simulation:
                                  self.default_parameters,
                                  logger)
 
-        self.stencil = options.get('stencil', self.default_parameters['stencil'])
-        if self.stencil not in ['H', 'A', 'G']:
-            msg = f'Stencil "{self.stencil}" not implemented'
-            raise ut.UserInputError(msg) from None
+        self.L_mean_kind = options.get('L_mean_kind',
+                                       self.default_parameters['L_mean_kind'])
 
         # TODO : check that all input config entries are valid. Difficulty:
         # nested structure both in config and in instance attributes
@@ -441,7 +439,7 @@ class NewSimulation(Simulation):
                             self.lattice,
                             show_completion,
                             verbose,
-                            self.stencil,
+                            self.L_mean_kind,
                             self.logger)
         self.logger.results(resdict)
         self.simres.add_results(resdict)

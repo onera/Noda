@@ -59,6 +59,8 @@ composition-independent molar volume and diffusivity have analytical solutions.
 Some typical initial distributions and boundary conditions are illustrated
 below.
 
+.. _couple_AB:
+
 Diffusion couple (planar geometry)
 ----------------------------------
 

@@ -40,7 +40,7 @@ factory_default_parameters = {
    'q': 1.02,
    'Fourier_number': 0.25,
    'geometry': 'planar',
-   'stencil': 'A',
+   'L_mean_kind': 'arithmetic',
    'partial_molar_volume': 1e-5,
    'vacancy_formation_energy': [2e5, 50],
     }
@@ -63,8 +63,8 @@ dict: Factory default parameters.
     Fourier number (see :ref:`time_step`).
 'geometry' : str
     Domain geometry (see :ref:`space`).
-'stencil' : str
-    Space discretization stencil (see :ref:`stencil`).
+'L_mean_kind' : str
+    Kind of mean used to compute L values at nodes (see :ref:`L_mean_kind`).
 'partial_molar_volume' : float
     Partial molar volume in m3/mol.
 'vacancy_formation_energy' : list of floats

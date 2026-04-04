@@ -18,7 +18,7 @@ from noda.utils import div
 
 
 def solver(thermo, mobility, space, init, BC, time_grid, lattice,
-           show_completion, verbose, stencil, logger):
+           show_completion, verbose, L_mean_kind, logger):
     """
     Solve diffusion equation.
 
@@ -45,8 +45,9 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
         Print completion rate while solver is running.
     verbose : str
         Verbosity level.
-    stencil : str
-        Name of discretization stencil. See :func:`compute_resistance`.
+    L_mean_kind : str
+        Kind of mean used to compute L values at nodes. See
+        :func:`make_L_mean_fun`.
     logger : :class:`log_utils.CustomLogger`
         Logger.
 
@@ -103,6 +104,7 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
     k_pores = lattice.k_pores
     rho_dislo = lattice.rho_dislo
     rho_pores = lattice.rho_pores
+    L_mean_fun = make_L_mean_fun(L_mean_kind)
     res = {0: {'z': z.copy(), 'c': cvar.c.mid, 'fp': cvar.fp.mid}}
     completion_rates = np.arange(0.1, 1, step=0.1)
     completion_steps = [np.round((nt - 1)*r) for r in completion_rates]
@@ -141,16 +143,17 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
         MU_diff = MU[1:] - MU[0]
         yVa_eq = thermo.yVa_fun(x[:-1])
 
-        # Compute Onsager coeffs, factor in yVa
+        # Compute Onsager coefficients
         # Note: since c is the global concentration, L_eq includes fm. This is
         # only valid inasmuch as L_ij = 0 in the pores
         L_eq = mobility.L_fun(c[1:], x[:-1])
+        # Factor in actual yVa
         L = L_eq * y[0]/yVa_eq
-
-        # Compute diffusion fluxes
-        RL = compute_resistance(comps[1:], L, dz, stencil)
-
-        Jbulk = -np.diff(MU_diff)/RL
+        # Select diagonal terms
+        L_diag = np.array([L[k, k] for k in range(len(comps[1:]))])
+        L_nod = L_mean_fun(L_diag)
+        dz_nod = (dz[1:] + dz[:-1])/2
+        Jbulk = -L_nod*np.diff(MU_diff)/dz_nod
         Jleft, Jright = compute_boundary_fluxes(n*dt, MU_diff, dz, BC,
                                                 thermo.MU_funy,
                                                 L, mobility.L_fun, Vk)
@@ -297,7 +300,7 @@ def compute_boundary_fluxes(t, MU_diff, dz, BC, MU_fun, L, L_fun, Vk):
         Space step (m).
     BC : dict
         Types and functions of left and right BC, see
-        :meth:`simu.Simulation.add_BC`.
+        :class:`boundary_conditions.BoundaryConditions`.
     MU_fun : function
         Compute chemical potentials from site fractions.
     L : 3D array
@@ -341,53 +344,46 @@ def compute_boundary_fluxes(t, MU_diff, dz, BC, MU_fun, L, L_fun, Vk):
     return J['left'], J['right']
 
 
-def compute_resistance(comps, L, dz, stencil):
-    """
-    Compute diffusion resistance.
+def make_L_mean_fun(L_mean_kind):
+    r"""
+    Make function that computes mean L values.
 
-    Defined as dz/L, with L the Onsager coefficients.
+    L is defined in a volume. Fluxes are defined between volumes (at node
+    points), and therefore require L evaluated at node points. The manner in
+    which two neighboring L values are averaged to provide L at node points is
+    determined by the 'L_mean_kind' parameter.
 
     Parameters
     ----------
-    comps : list of str
-        System constituents.
-    L : 3D array
-        Onsager coefficients, initial shape (`ninds` + 1, `ninds` + 1,
-        `nz` - 1).
-    dz : 1D array
-        Space step, initial shape (`nz` - 1,).
-    stencil : str
-        Name of discretization stencil. Possible values: 'H', 'A', 'G'.
+    L_mean_kind : str
+        Manner in which two neighboring Onsager coefficients are averaged.
+        Possible values:
 
+        * ``arithmetic``: :math:`\bar{L}_i = (L_i + L_{i - 1})/2`.
+        * ``harmonic``: :math:`\bar{L}_i = \frac{2}{1/L_i + 1/L_{i - 1}}`.
+        * ``geometric``: :math:`\bar{L}_i = \sqrt{L_iL_{i - 1}}`.
+    
     Raises
     ------
-    Exception
-        If stencil is not supported.
+    utils.UserInputError
+        If L_mean_kind is invalid.
 
     Returns
     -------
-    RL : 2D array
-        Diffusion resistance, initial shape (`ninds` + 1, `nz` - 2).
+    fun :
+        Function that computes mean L at node points.
 
     """
-    gen_comps = range(len(comps))
-    RL = None
-    if stencil == 'H':
-        RL_mid = np.array([dz/L[k, k] for k in gen_comps])
-        RL = (RL_mid[:, 1:] + RL_mid[:, :-1])/2
-
-    elif stencil == 'A':
-        L_mid = np.array([L[k, k] for k in gen_comps])
-        L_bar = (L_mid[:, 1:] + L_mid[:, :-1])/2
-        dz_bar = (dz[1:] + dz[:-1])/2
-        RL = dz_bar/L_bar
-
-    elif stencil == 'G':
-        L_mid = np.array([L[k, k] for k in gen_comps])
-        L_bar = np.sqrt(L_mid[:, 1:] * L_mid[:, :-1])
-        dz_bar = (dz[1:] + dz[:-1])/2
-        RL = dz_bar/L_bar
-    return RL
+    if L_mean_kind == 'arithmetic':
+        fun = lambda L: (L[:, 1:] + L[:, :-1])/2
+    elif L_mean_kind == 'harmonic':
+        fun = lambda L: 2/(1/L[:, 1:] + 1/L[:, :-1])
+    elif L_mean_kind == 'geometric':
+        fun = lambda L: np.sqrt(L[:, 1:] * L[:, :-1])
+    else:
+        msg = f'L_mean_kind "{L_mean_kind}" not implemented'
+        raise ut.UserInputError(msg) from None
+    return fun
 
 # =============================================================================
 # Node adding/deleting algorithm

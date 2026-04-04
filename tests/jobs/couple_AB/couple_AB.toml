@@ -33,6 +33,4 @@ flux.A = 0
 flux.B = 0
 
 [options]
-
-# Space discretization
-stencil = "H"
+L_mean_kind = 'harmonic'

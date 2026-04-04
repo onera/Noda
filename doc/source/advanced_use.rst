@@ -3,42 +3,23 @@ Advanced use
 
 .. contents:: :local:
 
-.. _stencil:
+.. _L_mean_kind:
 
-Stencil
--------
+L_mean_kind
+-----------
 
-As shown in the :ref:`implementation_diffusion` Section, fluxes are discretized
-using a resistance :math:`R_i` which represents a local average of
-:math:`\Delta z/L`:
+As shown in the :ref:`implementation_diffusion` Section, Onsager coefficients
+(L) are known in the volumes (mid points), while fluxes are evaluated
+between volumes (at node points), and therefore require L to be evaluated
+at node points as well. The latter can be obtained via three kinds of means 
+(factory default: ``arithmetic``):
 
-.. math::
-   
-   J^{\text{lat}}_i = - \frac{\mu_i - \mu_{i - 1}}{R_i}.
-
-Three discretization schemes are provided with the parameter ``stencil``
-(factory default: ``A``):
-
-* ``A``: Quotient of arithmetic averages of :math:`\Delta z` and :math:`L`:
-  
-  .. math::
-  
-     R_i = \frac{\Delta z_i + \Delta z_{i - 1}}{L_i + L_{i - 1}}.
-
-* ``H``: Arithmetic average of :math:`\Delta z/L`:
-
-  .. math::
-  
-     R_i = \frac{1}{2}\left(\frac{\Delta z_i}{L_i} + \frac{\Delta z_{i - 1}}{L_{i - 1}}\right).
-
-* ``G``: arithmetic average of :math:`\Delta z`, geometric average of :math:`L`:
-
-  .. math::
-
-     R_i = \frac{1}{2}\frac{\Delta z_i + \Delta z_{i - 1}}{\sqrt{L_iL_{i - 1}}}.
+* ``arithmetic``: :math:`\bar{L}_i = (L_i + L_{i - 1})/2`.
+* ``harmonic``: :math:`\bar{L}_i = \frac{2}{1/L_i + 1/L_{i - 1}}`.
+* ``geometric``: :math:`\bar{L}_i = \sqrt{L_iL_{i - 1}}`.
 
 This parameter can be supplied in the ``options`` table of the configuration
-file/dictionary.
+file/dictionary (see examples in :ref:`couple_AB` and :ref:`source_AB`).
 
 .. _time_step:
 
