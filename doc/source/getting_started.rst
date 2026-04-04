@@ -155,7 +155,7 @@ Thermodynamic and mobility database files
 -----------------------------------------
 
 Thermodynamic and mobility database files are spreadsheets in csv, ods or
-xslx format.
+xlsx format.
 
 The Gibbs free energy of the metal phase is described with the Calphad method,
 using a Redlich-Kister polynomial for the excess term (see the :ref:`thermo`

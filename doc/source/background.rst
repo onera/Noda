@@ -8,13 +8,13 @@ Background
 Models
 ------
 
-This section describes the models used in Noda. Additionnal information is
+This section describes the models used in Noda. Additional information is
 available in [Gheno_2022]_.
 
 .. note::
 
-   Noda has been developped in part to study the porosity stemming from the
-   Kirkendall effect. This requires explicitely solving a particular
+   Noda has been developed in part to study the porosity stemming from the
+   Kirkendall effect. This requires explicitly solving a particular
    (non-conserved) continuity equation for vacancies, with *finite sink strengths*,
    and considering a pore phase separate from the metal. In many cases, one is
    not interested in the Kirkendall porosity, and one wants to solve the diffusion
@@ -40,7 +40,7 @@ and some pores:
 Within :math:`W`, metal and pores are not spatially resolved; we consider the
 average properties of the volume.
 
-The metal is a cristalline, disordered solid solution, with a single sublattice
+The metal is a crystalline, disordered solid solution, with a single sublattice
 (interstitial species may be represented as substitutional species with a
 partial molar volume equal to zero). It contains :math:`N` mol of lattice sites,
 occupied by atoms and vacancies. The pore contains no site. The overall system

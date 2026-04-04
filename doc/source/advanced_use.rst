@@ -64,7 +64,7 @@ the time step may be modified with input parameter ``nt_multiplier``, which is
 used as the inverse of ``dt_multiplier``. One would decrease the time step
 (i.e., increase the number of time steps) with ``nt_multiplier`` > 1.
 
-Unstabilities mostly arise in two cases:
+Instabilities mostly arise in two cases:
 
 * When an initial or boundary atom fraction is close to 0. In this case,
   ``nt_multiplier`` values of 2-3 are usually sufficient to recover stability.
@@ -146,7 +146,7 @@ subplots with profiles of the following variables:
     * flux in the lattice-fixed frame;
     * volume fraction of pores.
 
-It is convenient to analyse the results of non-ideal lattice simulations.
+It is convenient to analyze the results of non-ideal lattice simulations.
 
 .. note::
 
