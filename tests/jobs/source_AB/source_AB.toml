@@ -27,7 +27,6 @@ left.B = 1e-4
 
 [boundary_conditions]
 left.atom_fraction.B = 0.3
-right.atom_fraction.B = 1e-4
 
 [options]
 

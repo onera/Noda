@@ -65,34 +65,33 @@ class BoundaryConditions:
         self.logger = logger
         self.side = side
         self.type = self.make_BC_type(params)
-        xparams = self.make_BC_dict(params, "atom_fraction")
+        missing_comps = []
         if self.type == "Dirichlet":
+            xparams = self.make_BC_dict(params, "atom_fraction")
             self.cvar_fun = self.make_cvar_fun(xparams)
         else:
             self.cvar_fun = None
-        info_list = []
-        Jparams = self.make_BC_dict(params, "flux")
-        for k in self.comps[1:]:
-            if k not in Jparams:
-                Jparams[k] = "0"
-                info_list.append(k)
         if self.type == "Neumann":
+            Jparams = self.make_BC_dict(params, "flux")
+            for k in self.comps[1:]:
+                if k not in Jparams:
+                    Jparams[k] = "0"
+                    missing_comps.append(k)
             self.J_fun = self.make_J_fun(Jparams)
         else:
             self.J_fun = None
-        if len(info_list) > 0:
+        if len(missing_comps) > 0:
             logger.info("Auto boundary conditions:")
-            for k in info_list:
-                text = f"* {side:5} BC for {k} set to 0 flux"
+            for k in missing_comps:
+                text = f"* {side:5} BC for {k} set to 0-flux"
                 logger.info(text)
 
     def make_BC_type(self, params):
         """Guess BC type from input dict and make sure input is consistent."""
         if len(params) > 1:
-            msg = (f"{self.side} boundary condition: cannot specify more than "
-                   "one variable.")
+            msg = (f"{self.side} boundary condition: cannot specify atom "
+                   "fractions and fluxes.")
             raise ut.UserInputError(msg)
-
         if 'atom_fraction' in params:
             res = 'Dirichlet'
         elif ('flux' in params or params == {}):
