@@ -108,7 +108,9 @@ class Simulation:
         self.work_dir = work_dir
         self.logger = logger
         self.data_dir = paths.get_data_dir(work_dir, logger)
-        self.db_register, self.default_parameters = self.get_user_data()
+        self.user_data = da.get_user_data(self.data_dir, self.logger)
+        self.db_register = self.get_database_register()
+        self.default_parameters = self.get_default_parameters()
         min_atom_fraction = self.default_parameters['min_atom_fraction']
         self.config = config
         logger.input(config)
@@ -120,11 +122,12 @@ class Simulation:
         self.TC = self.temperature.TC
         self.TK = self.temperature.TK
         self.databases = config['databases']
-        self.V_partial = da.get_molar_volume(self.databases,
-                                             self.db_register['molar_volume'],
-                                             self.comps,
-                                             self.default_parameters,
-                                             logger)
+        self.V_partial = da.get_partial_molar_volume(
+                            self.databases,
+                            self.db_register['partial_molar_volume'],
+                            self.comps,
+                            self.default_parameters['partial_molar_volume'],
+                            logger)
         self.thermo = self.get_thermo_handler()
         self.mobility = self.get_mob_handler()
         if 'space' in config:
@@ -206,72 +209,45 @@ class Simulation:
         inds = comps[1:]
         return ['Va'] + inds + [comps[0]]
 
-    def get_user_data(self):
+    def get_database_register(self):
         """
-        Get database register and defaults from 'user_data.toml' file.
+        Get database register from 'user_data.toml'.
 
-        * Molar volume databases : required
-        * Vacancy formation energy databases : required
-        * Thermodynamics and mobility databases : required
-        * Default parameters : optional : for each parameter, defaults to
-          value in package-provided `co.factory_default_parameters`.
+        Four categories of databases are handled:
+
+        * Partial molar volume
+        * Vacancy formation energy
+        * Thermodynamics
+        * Mobility
+
+        All are optional : if no entry in 'user_data.toml', default to empty
+        dict.
 
         """
-        user_data = da.get_user_data(self.data_dir, self.logger)
-        volume = ut.get_or_raise(user_data, 'molar_volume')
-        vacancy = ut.get_or_raise(user_data, 'vacancy_formation_energy')
-        thermo = ut.get_or_raise(user_data, 'thermodynamics')
-        mobility = ut.get_or_raise(user_data, 'mobility')
-        # Merge and make all keys lowercase
-        db_register = {'molar_volume': volume,
-                       'vacancy_formation_energy': vacancy,
-                       'thermo': thermo,
-                       'mobility': mobility}
-        for cat, dct in db_register.items():
+        db_register = {}
+        for cat in ['partial_molar_volume',
+                    'vacancy_formation_energy',
+                    'thermodynamics',
+                    'mobility']:
+            dct = self.user_data.get(cat, {})
             db_register[cat] = {k.lower(): val for k, val in dct.items()}
-        # Get numerical parameters from user data or from constants module
+        return db_register
+
+    def get_default_parameters(self):
+        """
+        Get default parameters.
+
+        For each parameter defined in
+        :data:`constants.factory_default_parameters`, look for entry in
+        'user_data.toml', and default to entry in
+        :data:`constants.factory_default_parameters`.
+
+        """
         factory = co.factory_default_parameters
-        if 'default_parameters' in user_data:
-            user_dct = user_data['default_parameters']
-            default_parameters = {k: user_dct.get(k, val)
-                                  for k, val in factory.items()}
-        else:
-            default_parameters = factory
-        return db_register, default_parameters
-
-    def get_and_log(self, key, stream=True):
-        """
-        Get database and log.
-
-        * If user input is a dict : return this dict
-        * If user input is a database name : get the database from
-          self.databases
-        * If no user input : defaults to default_parameters.
-
-        Wrapper around :func:`log_utils.get_and_log`.
-
-        Parameters
-        ----------
-        key : str
-            Database type ('molar_volume' or 'vacancy_formation_energy').
-        stream : bool, optional
-            Log to screen in addition to file. The default is True.
-
-        Returns
-        -------
-        res :
-            Item of interest.
-
-        """
-        if key in self.databases and isinstance(self.databases[key], dict):
-            res = self.databases[key]
-        else:
-            res = lut.get_and_log(self.databases,
-                                  key,
-                                  self.default_parameters[f'{key}_database'],
-                                  self.logger,
-                                  stream=stream)
-        return res
+        user = self.user_data.get('default_parameters', {})
+        default_parameters = {k: user.get(k, val)
+                              for k, val in factory.items()}
+        return default_parameters
 
     def get_thermo_handler(self):
         """
@@ -287,7 +263,7 @@ class Simulation:
         if Path(name).is_file():
             fpath = Path(name)
         else:
-            db = ut.get_or_raise(self.db_register['thermo'], name)
+            db = ut.get_or_raise(self.db_register['thermodynamics'], name)
             fpath = self.data_dir / db["file"]
         params = da.get_thermo_from_file(fpath,
                                          self.phase,
@@ -296,16 +272,16 @@ class Simulation:
                                          self.logger)
         msg = f"Reading thermodynamic data in '{fpath.resolve()}'."
         self.logger.info(msg)
-        db_register = self.db_register['vacancy_formation_energy']
-        GfV = da.get_vacancy_formation_energy(self.databases,
-                                              db_register,
-                                              self.phase,
-                                              self.comps,
-                                              self.default_parameters,
-                                              self.logger)
+        GfV = da.get_vacancy_formation_energy(
+                        self.databases,
+                        self.db_register['vacancy_formation_energy'],
+                        self.phase,
+                        self.comps,
+                        self.default_parameters['vacancy_formation_energy'],
+                        self.logger)
         return Thermodynamics(params,
                               self.comps,
-                              self.phase, 
+                              self.phase,
                               self.TK,
                               GfV,
                               self.logger)

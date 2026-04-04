@@ -119,13 +119,13 @@ class SpaceGrid:
             msg = "Space parameters : zmax is required."
             raise ut.UserInputError(msg) from exc
         nz = get_and_log(params, 'nz',
-                         self.default_params['number_space_steps'],
+                         self.default_params['nz'],
                          self.logger)
         if grid_type == 'linear':
             z_init = np.linspace(zmin, zmax, num=nz)
         elif grid_type == 'geometric':
             q = get_and_log(params, 'q',
-                            self.default_params['common_ratio'],
+                            self.default_params['q'],
                             self.logger)
             z_init = geo_grid(zmin, zmax, nz, q)
         else:

@@ -13,7 +13,6 @@ import pandas as pd
 
 import noda.thermo_functions as tfu
 import noda.utils as ut
-import noda.constants as co
 from noda.constants import factory_default_parameters as factory
 from noda.paths import pkg_data_dir
 
@@ -40,7 +39,7 @@ def get_user_data(data_dir, logger):
 
     """
     fpath = data_dir / 'user_data.toml'
-    if fpath.exists():
+    if fpath.is_file():
         with open(fpath, 'rb') as file:
             res = tomllib.load(file)
     else:
@@ -53,27 +52,31 @@ def get_user_data(data_dir, logger):
     return res
 
 
-def get_molar_volume(databases, db_register, comps, default_parameters, logger):
+def get_partial_molar_volume(databases, db_register, comps, default, logger):
     """
     Get partial molar volumes from specified database.
+
+    User input can be a database name, which must be present in the database
+    register, or directly a dict with pure elements as keys.
+    If no partial molar volume database is specified, or if the specified
+    database contains no value for an element, use the default value (see
+    :meth:`simu.get_user_data`).
 
     Parameters
     ----------
     databases : dict
         Databases in input configuration.
     db_register : dict
-        Molar volume databases in 'user_data.toml' file.
+        Molar volume databases in 'user_data.toml'.
     comps : list of str
         System components.
-    default_parameters:
-        Parameters used when not specified in user input.
+    default:
+        Default value.
     logger : :class:`log_utils.CustomLogger`
         Logger.
 
     Raises
     ------
-    :class:`utils.UserInputError`
-        If database is not present in databases dict.
     :class:`utils.UserInputError`
         If database entry is formatted incorrectly.
 
@@ -83,47 +86,43 @@ def get_molar_volume(databases, db_register, comps, default_parameters, logger):
         ``{k: V_k for k in comps}``
 
     """
-    name, dct = get_database('molar_volume',
-                             databases,
-                             db_register,
-                             default_parameters,
-                             logger,
-                             stream=True)
+    name, dct = get_database('partial_molar_volume', databases, db_register)
     res = {}
     sorted_keys = comps + ['pore']
     for k in sorted_keys:
         try:
             res[k] = dct[k]
         except KeyError:
-            if 'default' in dct:
-                res[k] = dct['default']
-                msg = (f"No entry for {k} in molar volume database "
-                       f"'{name}'. Using default entry in the database.")
-                logger.info(msg, stream=False)
-            else:
-                res[k] = factory['partial_molar_volume']
-                msg = (f"Molar volume database '{name}' contains no data "
-                       f"for {k}, and no default value. Using system-wide "
-                       f"default value (Vm = {res[k]} m3/mol) instead.")
-                logger.info(msg, stream=False)
+            res[k] = default
+            msg = (f"Partial molar volume database '{name}' contains no data "
+                    f"for {k}. Using system-wide default value "
+                    f"({default} m3/mol) instead.")
+            logger.info(msg, stream=False)
         if k in ('Va', 'pore'):
             if not (isinstance(res[k], float) or res[k] == 'local'):
-                msg = (f"Invalid entry for species {k} in molar volume "
-                       f"database '{name}' (found '{res[k]}', should be "
+                msg = (f"Invalid entry for species {k} in partial molar volume"
+                       f" database '{name}' (found '{res[k]}', should be "
                        "a float or string 'local').")
                 raise ut.UserInputError(msg) from None
         else:
             if not isinstance(res[k], float):
-                msg = (f"Invalid entry for species {k} in database "
-                       f"'{name}' (found '{res[k]}', should be a float).")
+                msg = (f"Invalid entry for species {k} in partial molar volume"
+                       f" database '{name}' (found '{res[k]}', should be a "
+                       "float).")
                 raise ut.UserInputError(msg) from None
     return res
 
 
 def get_vacancy_formation_energy(databases, db_register, phase, comps,
-                                 default_parameters, logger):
+                                 default, logger):
     """
-    Get vacancy formation energy in pure metals.
+    Get vacancy formation energy in pure elements.
+
+    User input can be a database name, which must be present in the database
+    register, or directly a dict with pure elements as keys.
+    If no vacancy formation energy database is specified, or if the specified
+    database contains no value for an element, use the default value (see
+    :meth:`simu.get_user_data`).
 
     Parameters
     ----------
@@ -135,10 +134,15 @@ def get_vacancy_formation_energy(databases, db_register, phase, comps,
         Name of metal phase.
     comps : list of str
         System components.
-    default_parameters:
-        Parameters used when not specified in user input.
+    default:
+        Default values.
     logger : :class:`log_utils.CustomLogger`
         Logger.
+
+    Raises
+    ------
+    :class:`utils.UserInputError`
+        If database entry is formatted incorrectly.
 
     Returns
     -------
@@ -146,55 +150,47 @@ def get_vacancy_formation_energy(databases, db_register, phase, comps,
         ``{k: [enthalpy, entropy] for k in comps}``
 
     """
-    name, dct = get_database('vacancy_formation_energy',
-                             databases,
-                             db_register,
-                             default_parameters,
-                             logger,
-                             stream=False)
-    di_phase = {}
+    name, dct = get_database('vacancy_formation_energy', databases, db_register)
+    res = {}
     for k in comps:
         try:
-            di_phase[k] = dct[f"{phase}-{k}"]
+            res[k] = dct[f"{phase}-{k}"]
         except KeyError:
-            if 'default' in dct:
-                di_phase[k] = dct['default']
-                msg = (f"No entry for {phase}-{k} in vacancy formation energy "
-                       f"database '{name}'. Using default entry in the "
-                       "database.")
-                logger.info(msg, stream=False)
-            else:
-                di_phase[k] = factory['vacancy_formation_energy']
-                msg = (f"Vacancy formation energy database '{name}' "
-                       f"contains no data for {k}, and no default value. "
-                       f"Using system-wide default value ({di_phase[k]}) "
-                       "instead.")
-                logger.info(msg, stream=False)
-    res = {k: [v*co.EV*co.NA for v in di_phase[k]] for k in comps}
+            res[k] = default
+            msg = (f"Vacancy formation energy database '{name}' contains no "
+                   f"data for {k}. Using system-wide default value ({res[k]} "
+                   "[J/mol, J/mol/K]) instead.")
+            logger.info(msg, stream=False)
+        msg = (f"Invalid entry for species {k} in vacancy formation energy "
+               f"database '{name}' (found '{res[k]}', should be a list-like "
+               "of two floats or integers)")
+        try:
+            H, S = res[k]
+        except (TypeError, IndexError) as exc:
+            raise ut.UserInputError(msg) from exc
+        if not isinstance(H, (float, int)) or not isinstance(S, (float, int)):
+            raise ut.UserInputError(msg) from None
     return res
 
 
-def get_database(key, databases, db_register, default_parameters, logger,
-                 stream):
+def get_database(key, databases, db_register):
     """
-    Get database as a dictionary.
+    Get database name and database as a dictionary.
+
+    * If user input is a dict : return this dict
+    * If user input is a database name : get the database from registered
+      databases
+    * If no user input : return empty dict
 
     Parameters
     ----------
     key : str
-        Database type, either 'molar_volume' or 'vacancy_formation_energy'.
+        Database type, either 'partial_molar_volume' or
+        'vacancy_formation_energy'.
     databases : dict
-        Databases in input configuration.
+        Databases provided in input configuration.
     db_register : dict
-        Databases in 'user_data.toml' file.
-    comps : list of str
-        System components.
-    default_parameters:
-        Parameters used when not specified in user input.
-    logger : :class:`log_utils.CustomLogger`
-        Logger.
-    stream : bool
-        Log to screen in addition to file.
+        Databases registered in 'user_data.toml'.
 
     Returns
     -------
@@ -202,17 +198,17 @@ def get_database(key, databases, db_register, default_parameters, logger,
         Name of database.
     dct : dict
         Database parameters as a dict.
-    
+
     Raises
     ------
     utils.UserInputError
         If database is not found in 'user_data.toml'.
-    
+
     """
     if key in databases:
         if isinstance(databases[key], dict):
             dct = databases[key]
-            name = ''
+            name = None
         else:
             name = databases[key]
             try:
@@ -223,11 +219,8 @@ def get_database(key, databases, db_register, default_parameters, logger,
                        "your 'user_data.toml' file")
                 raise ut.UserInputError(msg) from None
     else:
-        name = default_parameters[key + '_database']
-        dct = db_register[name]
-        text = (f"'{key}' absent from configuration, using '{name}' as "
-                "default.")
-        logger.info(text, stream=stream)
+        name = None
+        dct = {}
     return name, dct
 
 

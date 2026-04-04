@@ -21,14 +21,11 @@ file = "fcc-NiCrSi-mob-Du2001.ods"
 # Made-up data for an ideal A-B binary system
 file = "fcc-AB-mob-ideal.ods"
 
-[molar_volume]
-# Partial molar volume in m3/mol
+[partial_molar_volume]
+# Partial molar volume of pure elements in m3/mol
 
-[molar_volume.standard]
-default = 1e-5
-
-[molar_volume.Vegard]
-# Calculated by dividing the atomic mass by the density of the pure metals.
+[partial_molar_volume.Vegard]
+# Calculated as atomic mass / density of the pure elements.
 Va = "local"
 pore = "local"
 Al = 9.99e-06
@@ -37,17 +34,20 @@ Ni = 6.59e-06
 Si = 1.21e-05
 
 [vacancy_formation_energy]
-# Vacancy formation energy
-# GfV = HfV - T*SfV with [HfV, SfV] in [eV, eV/K]
+# Vacancy formation energy in pure elements
+# GfV = HfV - T*SfV with [HfV, SfV] in [J/mol, J/mol/K]
 
 [vacancy_formation_energy.Shang2016]
 # Source: Shang et al 2016, https://doi.org/10.1016/j.actamat.2016.02.031,
 # supplementary materials, xls sheet
-fcc-Ni = [1.669, 3.5953e-04]
-fcc-Cr = [1.681, 2.4272e-04]
-fcc-Fe = [2.423, 6.2757e-04]
-fcc-Al = [0.734, 3.2038e-04]
+fcc-Ni = [1.610e+5, 3.469e+1]
+fcc-Cr = [1.622e+5, 2.342e+1]
+fcc-Fe = [2.338e+5, 6.055e+1]
+fcc-Al = [7.082e+4, 3.091e+1]
 
-[vacancy_formation_energy.standard]
-# Made-up data
-default = [2, 3e-04]
+[default_parameters]
+# Used if no database is specified in configuration, or if an element is not
+# included in the specified database.
+
+partial_molar_volume = 1e-5            # Partial molar volume in m3/mol
+vacancy_formation_energy = [2e5, 50]   # Vacancy formation enthalpy and entropy in [J/mol, J/mol/K]

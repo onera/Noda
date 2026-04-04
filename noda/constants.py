@@ -36,16 +36,14 @@ factory_default_parameters = {
    'min_number_time_steps': 20,
    'num_out': 2,
    'grid_type': 'linear',
-   'number_space_steps': 60,
-   'common_ratio': 1.02,
+   'nz': 60,
+   'q': 1.02,
    'Fourier_number': 0.25,
    'geometry': 'planar',
    'stencil': 'A',
-   'molar_volume_database': 'standard',
    'partial_molar_volume': 1e-5,
-   'vacancy_formation_energy_database': 'standard',
-   'vacancy_formation_energy': [2, 3e-04],
-                             }
+   'vacancy_formation_energy': [2e5, 50],
+    }
 """
 dict: Factory default parameters.
 
@@ -57,23 +55,19 @@ dict: Factory default parameters.
     Number of saved time steps (see :ref:`time`).
 'grid': str
     Type of space grid (see :ref:`space`).
-'number_space_steps' : int
-    Number of space steps (nz in input file, see :ref:`space`).
-'common_ratio' : float
-    Common ratio for geometric grid (q in input file, see
-    :ref:`space`).
+'nz' : int
+    Number of space steps (see :ref:`space`).
+'q' : float
+    Common ratio for geometric grid (see :ref:`space`).
 'Fourier_number' : float
     Fourier number (see :ref:`time_step`).
 'geometry' : str
     Domain geometry (see :ref:`space`).
 'stencil' : str
     Space discretization stencil (see :ref:`stencil`).
-'volume_database' : str
-    Partial molar volume database.
 'partial_molar_volume' : float
     Partial molar volume in m3/mol.
-'vacancy_database' : str
-    Vacancy formation energy database.
-'vacancy_formation_energy_database' : list of floats
-    Vacancy formation energy, GfV = HfV - T*SfV with [HfV, SfV] in [eV, eV/K]
+'vacancy_formation_energy' : list of floats
+    Vacancy formation enthalpy and entropy, [HfV, SfV] in [J/mol, J/mol/K]
+    GfV = HfV - T*SfV
 """

@@ -46,7 +46,7 @@ in the file system::
     NODA_user
        ├───data
        │       my_thermodynamics_database.ods
-       │       my_mobility_database.xlsx
+       │       my_mobility_database.ods
        │       user_data.toml
        └───jobs
             └───fancy_simulation
@@ -69,9 +69,9 @@ folder.
 
 .. note::
 
-   It is recommended to not modify the files present in the installation directory
+   Users should not modify the files present in the installation directory
    ``noda/data`` folder. To get started, users may instead copy these files
-   into the user directory, and modify the files and add new files there.
+   to the user directory, and modify them there.
 
 Tests and documentation
 -----------------------
@@ -99,14 +99,15 @@ User data
 ---------
 
 The file "user_data.toml" is a database register. It uses the
-`TOML <https://toml.io>`__ format and contains four tables:
+`TOML <https://toml.io>`__ format and contains five tables:
 
-* ``[thermodynamics]`` stores file names of thermodynamic databases.
+* ``[thermodynamics]`` stores thermodynamic database file names.
 * ``[mobility]`` does the same for mobility databases.
-* ``[molar_volume]`` stores databases of partial molar volumes of pure
+* ``[partial_molar_volume]`` stores databases of partial molar volumes of pure
   elements, vacancies and pores.
 * ``[vacancy_formation_energy]`` stores databases of vacancy formation energies
   in pure elements.
+* ``[default_parameters]`` stores default values for various parameters.
 
 For example, the "user_data.toml" file included in the installation directory
 (``noda/data``) contains the following:
@@ -121,17 +122,21 @@ may provide one of these database names or directly indicate a file path (see
 :ref:`setting_up`). The content of the database files is described next
 (:ref:`thermokin_database_files`).
 
-The ``[molar_volume]`` and ``[vacancy_formation_energy]`` tables contain
-data. When setting up a simulation, users may provide one of these database
-names or directly provide data (see :ref:`setting_up`). The program looks
+The ``[molar_volume]`` and ``[vacancy_formation_energy]`` tables associate
+database names with partial molar volume and vacancy formation energy data.
+When setting up a simulation, users may provide one of these database names, or
+directly provide data (see :ref:`setting_up`). The program looks
 for the partial molar volume of all components in the provided database. If a
-component is not present, it looks for the ``default`` key. If no ``default`` key is
-provided in the selected database, it falls back to a system-wide default value
-\ [#f1]_. Here, if using the ``standard`` molar volume database, all constituents
-will be assigned the value given by the ``default`` key of this database, 1e-5 m3/mol;
-if using the ``Vegard`` database, Al, Cr, Ni and Si will be given the indicated
-partial molar volumes, and any other constituent will be given the system-wide
-default.
+component is not present, it falls back to a system-wide default value. Here,
+if using the ``Vegard`` database, Al, Cr, Ni and Si will be
+assigned the indicated partial molar volumes, and any other constituent will be
+assigned the system-wide default. The ``vacancy_formation_energy`` table works
+the same way as the ``molar_volume`` table, with a slightly different syntax:
+the crystal structure of the pure metals is specified, and the energy values
+are given as [H, S] lists (in [J/mol, J/mol/K]). The vacancy
+formation energy in element `A` is calculated as
+:math:`G_\mathrm{f}^\mathrm{A} = H_\mathrm{f}^\mathrm{A} - TS_\mathrm{f}^\mathrm{A}`
+. The values are then used to calculate chemical potentials, see :ref:`thermo`.
 
 .. note::
 
@@ -140,10 +145,9 @@ default.
    string ``local``, in which case they take the local average molar volume ---
    see :ref:`background`.
 
-The ``vacancy_formation_energy`` table works the same way as the
-``molar_volume`` table, with a slightly different syntax: the crystal structure
-of the pure metals is specified, and the energy values are given as
-[enthalpy, entropy] lists (in [eV, eV/K]).
+Factory default values for a number of parameters are provided in the package
+files (in the :mod:`constants` module). These can be overridden by specifying
+values in the ``[default_parameters]`` table, see :ref:`default_parameters`.
 
 .. _thermokin_database_files:
 
@@ -203,11 +207,6 @@ The parameters that populate the thermodynamics and mobility database files
 are typically found in journal articles. Users are recommended to use the
 files provided in the ``noda/data`` folder of the installation directory as
 examples to build their own database files.
-
-.. rubric:: Footnotes
-
-.. [#f1] A "factory" default value is defined in the package installation and
-   can be overridden, see :ref:`default_parameters`.
 
 .. rubric:: References
 

@@ -179,20 +179,21 @@ Default parameters
 
 When an optional parameter is not present in the input file, it is assigned a
 default value. "Factory" default values are defined as part of the package
-installation (see :data:`constants.factory_default_parameters`). These can be
-overridden by creating a table named ``default_parameters`` in the user data file
-(“user_data.toml”) and indicating the new default values as key-value pairs,
+installation (in :data:`constants.factory_default_parameters`). These can be
+overridden by creating a table named ``default_parameters`` in the
+“user_data.toml” file and indicating the new default values as key-value pairs,
 for example::
 
    # user_data.toml
 
    [default_parameters]
 
-   number_space_steps = 100
-   molar_volume_database = 'Vegard'
+   nz = 100
+   num_out = 10
 
-In this case, when ``nz`` is absent from the input file, it will take the value
-100. Likewise, ``molar_volume_database`` will default to ``Vegard``.
+In this case, when the number of space steps ``nz`` is absent from the input
+file, it will take the value 100. Likewise, the number of saved time steps
+``num_out`` will default to 10.
 
 In addition to optional parameters, :data:`constants.factory_default_parameters`
 includes numerical parameters that cannot be set on a per-job basis, but can be
@@ -207,12 +208,10 @@ set system-wide via the ``default_parameters`` table in “user_data.toml”:
     ``1 - min_atom_fraction``.  The factory default is 1e-9.
   * ``min_number_time_steps``: this is a lower bound for the number of time
     steps. The factory default is 20.
-  * ``partial_molar_volume`` : this is the default partial molar volume (m3/mol)
-    assigned to a species when it is absent from a ``molar_volume_database``,
-    and the database contains no ``default`` entry. The factory default is
-    1e-5.
+  * ``partial_molar_volume`` : default value (m3/mol) assigned to a species
+    when it is absent from a partial molar volume database, or when no partial
+    molar volume database has been specified in the simulation configuration.
+    The factory default is 1e-5.
   * ``vacancy_formation_energy`` : same with the vacancy formation energy in
-    pure metals. The factory default is [2, 3e-04] (GfV = HfV - T*SfV with
-    [HfV, SfV] in [eV, eV/K]).
-
-     
+    pure elements. The factory default is [2e5, 50] (GfV = HfV - T*SfV with
+    [HfV, SfV] in [J/mol, J/mol/K]).
