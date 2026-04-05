@@ -351,9 +351,10 @@ class NewSimulation(Simulation):
     See :class:`Simulation` for documentation on attributes and methods.
 
     """
-    def __init__(self, file=None, config=None, ref=None):
+    def __init__(self, file=None, config=None, ref=None, log=True):
         """Class constructor."""
-        print(intro_msg(), flush=True)
+        if log:
+            print(intro_msg(), flush=True)
         now = get_timedate()
         if ( (config is None and file is None)
             or (config is not None and file is not None) ):
@@ -377,9 +378,9 @@ class NewSimulation(Simulation):
             if ref is None:
                 ref = get_timedate(file_format=True)
             init_msg = "Reading input dictionary."
-        logger = lut.CustomLogger(work_dir, ref)
+        logger = lut.CustomLogger(work_dir, ref, log)
         logger.info(f"{now} Creating '{ref}' simulation.")
-        log_fpath = logger.handlers[1].baseFilename
+        log_fpath = logger.handlers[1].baseFilename if log else None
         logger.info(f"Log saved in '{log_fpath}'.")
         logger.info(init_msg)
         for x in config:
