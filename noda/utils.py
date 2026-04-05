@@ -11,11 +11,6 @@ from math import comb
 import numpy as np
 
 
-def is_string_value(x, val):
-    """Check if x is str and then whether its value is val."""
-    return (isinstance(x, str) and x == val)
-
-
 def kd(a, b):
     """
     Kronecker delta.
@@ -117,18 +112,20 @@ def index_binary_combination(i, j, n):
     """
     Compute index of binary combination in n-size system.
 
-    Combination (i, j) where i and j start at 0.
+    Combination (i, j) with i > j.
 
     Example with n = 3:
-    =====  ====
-    index  i, j
-    =====  ====
-    0      0, 1
-    1      0, 2
-    2      1, 2
-    =====  ====
+
+    = = =====  
+    i j index  
+    = = =====  
+    0 1 0      
+    0 2 1      
+    1 2 2      
+    = = =====  
 
     """
+    i, j = sorted([i, j])
     res = comb(n, 2) - 1
     res -= comb(n - i - 1, 2) + (n - j - 1)
     return res
@@ -138,19 +135,21 @@ def index_ternary_combination(i, j, k, n):
     """
     Compute index of ternary combination in n-size system.
 
-    Combination (i, j, k) where i, j and k start at 0.
+    Combination (i, j, k) with i > j > k.
 
     Example with n = 4:
-    =====  =======
-    index  i, j, k
-    =====  =======
-    0      0, 1, 2
-    1      0, 1, 3
-    2      0, 2, 3
-    3      1, 2, 3
-    =====  =======
+
+    = = = =====
+    i j k index
+    = = = =====
+    0 1 2 0
+    0 1 3 1
+    0 2 3 2
+    1 2 3 3
+    = = = =====
 
     """
+    i, j, k = sorted([i, j, k])
     res = comb(n, 3) - 1
     res -= comb(n - i - 1, 3) + comb(n - j - 1, 2) + (n - k - 1)
     return res
