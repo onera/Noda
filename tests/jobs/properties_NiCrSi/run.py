@@ -4,7 +4,10 @@ from noda import simu
 
 s = simu.NewSimulation(file='NiCrSi.toml')
 
-# The independent components are Cr and Si, in alphabetical order:
+# The components are 'Va', 'Cr', 'Si' and 'Ni'
+assert s.comps == ['Va', 'Cr', 'Si', 'Ni']
+
+# The independent components are Cr and Si
 assert s.inds == ['Cr', 'Si']
 
 # Make atom fraction array
@@ -19,11 +22,11 @@ x = np.vstack((x_Cr, x_Si))
 # Compute Gibbs free energy, shape = (n_points,)
 G = s.thermo.G_fun(x)
 
-# Compute chemical potentials, shape = (n ind. components, n_points)
-MU = s.thermo.MU_fun(x)
+# Compute chemical potentials, shape = (n components, n_points)
+MU = np.array([s.thermo.MU_fun(x)[k] for k in s.comps[1:]])
 
-# Compute tracer diffusion coefficients, shape = (n ind. components, n_points)
-DT = s.mobility.DT_fun(x)
+# Compute tracer diffusion coefficients, shape = (n components, n_points)
+DT = np.array([s.mobility.DT_fun(x)[k] for k in s.comps[1:]])
 
 
 #%% Validation

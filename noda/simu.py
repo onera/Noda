@@ -155,7 +155,7 @@ class Simulation:
             self.time = TimeGrid(config['time'],
                                  self.initial_conditions.x,
                                  self.space.dz_init,
-                                 self.mobility.DT_fun,
+                                 self.mobility.DT_funx,
                                  self.default_parameters,
                                  logger)
 

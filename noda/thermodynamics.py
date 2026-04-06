@@ -9,7 +9,6 @@ import numpy as np
 import noda.thermo_functions as tfu
 import noda.constants as co
 import noda.utils as ut
-import noda.data_io as da
 
 
 class Thermodynamics:
@@ -47,21 +46,21 @@ class Thermodynamics:
     Methods
     -------
     G_funx(x) :
-        Returns Gibbs free energy at composition given by atom fraction array.
+        Return Gibbs free energy at composition given by atom fraction array.
     MU_funx(x) :
-        Returns chemical potentials at composition given by atom fraction
+        Return chemical potentials at composition given by atom fraction
         array.
     yVa_fun(x) :
-        Returns equilibrium vacancy fraction at composition given by atom
+        Return equilibrium vacancy fraction at composition given by atom
         fraction array.
     G_fun(x) :
-        Alias of G_fun.x
+        Alias of G_funx.
     MU_fun(x):
-        Alias of MU_funx.
+        Return MU_funx as a dict.
     G_funy(y):
-        Returns Gibbs free energy at composition given by site fraction array.
-    MU_funy :
-        Returns chemical potentials at composition given by site fraction
+        Return Gibbs free energy at composition given by site fraction array.
+    MU_funy(y) :
+        Return chemical potentials at composition given by site fraction
         array.
 
     """
@@ -99,7 +98,6 @@ class Thermodynamics:
         self.MU_funx = make_MU_fun(comps[1:], self.params, TK)
         self.yVa_fun = make_yVa_fun(comps, self.params, TK)
         self.G_fun = self.G_funx
-        self.MU_fun = self.MU_funx
         self.ideal_lattice = True
         self.G_funy = self.extend_G_funx()
         self.MU_funy = self.extend_MU_funx()
@@ -156,6 +154,24 @@ class Thermodynamics:
         self.ideal_lattice = False
         self.G_funy = make_G_fun(self.comps, self.params, self.TK)
         self.MU_funy = make_MU_fun(self.comps, self.params, self.TK)
+
+    def MU_fun(self, x):
+        """
+        Calculate chemical potential of atom components.
+
+        Parameters
+        ----------
+        x : np.array (shape (`n_inds`, `nz`))
+            Atom fractions.
+
+        Returns
+        -------
+        dict
+            Chemical potentials, shape (`nz`)
+            ``{k: mu_k for k in components}``.
+
+        """
+        return {k: self.MU_funx(x)[i] for i, k in enumerate(self.comps[1:])}
 
 
 def make_G_fun(comps, pdict, TK):

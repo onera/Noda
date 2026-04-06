@@ -13,7 +13,7 @@ x_bulk = s.initial_conditions.x['B'][0]
 x_surf = s.boundary_conditions['left'].x_fun(0)[0]
 
 x_any = np.array([[0.5]])
-D = s.mobility.DT_fun(x_any)[0]
+D = s.mobility.DT_fun(x_any)['B']
 
 r = s.results[-1]
 x_ana = x_bulk + (x_surf - x_bulk)*erfc(r.z/np.sqrt(4*D*s.time.ts))

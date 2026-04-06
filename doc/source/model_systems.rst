@@ -9,7 +9,7 @@ The examples below shows how the known solution to the diffusion problem
 is recovered when the system properties follow a particular set of constraints.
 
 Let us consider a single-phase binary system AB, where the partial molar
-volumes of A abd B are equal (therefore the average molar volume is
+volumes of A and B are equal (therefore the average molar volume is
 composition-independent). In 1D, the diffusion problem may be written in the
 following form:
 

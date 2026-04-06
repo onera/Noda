@@ -41,7 +41,7 @@ class TimeGrid:
 
     """
 
-    def __init__(self, params, x, dz, DT_fun, default_parameters, logger):
+    def __init__(self, params, x, dz, DT_funx, default_parameters, logger):
         """
         Class constructor.
 
@@ -59,7 +59,7 @@ class TimeGrid:
             Initial atom fraction profile.
         dz : 1D array
             Initial space step.
-        DT_fun : function
+        DT_funx : function
             Calculates tracer diffusion coefficients.
         default_parameters : dict
             Parameters used when not specified in user input.
@@ -94,14 +94,14 @@ class TimeGrid:
 
         self.default_parameters = default_parameters
         self.logger = logger
-        self.dt, self.nt = self.make_time_steps(x, dz, DT_fun)
+        self.dt, self.nt = self.make_time_steps(x, dz, DT_funx)
         self.saved_steps, self.saved_th = self.make_saved_steps(params)
         self.num_out = self.saved_steps.size
 
-    def make_time_steps(self, x, dz, DT_fun):
+    def make_time_steps(self, x, dz, DT_funx):
         """Calculate time steps."""
         x_arr = np.array(list(x.values()))
-        DTmax = np.max(DT_fun(x_arr))
+        DTmax = np.max(DT_funx(x_arr))
         Fo = self.default_parameters['Fourier_number']
         dt = Fo*self.dt_multiplier*dz.min()**2/DTmax
         nt = int(self.ts/dt) + 1

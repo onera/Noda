@@ -13,19 +13,19 @@ comps = [k for k in s.comps if k != 'Va']
 x0 = np.linspace(1e-9, 0.4, num=200)
 x = x0[np.newaxis]
 
-DT = s.DT_fun(x)
-MU = s.MU_fun(x)
-phi = -(1 - x0)/(R*s.TK)*np.gradient(MU[1], x0)
-DI = DT*phi
+DT = s.mobility.DT_fun(x)
+MU = s.thermo.MU_fun(x)
+phi = -(1 - x0)/(R*s.TK)*np.gradient(MU['Ni'], x0)
+DI = {k: DT[k]*phi for k in comps}
 
 #%% Plot
 
-colors = ['tab:blue', 'tab:orange']
+colors = {'Cr': 'steelblue', 'Ni': 'firebrick'}
 
 fig, ax = plt.subplots(figsize=(5,5/1.5))
-for i, k in enumerate(comps):
-    ax.plot(x0, np.log10(DT[i]), c=colors[i], label=k)
-    ax.plot(x0, np.log10(DI[i]), '--', c=colors[i])
+for k in comps:
+    ax.plot(x0, np.log10(DT[k]), c=colors[k], label=k)
+    ax.plot(x0, np.log10(DI[k]), '--', c=colors[k])
 
 ax.set_xlabel(r'$x_\mathrm{Cr}$')
 ax.set_ylabel(r'$\log_{10}\ D_k$ (m$^2$/s)')

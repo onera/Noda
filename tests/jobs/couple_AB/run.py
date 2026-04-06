@@ -13,7 +13,7 @@ x_left = s.initial_conditions.x['B'][0]
 x_right = s.initial_conditions.x['B'][-1]
 
 x_any = np.array([[0.5]])
-D = s.mobility.DT_fun(x_any)[0]
+D = s.mobility.DT_fun(x_any)['B']
 
 r = s.results[-1]
 zmid = (r.z[-1] + r.z[0])/2

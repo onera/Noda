@@ -322,7 +322,7 @@ def yVa_model(x, G0, L, TK):
 # =============================================================================
 # Vacancy tracer diffusion coefficient
 
-def make_DVa_fun(DT_fun):
+def make_DVa_fun(DT_funx):
     r"""
     Make function to compute vacancy tracer diffusion coefficient.
 
@@ -332,7 +332,7 @@ def make_DVa_fun(DT_fun):
 
     Parameters
     ----------
-    DT_fun : function
+    DT_funx : function
         Compute tracer diffusion coefficient of atom constituents.
 
     Returns
@@ -342,7 +342,7 @@ def make_DVa_fun(DT_fun):
 
     """
     def fun(y, x):
-        DT = DT_fun(x)
+        DT = DT_funx(x)
         return 1/y[0]*sum(y[1:]*DT)
 
     return fun
@@ -351,7 +351,7 @@ def make_DVa_fun(DT_fun):
 # =============================================================================
 # Onsager coefficients
 
-def make_Lfun(DT_fun, TK):
+def make_Lfun(DT_funx, TK):
     """
     Generate function to evaluate Onsager coefficients.
 
@@ -359,7 +359,7 @@ def make_Lfun(DT_fun, TK):
 
     Arguments
     ---------
-    DT_fun: function
+    DT_funx: function
         Function evaluating tracer diffusion coefficients on composition array.
     TK: float
         Temperature in Kelvin.
@@ -376,7 +376,7 @@ def make_Lfun(DT_fun, TK):
     """
     def fun(c, x):
 
-        DT = DT_fun(x)
+        DT = DT_funx(x)
 
         nc, nz = c.shape
         res = np.zeros((nc, nc, nz))

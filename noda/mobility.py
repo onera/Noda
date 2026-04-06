@@ -22,11 +22,13 @@ class Mobility:
         ``{i: subdict for i in comps}``
 
         subdict: ``{j: val for j in subsystems}``.
+    comps : list of str
+            Atom components.
 
     Methods
     -------
-    DT_fun(x) :
-        Tracer diffusion coefficients, see :func:`get_DT_fun`.
+    DT_funx(x) :
+        Tracer diffusion coefficients, see :func:`get_DT_funx`.
     L_fun(x):
         Onsager coefficients, see :func:`thermo_functions.make_Lfun`.
     DVa_fun(y, x)
@@ -48,18 +50,37 @@ class Mobility:
             subdict: ``{j: val for j in subsystems}``.
 
         comps : list of str
-            System components.
+            Atom components.
         TK : float
             Temperature in Kelvin.
 
         """
         self.params = params
-        self.DT_fun = get_DT_fun(comps, params, TK)
-        self.L_fun = tfu.make_Lfun(self.DT_fun, TK)
-        self.DVa_fun = tfu.make_DVa_fun(self.DT_fun)
+        self.comps = comps
+        self.DT_funx = get_DT_funx(comps, params, TK)
+        self.L_fun = tfu.make_Lfun(self.DT_funx, TK)
+        self.DVa_fun = tfu.make_DVa_fun(self.DT_funx)
+    
+    def DT_fun(self, x):
+        """
+        Calculate tracer diffusion coefficients of atom components.
+
+        Parameters
+        ----------
+        x : np.array (shape (`n_inds`, `nz`))
+            Atom fractions.
+
+        Returns
+        -------
+        dict
+            Tracer diffusion coefficients, shape (`nz`)
+            ``{k: DT_k for k in components}``.
+
+        """
+        return {k: self.DT_funx(x)[i] for i, k in enumerate(self.comps)}
 
 
-def get_DT_fun(comps, pdict, TK):
+def get_DT_funx(comps, pdict, TK):
     """
     Generate DT function based on :func:`thermo_functions.lnDT_model`.
 
