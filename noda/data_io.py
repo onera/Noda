@@ -13,7 +13,6 @@ import pandas as pd
 
 import noda.thermo_functions as tfu
 import noda.utils as ut
-from noda.constants import factory_default_parameters as factory
 from noda.paths import pkg_data_dir
 
 
@@ -288,6 +287,9 @@ def get_thermo_from_file(fpath, phase, comps, TK, logger):
             df = pd.DataFrame(df.values[1:],
                               columns=df.iloc[0],
                               index=df.index[1:])
+        # Make column names lowercase to add flexibility in user database files
+        # Use dropna first to avoid TypeError (nan due to empty column in database)
+        df = df.dropna(how='all', axis=1).rename(str.lower, axis=1)
         dct[key] = df
 
     G0 = process_elements_parameters(dct['Elements'], comps, TK, phase)
@@ -418,8 +420,8 @@ def process_interaction_parameters(df, comps, logger):
 
     They are given as:
 
-    * order 0: A and B in `L0 = A + B*T`
-    * order 1: C and D in `L1 = C + D*T`
+    * order 0: A and B in `L0 = a + b*T`
+    * order 1: C and D in `L1 = c + d*T`
 
     If a variable is not included in the input file, all parameters are set to
     0 for this variable.
@@ -476,10 +478,10 @@ def unit_process_interactions(df, solvents, logger):
         * variable : either of L, Tc or beta (see
           :func:`process_interaction_parameters`).
         * solvent : constituents of subsystem concatenated to string.
-        * A, B, C, D : interaction parameters, with
+        * a, b, c, d : interaction parameters, with
 
-            * order 0 = A + B*T
-            * order 1 = C + D*T
+            * order 0 = a + b*T
+            * order 1 = c + d*T
 
     fpath : pathlib.Path
         Path of file with thermodynamic database.
@@ -499,7 +501,7 @@ def unit_process_interactions(df, solvents, logger):
     di_reduced : dict of dicts
         Thermodynamic interaction parameters,
 
-        ``{k: {letter: val for letter in 'ABCD'} for k in solvents}``.
+        ``{k: {letter: val for letter in 'abcd'} for k in solvents}``.
 
     """
     variable = df['variable'].values[0]
@@ -509,7 +511,7 @@ def unit_process_interactions(df, solvents, logger):
         kfile_list = [s for s in df.index if s in possible]
 
         if len(kfile_list) == 0:
-            df.loc[k] = [variable] + [0 for letter in 'ABCD']
+            df.loc[k] = [variable] + [0 for letter in 'abcd']
             # Interactions parameters for Tc and beta are not always available,
             # and are not used in Noda -> do not issue any warning for these
             # variables.
@@ -522,7 +524,7 @@ def unit_process_interactions(df, solvents, logger):
             # In binary subsystems, if the 2 elements are reversed, the order 1
             # parameters must be changed because
             # G = ... + x_i*x_j*(L0_ij + L1_ij*(x_i - x_j)) + ...
-            # with L1_ij = C + D*T
+            # with L1_ij = c + d*T
             # In ternary subsystems, order 1 parameters are 0 for the moment
             # Introducing order 1 parameters would be more complex -> order of
             # elements does not matter
@@ -531,8 +533,8 @@ def unit_process_interactions(df, solvents, logger):
             if k != kfile:
                 df = df.rename(index={kfile: k})
                 if len(possible) == 2:  # binary subsystems
-                    df.loc[k, 'C'] *= -1
-                    df.loc[k, 'D'] *= -1
+                    df.loc[k, 'c'] *= -1
+                    df.loc[k, 'd'] *= -1
 
         else:
             msg = (f"{k} interaction parameters for {variable}\n"
@@ -552,7 +554,7 @@ def make_L_isotherm(L, T):
     L : dict
         Interaction parameters,
 
-        ``{k: {letter: val for letter in 'ABCD'} for k in solvents}``.
+        ``{k: {letter: val for letter in 'abcd'} for k in solvents}``.
     T : float or int
         Temperature in Kelvin.
 
@@ -562,8 +564,8 @@ def make_L_isotherm(L, T):
         Interaction parameters, ``{k: [L0, L1] for k in solvents}``.
 
     """
-    res = {k: [L[k]['A'] + L[k]['B']*T,
-               L[k]['C'] + L[k]['D']*T]
+    res = {k: [L[k]['a'] + L[k]['b']*T,
+               L[k]['c'] + L[k]['d']*T]
            for k in L}
     return res
 
@@ -661,7 +663,7 @@ def get_mob_from_spreadsheet(fpath, comps, TK):
     p : dict of dicts
         ``{i: subdict for i in comps}``
 
-        subdict: ``{j: val for j in subsystems}``
+        subdict: ``{j: L0 for j in subsystems}``
 
     """
     if fpath.suffix == '.csv':
@@ -672,18 +674,18 @@ def get_mob_from_spreadsheet(fpath, comps, TK):
     if all(x.startswith('Unnamed') for x in df.columns):
         df = pd.DataFrame(df.values[1:], columns=df.iloc[0])
     df.solute = df.solute.apply(ut.format_element_symbol)
-
+    # Make column names lowercase to add flexibility in user database files
+    # Use dropna first to avoid TypeError (nan due to empty column in database)
+    df = df.dropna(how='all', axis='columns').rename(str.lower, axis="columns")
     solvents = ut.make_combinations(comps)['all']
-
     p = {}
     for i in comps:
         p[i] = {}
         for j in solvents:
             redf = get_reduced_df(df, j, i)
-            A = redf['A'].values[0]
-            B = redf['B'].values[0]
-            p[i][j] = A + B*TK
-
+            a = redf['a'].values[0]
+            b = redf['b'].values[0]
+            p[i][j] = a + b*TK
     return p
 
 
@@ -705,7 +707,7 @@ def get_mob_from_json(fpath, comps, TK):
     p : dict of dicts
         ``{i: subdict for i in comps}``
 
-        subdict: ``{j: val for j in subsystems}``
+        subdict: ``{j: L0 for j in subsystems}``
 
     """
     # pylint: disable=too-many-locals

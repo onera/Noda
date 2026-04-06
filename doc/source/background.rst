@@ -148,7 +148,7 @@ elements, ternary interactions of order 0:
                                    + \sum_{i = 0}^{n - 2}{\sum_{j = i + 1}^{n - 1}{\sum_{k = j + 1}^{n}{y_i y_j y_k\Lambda_{ijk}}}}.
 
 The binary and ternary interaction terms, :math:`_{}^{\nu}\Lambda_{ij}`
-and :math:`\Lambda_{ijk}`, are expressed in the form :math:`A + B \cdot T`.
+and :math:`\Lambda_{ijk}`, are expressed in the form :math:`a + b \cdot T`.
 
 Chemical potentials are defined as:
 
@@ -359,7 +359,7 @@ binary and ternary interactions of order 0:
             + \sum_{i = 1}^{n - 2}{\sum_{j = i + 1}^{n - 1}{\sum_{k = j + 1}^{n}{x_i x_j x_k\Lambda_{ijk}}}}.
 
 The binary and ternary interaction terms, :math:`\Lambda_{ij}` and
-:math:`\Lambda_{ijk}`, are expressed in the form :math:`A + B \cdot T`.
+:math:`\Lambda_{ijk}`, are expressed in the form :math:`a + b \cdot T`.
 
 Diffusion
 ^^^^^^^^^

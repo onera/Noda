@@ -176,14 +176,14 @@ Section). Thermodynamic database files in ods and xlsx format contain two sheets
   
   .. math::
    
-     _{}^{0}\Lambda_{ij} = A + B \cdot T,\\
-     _{}^{1}\Lambda_{ij} = C + D \cdot T,\\
-     \Lambda_{ijk} = A + B \cdot T.
+     _{}^{0}\Lambda_{ij} = a + b \cdot T,\\
+     _{}^{1}\Lambda_{ij} = c + d \cdot T,\\
+     \Lambda_{ijk} = a + b \cdot T.
 
 .. note::
 
    Noda only considers ternary interactions of order 0. Entries for coefficients
-   `C` and `D` of a ternary endmember will be ignored.
+   `c` and `d` of a ternary endmember will be ignored.
 
 Thermodynamic database files in csv format store the parameters under
 `Elements` and `Interactions` headings.
@@ -195,7 +195,7 @@ unary terms, and binary and ternary interaction parameters:
 
 .. math::
    
-   \phi_\mathrm{solute}^\mathrm{solvent} = A + B \cdot T.
+   \phi_\mathrm{solute}^\mathrm{solvent} = a + b \cdot T.
 
 In this context, `solute` is the diffusing species, while `solvent` is the
 endmember in which it diffuses, or the subsystem that generates interactions.

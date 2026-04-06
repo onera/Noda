@@ -1,8 +1,8 @@
-﻿# Made-up data for an ideal binary system,,,,
-solute,solvent,,A,B
-A,A,,-200000,-100
-A,B,,-200000,-100
-A,AB,,0,0
-B,A,,-200000,-100
-B,B,,-200000,-100
-B,AB,,0,0
+﻿# Made-up data for an ideal binary system,,,
+solute,solvent,a,b
+A,A,-200000,-100
+A,B,-200000,-100
+A,AB,0,0
+B,A,-200000,-100
+B,B,-200000,-100
+B,AB,0,0

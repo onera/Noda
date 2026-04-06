@@ -12,5 +12,5 @@ Tcritical,400,600,,,
 beta,0.8,0.5,,,
 ,,,,,
 Interactions,,,,,
-variable,solvent,A,B,C,D
+variable,solvent,a,b,c,d
 L,AB,0,0,0,0
