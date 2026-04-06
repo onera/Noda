@@ -4,7 +4,7 @@
 
 """Solve the diffusion equation."""
 
-import time
+from time import perf_counter
 
 import numpy as np
 import scipy.interpolate as spi
@@ -17,7 +17,7 @@ from noda.utils import div
 # Solver
 
 
-def solver(thermo, mobility, space, init, BC, time_grid, lattice,
+def solver(thermo, mobility, space, init, BC, time, lattice,
            show_completion, verbose, L_mean_kind, logger):
     """
     Solve diffusion equation.
@@ -37,7 +37,7 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
         Initial conditions.
     BC : dict of :class:`boundary_conditions.BoundaryConditions`
         Boundary conditions.
-    time_grid : :class:`time.TimeGrid`
+    time : :class:`time.TimeGrid`
         Time parameters.
     lattice : :class:`lattice.Lattice`
         Parameters related to sink strength.
@@ -88,7 +88,7 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
         Solver run time in s.
 
     """
-    start_time = time.time()
+    start_time = perf_counter()
     cvar = init.cvar
     comps = cvar.comps
     V_partial = cvar.V_partial
@@ -98,8 +98,8 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
     dz_min = dz.min()
     dz_max = dz.max()
     deformation = np.zeros(dz.size)
-    nt = time_grid.nt
-    dt = time_grid.dt
+    nt = time.nt
+    dt = time.dt
     k_dislo = lattice.k_dislo
     k_pores = lattice.k_pores
     rho_dislo = lattice.rho_dislo
@@ -128,7 +128,7 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
         V0 = V_partial['Va'] if V_partial['Va'] != 'local' else Vm
         Vp = V_partial['pore'] if V_partial['pore'] != 'local' else Vm
 
-        if n in time_grid.saved_steps:
+        if n in time.saved_steps:
             res[n] = {}
             res[n]['z'] = z.copy()
             res[n]['c'] = c.copy()
@@ -193,7 +193,7 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
         cvar.c.mid = c
 
         # Record variables
-        if n in time_grid.saved_steps:
+        if n in time.saved_steps:
             res[n]['mu'] = MU
             res[n]['Jlat'] = Jlat
             res[n]['yVa_eq'] = yVa_eq
@@ -206,11 +206,11 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
 
         if show_completion:
             if n in completion_steps:
-                dur = time.time() - start_time
+                dur = perf_counter() - start_time
                 r = n/(nt - 1)
                 logger.info(f'{dur:^10.3f}{"":2}{r*100:^10.0f}')
 
-    dur = time.time() - start_time
+    dur = perf_counter() - start_time
     logger.info(f'Solver run time: {dur:.3f} s')
 
     return res
