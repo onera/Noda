@@ -55,7 +55,7 @@ class BoundaryConditions:
 
     """
     def __init__(self, params, thermo, V_partial, min_atom_fraction, logger,
-                 side):
+                 side, ready):
         """Class constructor."""
         self.thermo = thermo
         self.comps = thermo.comps
@@ -81,10 +81,10 @@ class BoundaryConditions:
         else:
             self.J_fun = None
         if len(missing_comps) > 0:
-            logger.info("Auto boundary conditions:")
+            logger.info("Auto boundary conditions:", stream=ready)
             for k in missing_comps:
                 text = f"* {side:5} BC for {k} set to 0-flux"
-                logger.info(text)
+                logger.info(text, stream=ready)
 
     def make_BC_type(self, params):
         """Guess BC type from input dict and make sure input is consistent."""

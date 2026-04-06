@@ -135,7 +135,6 @@ class Simulation:
                                    self.default_parameters,
                                    work_dir,
                                    logger)
-        self.boundary_conditions = self.get_boundary_conditions(min_atom_fraction)
         options = config.get('options', {})
         self.lattice = Lattice(options, work_dir, logger)
         if self.lattice.ideal is False:
@@ -158,7 +157,13 @@ class Simulation:
                                  self.mobility.DT_funx,
                                  self.default_parameters,
                                  logger)
-
+        
+        # Flag ready if tables required for run are present in config.
+        # This is used in BoundaryConditions to determine whether auto-boundary
+        # conditions INFO should be streamed.
+        cats = ['space', 'initial_conditions', 'time']
+        self.ready = all(hasattr(self, cat) for cat in cats)
+        self.boundary_conditions = self.get_boundary_conditions(min_atom_fraction)
         self.L_mean_kind = options.get('L_mean_kind',
                                        self.default_parameters['L_mean_kind'])
 
@@ -166,8 +171,6 @@ class Simulation:
         # nested structure both in config and in instance attributes
 
         # Initialize results if simulation is ready to run
-        cats = ['space', 'initial_conditions', 'time', 'boundary_conditions']
-        self.ready = all(hasattr(self, cat) for cat in cats)
         if self.ready:
             params = {'comps': self.comps,
                       'V_partial': self.V_partial,
@@ -336,7 +339,8 @@ class Simulation:
                                            self.V_partial,
                                            min_atom_fraction,
                                            self.logger,
-                                           side)
+                                           side,
+                                           self.ready)
         return dct
 
 
