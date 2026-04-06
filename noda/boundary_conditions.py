@@ -112,10 +112,14 @@ class BoundaryConditions:
         Make function that returns a boundary flux array.
 
         The inner function returns a 1D array of fluxes, which include
-        all System components.
+        all atom components.
 
         """
         self.check_BC_components(Jparams.keys(), self.comps[1:], 'flux')
+        fun_dct = {}
+        # the default argument is needed because of late-binding (Python
+        # will look up the value of k when the lambda function is called,
+        # and by that time k will be the last k value)
         fun_dct = {k: lambda t, s=Jparams[k]: eval(s) for k in self.comps[1:]}
         def fun(t):
             J_dict = {k: fun_dct[k](t) for k in self.comps[1:]}
@@ -137,6 +141,9 @@ class BoundaryConditions:
         """
         self.check_BC_components(xparams.keys(), self.inds, 'atom_fraction')
         xparams = self.clip_xBC_values(xparams)
+        # the default argument is needed because of late-binding (Python
+        # will look up the value of k when the lambda function is called,
+        # and by that time k will be the last k value)
         fun_dct = {k: lambda t, s=xparams[k]: eval(s) for k in self.inds}
 
         def fun(t):

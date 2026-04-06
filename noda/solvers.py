@@ -154,7 +154,7 @@ def solver(thermo, mobility, space, init, BC, time_grid, lattice,
         L_nod = L_mean_fun(L_diag)
         dz_nod = (dz[1:] + dz[:-1])/2
         Jbulk = -L_nod*np.diff(MU_diff)/dz_nod
-        Jleft, Jright = compute_boundary_fluxes(n*dt, MU_diff, dz, BC,
+        Jleft, Jright = compute_boundary_fluxes(n, dt, MU_diff, dz, BC,
                                                 thermo.MU_funy,
                                                 L, mobility.L_fun, Vk)
         Jlat = np.hstack((Jleft[None].T, Jbulk, Jright[None].T))
@@ -285,14 +285,16 @@ def compute_alpha_ideal(z, cnod, c, y_Va, dt, Jlat, Vk, V0, Vp, V, Vm,
 # Auxiliary functions
 
 
-def compute_boundary_fluxes(t, MU_diff, dz, BC, MU_fun, L, L_fun, Vk):
+def compute_boundary_fluxes(n, dt, MU_diff, dz, BC, MU_fun, L, L_fun, Vk):
     """
     Compute fluxes on domain boundaries.
 
     Parameters
     ----------
-    t : float
-        Time (s).
+    n : int
+        Time index.
+    dt : float
+        Time step (s)
     MU_diff : 2D array
         Diffusion potentials (MU_k - MU_0), initial shape (`ninds` + 1,
         `nz` - 1).
@@ -324,7 +326,7 @@ def compute_boundary_fluxes(t, MU_diff, dz, BC, MU_fun, L, L_fun, Vk):
         i0 = 0 if side == 'left' else -1
 
         if BC[f'{side}'].type == 'Dirichlet':
-            cvar_BC = BC[side].cvar_fun(t)
+            cvar_BC = BC[side].cvar_fun(n*dt)
             y_BC = cvar_BC.y.mid
             MU_BC = MU_fun(y_BC[:-1])
             MU_diff_BC = MU_BC[1:] - MU_BC[0]
@@ -339,7 +341,8 @@ def compute_boundary_fluxes(t, MU_diff, dz, BC, MU_fun, L, L_fun, Vk):
             # Compensate volume change by setting flux of dependent constituent
             J[f'{side}'][-1] = (-sum(J[f'{side}'][:-1]*Vk[1:-1])/Vk[-1]).item()
         else:
-            J[f'{side}'] = sign*BC[side].J_fun(t)
+            # Call J_fun at t + dt/2
+            J[f'{side}'] = sign*BC[side].J_fun(dt*(n + 1/2))
 
     return J['left'], J['right']
 
