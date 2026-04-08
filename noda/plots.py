@@ -200,8 +200,6 @@ def plot_profile_quartet(result, title, zunit='um', ylim=None,
         Figure.
     axes : list of matplotlib.axes._subplots.AxesSubplot
         Axes.
-    lines : list of lists of matplotlib.lines.Line2D
-        Lines.
 
     """
     zunit, zmult = process_xaxis_unit(zunit)
@@ -257,7 +255,6 @@ def plot_profile_quartet(result, title, zunit='um', ylim=None,
     ax4.set_ylabel('$f_p$ (%)')
 
     axes = [ax1, ax2, ax3, ax4]
-    lines = [lines1, lines2, lines3, lines4]
 
     if ylim is not None:
         for ax, k in zip([ax1, ax2, ax3, ax4], ['x', 'y0', 'J', 'fp']):
@@ -265,7 +262,7 @@ def plot_profile_quartet(result, title, zunit='um', ylim=None,
             if ylim[k]:
                 ax.set_ylim(ylim[k])
 
-    return fig, axes, lines
+    return fig, axes
 
 
 class StaticProfile:
@@ -355,13 +352,13 @@ class StaticProfile:
 
         Returns
         -------
-        fig, axes, lines : matplotlib figure, axes and lines
+        fig, axes : matplotlib figure and axes
 
         """
         if title is None:
             title = f'step {self.step:3}, {self.th:3.1f} h'
-        fig, axes, lines = plot_profile_quartet(self.res, title, **kwargs)
-        return fig, axes, lines
+        fig, axes = plot_profile_quartet(self.res, title, **kwargs)
+        return fig, axes
 
 
 def calculate_view_limits(results, varname):

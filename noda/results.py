@@ -156,12 +156,12 @@ class SimulationResults:
 
         Returns
         -------
-        fig, axes, lines : matplotlib figure, axes and lines
+        fig, axes : matplotlib figure and axes
 
         """
         res = self.result(step_index=step_index, th=th)
-        fig, axes, lines = res.plot_quartet(**kwargs)
-        return fig, axes, lines
+        fig, axes = res.plot_quartet(**kwargs)
+        return fig, axes
 
     def interactive_plot(self, variable='x'):
         """Interactive plot (call :class:`plots.InteractivePlot`)."""
@@ -450,5 +450,5 @@ class UnitResult:
         Call :meth:`plots.StaticProfile.quartet`. Plot x, yVa, Jlat, fp.
 
         """
-        fig, axes, lines = self.static_prof.quartet(**kwargs)
-        return fig, axes, lines
+        fig, axes = self.static_prof.quartet(**kwargs)
+        return fig, axes
