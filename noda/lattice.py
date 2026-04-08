@@ -104,8 +104,8 @@ class Lattice:
             if isinstance(rho, str):
                 fpath = work_dir / rho
                 rho = np.genfromtxt(fpath)
-            dct['name']['k'] = k
-            dct['name']['rho'] = rho
+            dct[name]['k'] = k
+            dct[name]['rho'] = rho
         return dct
 
 
