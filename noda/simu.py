@@ -282,7 +282,6 @@ class Simulation:
         GfV = da.get_vacancy_formation_energy(
                         self.databases,
                         self.db_register['vacancy_formation_energy'],
-                        self.phase,
                         self.comps,
                         self.default_parameters['vacancy_formation_energy'],
                         self.logger)

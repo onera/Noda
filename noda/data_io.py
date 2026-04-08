@@ -112,8 +112,8 @@ def get_partial_molar_volume(databases, db_register, comps, default, logger):
     return res
 
 
-def get_vacancy_formation_energy(databases, db_register, phase, comps,
-                                 default, logger):
+def get_vacancy_formation_energy(databases, db_register, comps, default,
+                                 logger):
     """
     Get vacancy formation energy in pure elements.
 
@@ -129,8 +129,6 @@ def get_vacancy_formation_energy(databases, db_register, phase, comps,
         Databases in input configuration.
     db_register : dict
         Vacancy formation energy databases in 'user_data.toml' file.
-    phase : str
-        Name of metal phase.
     comps : list of str
         System components.
     default:
@@ -153,7 +151,7 @@ def get_vacancy_formation_energy(databases, db_register, phase, comps,
     res = {}
     for k in comps:
         try:
-            res[k] = dct[f"{phase}-{k}"]
+            res[k] = dct[k]
         except KeyError:
             res[k] = default
             msg = (f"Vacancy formation energy database '{name}' contains no "
