@@ -282,14 +282,9 @@ def get_thermo_from_file(fpath, phase, comps, TK, logger):
         dct = get_thermo_from_spreadsheet(fpath)
 
     for key in ['Elements', 'Interactions']:
-        df = dct[key].dropna(how='all')
-        if all(x.startswith('Unnamed') for x in df.columns):
-            df = pd.DataFrame(df.values[1:],
-                              columns=df.iloc[0],
-                              index=df.index[1:])
+        df = sanitize_dataframe(dct[key])
         # Make column names lowercase to add flexibility in user database files
-        # Use dropna first to avoid TypeError (nan due to empty column in database)
-        df = df.dropna(how='all', axis=1).rename(str.lower, axis=1)
+        df = df.rename(str.lower, axis=1)
         dct[key] = df
 
     G0 = process_elements_parameters(dct['Elements'], comps, TK, phase)
@@ -322,16 +317,16 @@ def get_thermo_from_csv(fpath, comps):
         | ``'Interactions' : interactions parameters``
 
     """
-    with open(fpath, 'r', encoding='utf-8') as file:
-        raw = file.read()
-    parts = re.split('Elements|Interactions', raw)
+    
+    csv_string = get_csv_as_string(fpath)
+    parts = re.split('Elements,*|Interactions,*', csv_string)
     elements = parts[1]
     df_elements = pd.read_csv(io.StringIO(elements),
-                              skiprows=1,
+                              comment='#',
                               usecols=range(len(comps) + 1),
                               index_col=0)
     interactions = parts[2]
-    df_interactions = pd.read_csv(io.StringIO(interactions), skiprows=1)
+    df_interactions = pd.read_csv(io.StringIO(interactions), comment='#')
     dct = {'Elements': df_elements, 'Interactions': df_interactions}
     return dct
 
@@ -667,12 +662,11 @@ def get_mob_from_spreadsheet(fpath, comps, TK):
 
     """
     if fpath.suffix == '.csv':
-        df = pd.read_csv(fpath, comment='#')
+        csv_string = get_csv_as_string(fpath)
+        df = pd.read_csv(io.StringIO(csv_string), comment='#')
     else:
         df = pd.read_excel(fpath, comment='#')
-    df = df.dropna(how='all')
-    if all(x.startswith('Unnamed') for x in df.columns):
-        df = pd.DataFrame(df.values[1:], columns=df.iloc[0])
+    df = sanitize_dataframe(df)
     df.solute = df.solute.apply(ut.format_element_symbol)
     # Make column names lowercase to add flexibility in user database files
     # Use dropna first to avoid TypeError (nan due to empty column in database)
@@ -783,3 +777,36 @@ def get_reduced_df(df, solvent, solute):
         raise ut.UserInputError(msg) from None
 
     return res
+
+
+def get_csv_as_string(fpath):
+    """Load csv file content, sanitize and return string."""
+    with open(fpath, 'r', encoding='utf-8') as file:
+        raw_lines = file.readlines()
+    # Convert ; to , before loading with pd.read_csv.
+    # Avoid sep=',|;' which triggers engine='Python' and different line
+    # counting behavior.
+    csv = [line.replace(';', ',') for line in raw_lines]
+    # Get rid of empty lines
+    csv = [line for line in csv if not all(c == ',' for c in line.strip())]
+    # Get rif of quote before # (can be inserted when converting to csv)
+    csv = [line.replace('"#', '#') for line in csv]
+    csv = ''.join(csv)
+    return csv
+
+
+def sanitize_dataframe(df):
+    """
+    Get rid of empty lines and columns and rebuild if first line was empty
+
+    pd.read_excel use first line as header even if it is empty (then columns
+    are named 'Unnamed N'). Delete empty lines first to make sure the line used
+    as header when rebuilding is not empty.
+    Deleting empty columns is needed to apply str.lower on column names (see
+    :func:`get_thermo_from_file`).
+    """
+    df = df.dropna(how='all', axis=0).dropna(how='all', axis=1)
+    if all(x.startswith('Unnamed') for x in df.columns):
+        df = pd.DataFrame(df.values[1:], columns=df.iloc[0], index=df.index[1:])
+    return df
+
