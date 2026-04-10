@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "noda"
-version = "1.3.2"
+version = "2.0.0"
 authors = [
   { name="Thomas Gheno", email="thomas.gheno@onera.fr" },
 ]
-description = "noda is a Python package to simulate diffusion in multicomponent systems."
+description = "Noda is a Python package to simulate diffusion in multicomponent systems."
 readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE.txt"]
@@ -31,6 +31,10 @@ dependencies = [
   "openpyxl",
   "numdifftools"
 ]
+
+[project.urls]
+Homepage = "https://github.com/onera/noda"
+Documentation = "https://onera.github.io/Noda/"
 
 [tool.pytest.ini_options]
 addopts = [
