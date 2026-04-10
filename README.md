@@ -13,9 +13,11 @@ Dependencies:
 * Python 3.11+
 * numpy, scipy, pandas, matplotlib, odfpy, openpyxl, numdifftools
 
-The documentation is available at
-[onera.github.io/Noda](https://onera.github.io/Noda); it contains
-installation instructions, tutorials and the package reference.
+Resources :
+
+* [onera.github.io/Noda](https://onera.github.io/Noda): documentation
+* [github.com/onera/noda](https://github.com/onera/noda): repository
+* [pypi.org/project/noda](https://pypi.org/project/noda/): PyPI page
 
 Quick install
 -------------

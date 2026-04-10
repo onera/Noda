@@ -242,7 +242,7 @@ class Simulation:
                     'thermodynamics',
                     'mobility']:
             dct = self.user_data.get(cat, {})
-            db_register[cat] = {k.lower(): val for k, val in dct.items()}
+            db_register[cat] = {k: val for k, val in dct.items()}
         return db_register
 
     def get_default_parameters(self):
@@ -273,7 +273,7 @@ class Simulation:
         """
         possible_keys = ['thermo', 'thermodynamics']
         key = (self.databases.keys() & possible_keys).pop()
-        name = self.databases[key].lower()
+        name = self.databases[key]
         if Path(name).is_file():
             fpath = Path(name)
         else:
@@ -310,7 +310,7 @@ class Simulation:
             Mobility properties handler.
 
         """
-        name = self.databases['mobility'].lower()
+        name = self.databases['mobility']
         if Path(name).is_file():
             fpath = Path(name)
         else:
