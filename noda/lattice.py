@@ -90,13 +90,13 @@ class Lattice:
         dct = {'dislo' : {}, 'pores' : {}}
         for name in dct:
             if f'rho_{name}' in params and f'k_{name}' in params:
-                msg = f"Cannot specify both k_{name} and rho_{name}."
+                msg = f"Cannot specify both 'k_{name}' and 'rho_{name}'."
                 raise UserInputError(msg) from None
             k = getattr(self, f"k_{name}")
             rho = getattr(self, f"rho_{name}")
             if k is None and rho is None:
                 k = 0
-                msg = f"No value found for k_{name}, defaults to 0."
+                msg = f"No value found for 'k_{name}', defaults to 0."
                 logger.warning(msg)
             if isinstance(k, str):
                 fpath = work_dir / k

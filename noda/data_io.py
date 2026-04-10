@@ -96,7 +96,11 @@ def get_partial_molar_volume(databases, db_register, comps, default, logger):
             msg = (f"Partial molar volume database '{name}' contains no data "
                     f"for {k}. Using system-wide default value "
                     f"({default} m3/mol) instead.")
-            logger.info(msg, stream=False)
+            if 'partial_molar_volume' in databases and k not in ['Va', 'pore']:
+                log_level = 30
+            else:
+                log_level = 18
+            logger.log_wrapper(log_level, msg)
         if k in ('Va', 'pore'):
             if not (isinstance(res[k], float) or res[k] == 'local'):
                 msg = (f"Invalid entry for species {k} in partial molar volume"
@@ -148,8 +152,9 @@ def get_vacancy_formation_energy(databases, db_register, comps, default,
 
     """
     name, dct = get_database('vacancy_formation_energy', databases, db_register)
+    log_level = 30 if 'vacancy_formation_energy' in databases else 18
     res = {}
-    for k in comps:
+    for k in comps[1:]:
         try:
             res[k] = dct[k]
         except KeyError:
@@ -157,7 +162,7 @@ def get_vacancy_formation_energy(databases, db_register, comps, default,
             msg = (f"Vacancy formation energy database '{name}' contains no "
                    f"data for {k}. Using system-wide default value ({res[k]} "
                    "[J/mol, J/mol/K]) instead.")
-            logger.info(msg, stream=False)
+            logger.log_wrapper(log_level, msg)
         msg = (f"Invalid entry for species {k} in vacancy formation energy "
                f"database '{name}' (found '{res[k]}', should be a list-like "
                "of two floats or integers)")
@@ -247,6 +252,8 @@ def get_thermo_from_file(fpath, phase, comps, TK, logger):
     ------
     utils.UserInputError
         If file is not found.
+    utils.UserInputError
+        If element not found in database.
 
     Returns
     -------
@@ -284,6 +291,11 @@ def get_thermo_from_file(fpath, phase, comps, TK, logger):
         # Make column names lowercase to add flexibility in user database files
         df = df.rename(str.lower, axis=1)
         dct[key] = df
+    
+    for k in comps:
+        if k.lower() not in dct['Elements'].columns:
+            msg = f"Element {k} not found in thermodynamic database '{fpath}'."
+            raise ut.UserInputError(msg) from None
 
     G0 = process_elements_parameters(dct['Elements'], comps, TK, phase)
     interactions = process_interaction_parameters(dct['Interactions'],

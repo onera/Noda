@@ -82,7 +82,7 @@ class InitialConditions:
         self.x = self.make_x_profile(params["atom_fraction"])
         for key in ["vacancy_fraction", "pore_fraction"]:
             if key in params and thermo.ideal_lattice:
-                msg = (f"Custom initial {key} profile not compatible with "
+                msg = (f"Custom initial '{key}' profile not compatible with "
                        "ideal lattice.")
                 raise ut.UserInputError(msg) from None
         self.yVa = self.make_yVa_profile(params, thermo.yVa_fun)
@@ -92,12 +92,16 @@ class InitialConditions:
 
     def make_x_profile(self, params):
         """Make initial atom fraction profile."""
-        x = self.make_profile("atom_fraction", params)
-        x = self.check_x_profile(x)
+        if 'file' in params:
+            x = self.make_profile("atom_fraction", params)
+            x = self.check_x_profile_from_file(x)
+        else:
+            params = self.prepare_x_params(params)
+            x = self.make_profile("atom_fraction", params)
         x = {k: x[k] for k in self.inds}
         return x
 
-    def check_x_profile(self, x):
+    def check_x_profile_from_file(self, x):
         """
         Check initial atom fraction profile.
 
@@ -125,6 +129,44 @@ class InitialConditions:
                 self.logger.info(msg)
                 prof[:] = np.clip(prof, min_val, max_val)
         return x
+
+    def prepare_x_params(self, params):
+        """
+        Prepare initial atom fraction profile.
+
+        * Make sure the constituents in the initial atom fraction profile match
+          the list of independent constituents declared in the configuration.
+        * Enforce bounds on initial atom fractions and print warning.
+
+        """
+        min_val = self.min_atom_fraction
+        max_val = 1 - self.min_atom_fraction
+        sides = [ side for side in ['left', 'right'] if side in params]
+        msg = "Reading initial conditions for 'atom_fraction'. "
+        for side in sides:
+            x_side = params[side]
+            for k in x_side:
+                if x_side[k] < min_val:
+                    msg = (f"{side} {k} = {x_side[k]} replaced "
+                           f"by minimum allowed {min_val}.")
+                    self.logger.info(msg)
+                    x_side[k] = min_val
+                if x_side[k] > max_val:
+                    msg = (f"{side} {k} = {x_side[k]} replaced "
+                           f"by maximum allowed {max_val}.")
+                    self.logger.info(msg)
+                    x_side[k] = max_val
+            try:
+                assert set(params[side]) == set(self.inds)
+            except AssertionError as exc:
+                side_comps = ", ".join(params[side])
+                inds = ", ".join(self.inds)
+                msg = ("Missing or extra element(s) in initial atom fraction "
+                       "profile.\n"
+                       f"Components on {side} side: {side_comps}\n"
+                       f"Declared independent components: {inds}")
+                raise ut.UserInputError(msg) from exc
+        return params
 
     def make_yVa_profile(self, params, yVa_fun):
         """Make initial vacancy site fraction profile."""
@@ -168,7 +210,7 @@ class InitialConditions:
             Initial profile of variable of interest.
 
         """
-        msg = f"Reading initial conditions for {var} from input. "
+        msg = f"Reading initial conditions for '{var}'. "
         cond1 = "file" in params
         cond2 = "shape" in params
         if (cond1 and cond2) or (not cond1 and not cond2):

@@ -275,29 +275,38 @@ Running a diffusion simulation
 ------------------------------
 
 A new simulation is created using the :class:`simu.NewSimulation` class,
-from either a configuration file or dictionary::
+from a configuration file or dictionary::
 
-   from noda import simu
-   simu1 = simu.NewSimulation(file='couple_NiCrSi.toml')
-   simu2 = simu.NewSimulation(config=config)
+   from noda.simu import NewSimulation
+   simu1 = NewSimulation(file='couple_NiCrSi.toml')
+   simu2 = NewSimulation(config=config)
    
 The configuration file can be specified using a string or a pathlib.Path
 instance, and it can be relative to the script being run or absolute. The file
 location defines the work directory, where the log file will be saved. By default,
 the log file uses the same name as the configuration file, with the ``.nod``
-extension. A different name can be specified with the 'ref' keyword argument.
+extension. A different name can be specified with the ``ref`` keyword argument.
 Part of the log is printed to screen and saved to the log file (here
 ``couple_NiCrSi.nod``): file paths, default choices for parameters not present
 in the configuration file. The log file also includes the configuration
-dictionary and the simulation results.
+dictionary and the simulation results. Logging can be turned off entirely by 
+passing the optional argument ``log=False``.
 
 When a simulation is created using a configuration dictionary, the work directory
 is that of the script being run, and by default the log file name is a timedate
-stamp --- again this can be changed with the 'ref' keyword argument.
+stamp --- again this can be changed with the ``ref`` keyword argument.
 
-The simulation is then run with the :meth:`simu.Simulation.run` method::
+The simulation is then run with the :meth:`simu.NewSimulation.run` method::
 
    simu1.run()
+
+This method has two optional arguments:
+
+* ``show_completion`` : whether to print the completion rate to screen while
+  the simulation is running. Boolean ; the default is False.
+* ``verbose`` : Verbosity level, sets amount of information printed while
+  the simulation is running. Valid values: 0 (less verbose) and 1
+  (more verbose). The default is 1.
 
 Once the calculation is done, Noda logs the run time (screen and log file) and
 the results (to the log file only).
@@ -310,7 +319,8 @@ run, or by loading the log file from a simulation run in a previous
 session. In the latter case, the simulation is created using the
 :class:`simu.ReadSimulation` class::
 
-   simu1 = simu.ReadSimulation('couple_NiCrSi.nod')
+   from noda.simu import ReadSimulation
+   simu1 = ReadSimulation('couple_NiCrSi.nod')
    
 The file name can be relative or absolute.
 

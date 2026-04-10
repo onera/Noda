@@ -74,8 +74,11 @@ class TimeGrid:
             If params contains both nt_multipler and dt_multiplier.
 
         """
-        if 'th' in params and 'ts' in params:
-            msg = "Cannot specify both th and ts."
+        msg = "Reading 'time' table. "
+        cond1 = 'th' in params
+        cond2 = 'ts' in params
+        if (cond1 and cond2) or (not cond1 and not cond2):
+            msg += "Expecting either 'th' or 'ts'."
             raise ut.UserInputError(msg) from None
         if 'th' in params:
             self.th = params['th']
@@ -84,7 +87,7 @@ class TimeGrid:
             self.ts = params['ts']
             self.th = self.ts / 3600
         if 'dt_multiplier' in params and 'nt_multiplier' in params:
-            msg = "Cannot specify both dt_multiplier and nt_multiplier."
+            msg += "Cannot specify both 'dt_multiplier' and 'nt_multiplier'."
             raise ut.UserInputError(msg) from None
         if 'nt_multiplier' in params:
             nt_multiplier = params['nt_multiplier']

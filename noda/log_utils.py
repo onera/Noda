@@ -37,12 +37,22 @@ class CustomLogger(logging.Logger):
 
     Features:
 
-    * Uses a custom DATA level.
+    * Uses custom levels DATA, RESULTS, INPUT and INFO_NOSTREAM.
     * Implements a stream handler (level INFO) and a file handler (level DATA).
     * Wraps messages before logging.
 
-    """
+    ============= ===== ==== ======
+    Level         Value File Stream
+    ============= ===== ==== ======
+    DATA          15    o    x
+    RESULTS       16    o    x
+    INPUT         17    o    x
+    INFO_NOSTREAM 18    o    x
+    INFO          20    o    o
+    WARNING       30    o    o
+    ============= ===== ==== ======
 
+    """
     def __init__(self, sdir, ref, log=True):
         """Class constructor."""
         super().__init__(name=ref)

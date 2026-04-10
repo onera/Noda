@@ -142,6 +142,9 @@ class Simulation:
 
         # Need to handle after lattice because depends on thermo.ideal_lattice
         if 'initial_conditions' in config:
+            if 'space' not in config:
+                msg = "Missing required 'space' table in configuration."
+                raise ut.UserInputError(msg) from None
             self.initial_conditions = InitialConditions(
                                           config['initial_conditions'],
                                           self.V_partial,
@@ -151,6 +154,10 @@ class Simulation:
                                           self.thermo,
                                           logger)
         if 'time' in config:
+            for cat in ['space', 'initial_conditions']:
+                if cat not in config:
+                    msg = f"Missing required '{cat}' table in configuration."
+                    raise ut.UserInputError(msg) from None
             self.time = TimeGrid(config['time'],
                                  self.initial_conditions.x,
                                  self.space.dz_init,
@@ -270,15 +277,16 @@ class Simulation:
         if Path(name).is_file():
             fpath = Path(name)
         else:
-            db = ut.get_or_raise(self.db_register['thermodynamics'], name)
+            db = self.get_database_from_register(name, 'thermodynamics')
             fpath = self.data_dir / db["file"]
+        msg = f"Reading thermodynamic data in '{fpath.resolve()}'."
+        self.logger.info(msg)
         params = da.get_thermo_from_file(fpath,
                                          self.phase,
                                          self.comps[1:],
                                          self.TK,
                                          self.logger)
-        msg = f"Reading thermodynamic data in '{fpath.resolve()}'."
-        self.logger.info(msg)
+        
         GfV = da.get_vacancy_formation_energy(
                         self.databases,
                         self.db_register['vacancy_formation_energy'],
@@ -306,13 +314,43 @@ class Simulation:
         if Path(name).is_file():
             fpath = Path(name)
         else:
-            db = ut.get_or_raise(self.db_register['mobility'], name)
+            db = self.get_database_from_register(name, 'mobility')
             fpath = self.data_dir / db["file"]
         params = da.get_mob_from_file(fpath, self.comps[1:], self.TK,
                                       self.logger)
         msg = f"Reading mobility data in '{fpath.resolve()}'."
         self.logger.info(msg)
         return Mobility(params, self.comps[1:], self.TK)
+    
+    def get_database_from_register(self, name, table):
+        """
+        Get database file path from register.
+
+        Parameters
+        ----------
+        name : str
+            Database name.
+        table : str
+            Database category.
+
+        Raises
+        ------
+        utils.UserInputError
+            If database not found in register.
+
+        Returns
+        -------
+        val : str
+            Database file path.
+
+        """
+        try:
+            val = self.db_register[table][name]
+        except KeyError:
+            msg = (f"Entry '{name}' not found in table '{table}' of "
+                   "'user_data.toml' file.")
+            raise ut.UserInputError(msg) from None
+        return val
 
     def get_boundary_conditions(self, min_atom_fraction):
         """
@@ -413,11 +451,12 @@ class NewSimulation(Simulation):
         Parameters
         ----------
         show_completion : bool, optional
-            Print completion rate to screen while simulation is running.
+            Print completion rate to screen while simulation is running. The
+            default is False.
         verbose : int, optional
             Verbosity level, sets amount of information printed while
             simulation is running. Valid values: 0 (less verbose) and 1
-            (more verbose). See :func:`solvers.solver` and
+            (more verbose). The default is 1. See :func:`solvers.solver` and
             :func:`solvers.remesh`.
 
         Raises
@@ -430,7 +469,7 @@ class NewSimulation(Simulation):
             for cat in ['space', 'initial_conditions', 'time']:
                 if cat not in self.config:
                     msg = (f"Simulation is not ready to run. Required '{cat}' "
-                           "parameters are missing from input.")
+                           "table missing from input.")
                     raise ut.UserInputError(msg)
 
         self.prepare_simulation_log()
