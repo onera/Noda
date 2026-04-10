@@ -15,8 +15,8 @@ Installation
    Python package, it is advisable to have a general knowledge of virtual
    environments, packages and dependencies before attempting to install Noda.
 
-Getting, installing and updating Noda
--------------------------------------
+Installing and updating
+-----------------------
 
 It is recommended to install Noda in a virtual environment. These instructions
 assume you use a virtual environment named noda-env. It can be installed using
@@ -58,10 +58,18 @@ create and activate the virtual environment:
 
 Then get and install Noda via either of the following routes:
 
-Installing from the url
-^^^^^^^^^^^^^^^^^^^^^^^
+Installing from PyPI (recommended)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Install directly from the repository url:
+.. code-block::
+   
+   (noda-env) $ pip install noda
+
+To update, use the ``--upgrade`` option.
+
+
+Installing from the repository url
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block::
    
@@ -187,8 +195,8 @@ databases) will be located.
    variables window, choose "New", then in Variable name, type NODA_HOME, and in
    Variable value, choose the path you want.
 
-Uninstalling Noda
------------------
+Uninstalling
+------------
 
 .. code-block::
 

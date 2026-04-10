@@ -21,9 +21,7 @@ Quick install
 -------------
 
 ```
-git clone https://github.com/onera/Noda.git
-cd Noda
-pip install .
+pip install noda
 ```
 
 Citing

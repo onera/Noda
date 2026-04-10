@@ -1,3 +1,4 @@
+/dist
 _build
 __pycache__
 *.script
