@@ -1,0 +1,238 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mobility &mdash; noda 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_systems.html">Working with model systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mobility</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mobility</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025-2026 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Handle mobility properties.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.thermo_functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tfu</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_combinations</span>
+
+
+<div class="viewcode-block" id="Mobility">
+<a class="viewcode-back" href="../modules/mobility.html#mobility.Mobility">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mobility</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Methods to compute mobility-related quantities.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : dict of dicts</span>
+<span class="sd">        Mobility parameters arranged as follows:</span>
+
+<span class="sd">        ``{i: subdict for i in comps}``</span>
+
+<span class="sd">        subdict: ``{j: val for j in subsystems}``.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">            Atom components.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    DT_funx(x) :</span>
+<span class="sd">        Tracer diffusion coefficients, see :func:`get_DT_funx`.</span>
+<span class="sd">    L_fun(x):</span>
+<span class="sd">        Onsager coefficients, see :func:`thermo_functions.make_Lfun`.</span>
+<span class="sd">    DVa_fun(y, x)</span>
+<span class="sd">        Vacancy diffusion coefficient, see</span>
+<span class="sd">        :func:`thermo_functions.make_DVa_fun`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Mobility.__init__">
+<a class="viewcode-back" href="../modules/mobility.html#mobility.Mobility.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict of dicts</span>
+<span class="sd">            Mobility parameters arranged as follows:</span>
+
+<span class="sd">            ``{i: subdict for i in comps}``</span>
+
+<span class="sd">            subdict: ``{j: val for j in subsystems}``.</span>
+
+<span class="sd">        comps : list of str</span>
+<span class="sd">            Atom components.</span>
+<span class="sd">        TK : float</span>
+<span class="sd">            Temperature in Kelvin.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps</span> <span class="o">=</span> <span class="n">comps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DT_funx</span> <span class="o">=</span> <span class="n">get_DT_funx</span><span class="p">(</span><span class="n">comps</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">TK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">L_fun</span> <span class="o">=</span> <span class="n">tfu</span><span class="o">.</span><span class="n">make_Lfun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DT_funx</span><span class="p">,</span> <span class="n">TK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DVa_fun</span> <span class="o">=</span> <span class="n">tfu</span><span class="o">.</span><span class="n">make_DVa_fun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DT_funx</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Mobility.DT_fun">
+<a class="viewcode-back" href="../modules/mobility.html#mobility.Mobility.DT_fun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">DT_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate tracer diffusion coefficients of atom components.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.array (shape (`n_inds`, `nz`))</span>
+<span class="sd">            Atom fractions.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Tracer diffusion coefficients, shape (`nz`)</span>
+<span class="sd">            ``{k: DT_k for k in components}``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">DT_funx</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">)}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_DT_funx">
+<a class="viewcode-back" href="../modules/mobility.html#mobility.get_DT_funx">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_DT_funx</span><span class="p">(</span><span class="n">comps</span><span class="p">,</span> <span class="n">pdict</span><span class="p">,</span> <span class="n">TK</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate DT function based on :func:`thermo_functions.lnDT_model`.</span>
+
+<span class="sd">    This uses a Redlich-Kister polynomial with binary and ternary</span>
+<span class="sd">    interactions of order 0.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents.</span>
+<span class="sd">    pdict : dict of floats</span>
+<span class="sd">        Mobility parameters.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fun : function</span>
+<span class="sd">        Function that takes ayom fraction array (shape (`n_inds`, `nz`)) as</span>
+<span class="sd">        argument, and returns tracer diffusion coefficients evaluated on this</span>
+<span class="sd">        composition grid (shape (`n_comps`, `nz`)).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">solvents</span> <span class="o">=</span> <span class="n">make_combinations</span><span class="p">(</span><span class="n">comps</span><span class="p">)[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
+    <span class="n">parr</span> <span class="o">=</span> <span class="p">[</span><span class="n">pdict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">comps</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">solvents</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">tfu</span><span class="o">.</span><span class="n">lnDT_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">parr</span><span class="p">,</span> <span class="n">TK</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fun</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025-2026, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

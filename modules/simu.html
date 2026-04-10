@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>simu &mdash; noda 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="solvers" href="solvers.html" />
+    <link rel="prev" title="results" href="results.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_systems.html">Working with model systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="boundary_conditions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">boundary_conditions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="initial_conditions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">initial_conditions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mobility.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mobility</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simu.Simulation"><code class="docutils literal notranslate"><span class="pre">Simulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.__init__"><code class="docutils literal notranslate"><span class="pre">Simulation.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.check_required_parameters"><code class="docutils literal notranslate"><span class="pre">Simulation.check_required_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.get_constituents"><code class="docutils literal notranslate"><span class="pre">Simulation.get_constituents()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.get_database_register"><code class="docutils literal notranslate"><span class="pre">Simulation.get_database_register()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.get_default_parameters"><code class="docutils literal notranslate"><span class="pre">Simulation.get_default_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.get_thermo_handler"><code class="docutils literal notranslate"><span class="pre">Simulation.get_thermo_handler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.get_mob_handler"><code class="docutils literal notranslate"><span class="pre">Simulation.get_mob_handler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.get_database_from_register"><code class="docutils literal notranslate"><span class="pre">Simulation.get_database_from_register()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.Simulation.get_boundary_conditions"><code class="docutils literal notranslate"><span class="pre">Simulation.get_boundary_conditions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.NewSimulation"><code class="docutils literal notranslate"><span class="pre">NewSimulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simu.NewSimulation.__init__"><code class="docutils literal notranslate"><span class="pre">NewSimulation.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.NewSimulation.prepare_simulation_log"><code class="docutils literal notranslate"><span class="pre">NewSimulation.prepare_simulation_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simu.NewSimulation.run"><code class="docutils literal notranslate"><span class="pre">NewSimulation.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.ReadSimulation"><code class="docutils literal notranslate"><span class="pre">ReadSimulation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simu.ReadSimulation.__init__"><code class="docutils literal notranslate"><span class="pre">ReadSimulation.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.intro_msg"><code class="docutils literal notranslate"><span class="pre">intro_msg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simu.get_timedate"><code class="docutils literal notranslate"><span class="pre">get_timedate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="space.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">space</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="temperature.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">temperature</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermodynamics.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermodynamics</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="time_grid.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">time_grid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/simu.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-simu">
+<span id="simu"></span><h1><a class="reference internal" href="#module-simu" title="simu"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a><a class="headerlink" href="#module-simu" title="Link to this heading"></a></h1>
+<p>Define and load diffusion simulation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simu.Simulation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">Simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Handle system properties, simulation conditions, simulation results.</p>
+<p>This is a base class that organizes all input parameter processing
+and prepares simulation results. It is meant to be used only through
+subclasses <a class="reference internal" href="#simu.NewSimulation" title="simu.NewSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">NewSimulation</span></code></a> (create new simulation) or
+<a class="reference internal" href="#simu.ReadSimulation" title="simu.ReadSimulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReadSimulation</span></code></a> (read simulation from log file), not directly by
+the user.</p>
+<p>This is a 1D version, with constant temperature, time-invariant space grid
+and time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>work_dir</strong> (<em>pathlib.Path</em>) – Work directory.</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="log_utils.html#log_utils.CustomLogger" title="log_utils.CustomLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">log_utils.CustomLogger</span></code></a>) – Logger.</p></li>
+<li><p><strong>data_dir</strong> (<em>pathlib.Path</em>) – Data directory, user- or package-provided (see
+<a class="reference internal" href="paths.html#paths.get_data_dir" title="paths.get_data_dir"><code class="xref py py-func docutils literal notranslate"><span class="pre">paths.get_data_dir()</span></code></a>).</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – Simulation input parameters.</p></li>
+<li><p><strong>db_register</strong> (<em>dict</em>) – Names and file paths of databases in data folder.</p></li>
+<li><p><strong>default_parameters</strong> (<em>dict</em>) – Parameters used when not specified in user input.</p></li>
+<li><p><strong>comps</strong> (<em>list</em><em> of </em><em>str</em>) – System constituents (Va + atom components).</p></li>
+<li><p><strong>inds</strong> (<em>list</em><em> of </em><em>str</em>) – Independent constituents (Va + atom components).</p></li>
+<li><p><strong>phase</strong> (<em>str</em>) – System phase name.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference internal" href="temperature.html#temperature.Temperature" title="temperature.Temperature"><code class="xref py py-class docutils literal notranslate"><span class="pre">temperature.Temperature</span></code></a>) – Temperature program.</p></li>
+<li><p><strong>TK</strong> (<em>float</em>) – Temperature in Kelvin</p></li>
+<li><p><strong>TC</strong> (<em>float</em>) – Temperature in Celsius</p></li>
+<li><p><strong>databases</strong> (<em>dict</em>) – Databases used in the simulation (thermo, mobility,
+molar_volume, vacancy_formation_energy)</p></li>
+<li><p><strong>V_partial</strong> (<em>dict</em>) – Partial molar volumes.</p></li>
+<li><p><strong>thermo</strong> (<a class="reference internal" href="thermodynamics.html#thermodynamics.Thermodynamics" title="thermodynamics.Thermodynamics"><code class="xref py py-class docutils literal notranslate"><span class="pre">thermodynamics.Thermodynamics</span></code></a>) – Thermodynamic properties.</p></li>
+<li><p><strong>mobility</strong> (<a class="reference internal" href="mobility.html#mobility.Mobility" title="mobility.Mobility"><code class="xref py py-class docutils literal notranslate"><span class="pre">mobility.Mobility</span></code></a>) – Mobility properties.</p></li>
+<li><p><strong>space</strong> (<a class="reference internal" href="space.html#space.SpaceGrid" title="space.SpaceGrid"><code class="xref py py-class docutils literal notranslate"><span class="pre">space.SpaceGrid</span></code></a>) – Space grid parameters.</p></li>
+<li><p><strong>boundary_conditions</strong> (<em>dict</em>) – Instances of <a class="reference internal" href="boundary_conditions.html#boundary_conditions.BoundaryConditions" title="boundary_conditions.BoundaryConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">boundary_conditions.BoundaryConditions</span></code></a>, with
+‘left’ and ‘right’ as keys.</p></li>
+<li><p><strong>lattice</strong> (<a class="reference internal" href="lattice.html#lattice.Lattice" title="lattice.Lattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">lattice.Lattice</span></code></a>) – Parameters relative to vacancy annihilation/creation.</p></li>
+<li><p><strong>initial_conditions</strong> (<a class="reference internal" href="initial_conditions.html#initial_conditions.InitialConditions" title="initial_conditions.InitialConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">initial_conditions.InitialConditions</span></code></a>) – Initial conditions.</p></li>
+<li><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">time.TimeGrid</span></code>) – Time-related parameters.</p></li>
+<li><p><strong>L_mean_kind</strong> (<em>str</em>) – Kind of mean used to compute L values at nodes.</p></li>
+<li><p><strong>ready</strong> (<em>bool</em>) – Whether simulation is ready to run.</p></li>
+<li><p><strong>simres</strong> (<a class="reference internal" href="results.html#results.SimulationResults" title="results.SimulationResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.SimulationResults</span></code></a>) – Simulation results.</p></li>
+<li><p><strong>results</strong> (<em>dict</em>) – Simulation results, nested dicts with syntax res[th][var][k], see
+<a class="reference internal" href="results.html#results.SimulationResults" title="results.SimulationResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.SimulationResults</span></code></a>.</p></li>
+<li><p><strong>res</strong> (<em>dict</em>) – Alias of results.</p></li>
+<li><p><strong>result</strong> – Function to access simulation results, see
+<a class="reference internal" href="results.html#results.SimulationResults.result" title="results.SimulationResults.result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">results.SimulationResults.result()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.check_required_parameters">
+<span class="sig-name descname"><span class="pre">check_required_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.check_required_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.check_required_parameters" title="Link to this definition"></a></dt>
+<dd><p>Make sure required parameters are present in input dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.get_constituents">
+<span class="sig-name descname"><span class="pre">get_constituents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.get_constituents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.get_constituents" title="Link to this definition"></a></dt>
+<dd><p>Get atom components from input dict and add vacancies.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.get_database_register">
+<span class="sig-name descname"><span class="pre">get_database_register</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.get_database_register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.get_database_register" title="Link to this definition"></a></dt>
+<dd><p>Get database register from ‘user_data.toml’.</p>
+<p>Four categories of databases are handled:</p>
+<ul class="simple">
+<li><p>Partial molar volume</p></li>
+<li><p>Vacancy formation energy</p></li>
+<li><p>Thermodynamics</p></li>
+<li><p>Mobility</p></li>
+</ul>
+<p>All are optional : if no entry in ‘user_data.toml’, default to empty
+dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.get_default_parameters">
+<span class="sig-name descname"><span class="pre">get_default_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.get_default_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.get_default_parameters" title="Link to this definition"></a></dt>
+<dd><p>Get default parameters.</p>
+<p>For each parameter defined in
+<a class="reference internal" href="constants.html#constants.factory_default_parameters" title="constants.factory_default_parameters"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.factory_default_parameters</span></code></a>, look for entry in
+‘user_data.toml’, and default to entry in
+<a class="reference internal" href="constants.html#constants.factory_default_parameters" title="constants.factory_default_parameters"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.factory_default_parameters</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.get_thermo_handler">
+<span class="sig-name descname"><span class="pre">get_thermo_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.get_thermo_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.get_thermo_handler" title="Link to this definition"></a></dt>
+<dd><p>Process input parameters and make thermodynamic properties handler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Thermodynamic properties handler.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="thermodynamics.html#thermodynamics.Thermodynamics" title="thermodynamics.Thermodynamics"><code class="xref py py-class docutils literal notranslate"><span class="pre">thermodynamics.Thermodynamics</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.get_mob_handler">
+<span class="sig-name descname"><span class="pre">get_mob_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.get_mob_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.get_mob_handler" title="Link to this definition"></a></dt>
+<dd><p>Process input parameters and make mobility properties handler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mobility properties handler.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="mobility.html#mobility.Mobility" title="mobility.Mobility"><code class="xref py py-class docutils literal notranslate"><span class="pre">mobility.Mobility</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.get_database_from_register">
+<span class="sig-name descname"><span class="pre">get_database_from_register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.get_database_from_register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.get_database_from_register" title="Link to this definition"></a></dt>
+<dd><p>Get database file path from register.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Database name.</p></li>
+<li><p><strong>table</strong> (<em>str</em>) – Database category.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If database not found in register.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – Database file path.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.Simulation.get_boundary_conditions">
+<span class="sig-name descname"><span class="pre">get_boundary_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_atom_fraction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#Simulation.get_boundary_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.Simulation.get_boundary_conditions" title="Link to this definition"></a></dt>
+<dd><p>Make dict of <a class="reference internal" href="boundary_conditions.html#boundary_conditions.BoundaryConditions" title="boundary_conditions.BoundaryConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">boundary_conditions.BoundaryConditions</span></code></a> instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>min_atom_fraction</strong> (<em>min_atom_fraction : float</em>) – Minimum atom fraction accepted.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dct</strong> – <a class="reference internal" href="boundary_conditions.html#boundary_conditions.BoundaryConditions" title="boundary_conditions.BoundaryConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">boundary_conditions.BoundaryConditions</span></code></a> instances.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simu.NewSimulation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">NewSimulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#NewSimulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.NewSimulation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a></p>
+<p>Create new simulation from input file or dict.</p>
+<p>Process user input and make <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> instance. The user is
+expected to provide either a file or a dict, using the ‘file’ or ‘config’
+keyword argument.</p>
+<p>See <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> for documentation on attributes and methods.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.NewSimulation.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#NewSimulation.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.NewSimulation.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.NewSimulation.prepare_simulation_log">
+<span class="sig-name descname"><span class="pre">prepare_simulation_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#NewSimulation.prepare_simulation_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.NewSimulation.prepare_simulation_log" title="Link to this definition"></a></dt>
+<dd><p>Add simulation info to log.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.NewSimulation.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_completion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#NewSimulation.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.NewSimulation.run" title="Link to this definition"></a></dt>
+<dd><p>Prepare log and run diffusion simulation.</p>
+<ul class="simple">
+<li><p>Call to <a class="reference internal" href="solvers.html#solvers.solver" title="solvers.solver"><code class="xref py py-func docutils literal notranslate"><span class="pre">solvers.solver()</span></code></a>. The function returns variables at
+saved_steps.</p></li>
+<li><p>These are logged to file, and stored in simres attribute
+(<a class="reference internal" href="results.html#results.SimulationResults" title="results.SimulationResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.SimulationResults</span></code></a> instance).</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_completion</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print completion rate to screen while simulation is running. The
+default is False.</p></li>
+<li><p><strong>verbose</strong> (<em>int</em><em>, </em><em>optional</em>) – Verbosity level, sets amount of information printed while
+simulation is running. Valid values: 0 (less verbose) and 1
+(more verbose). The default is 1. See <a class="reference internal" href="solvers.html#solvers.solver" title="solvers.solver"><code class="xref py py-func docutils literal notranslate"><span class="pre">solvers.solver()</span></code></a> and
+<a class="reference internal" href="solvers.html#solvers.remesh" title="solvers.remesh"><code class="xref py py-func docutils literal notranslate"><span class="pre">solvers.remesh()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If simulation is not ready.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simu.ReadSimulation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">ReadSimulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#ReadSimulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.ReadSimulation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a></p>
+<p>Create simulation from log file.</p>
+<p>See <a class="reference internal" href="#simu.Simulation" title="simu.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> for documentation on attributes and methods.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="simu.ReadSimulation.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#ReadSimulation.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.ReadSimulation.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<p>Read log file of a previous simulation, get input dict and simulation
+results and make instance of <a class="reference internal" href="results.html#results.SimulationResults" title="results.SimulationResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">results.SimulationResults</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simu.intro_msg">
+<span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">intro_msg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#intro_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.intro_msg" title="Link to this definition"></a></dt>
+<dd><p>Prepare intro message.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simu.get_timedate">
+<span class="sig-prename descclassname"><span class="pre">simu.</span></span><span class="sig-name descname"><span class="pre">get_timedate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simu.html#get_timedate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simu.get_timedate" title="Link to this definition"></a></dt>
+<dd><p>Get current timedate str.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="results.html" class="btn btn-neutral float-left" title="results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="solvers.html" class="btn btn-neutral float-right" title="solvers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025-2026, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

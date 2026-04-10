@@ -1,0 +1,710 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>simu &mdash; noda 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_systems.html">Working with model systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">simu</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for simu</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025-2026 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Define and load diffusion simulation.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tw</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">paths</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.log_utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lut</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.data_io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">da</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">co</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.solvers</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">so</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.thermodynamics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Thermodynamics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.mobility</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mobility</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.space</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpaceGrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.initial_conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InitialConditions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.boundary_conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BoundaryConditions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.time_grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeGrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.temperature</span><span class="w"> </span><span class="kn">import</span> <span class="n">Temperature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda.lattice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lattice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">results</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">noda</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+
+
+<div class="viewcode-block" id="Simulation">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Simulation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle system properties, simulation conditions, simulation results.</span>
+
+<span class="sd">    This is a base class that organizes all input parameter processing</span>
+<span class="sd">    and prepares simulation results. It is meant to be used only through</span>
+<span class="sd">    subclasses :class:`NewSimulation` (create new simulation) or</span>
+<span class="sd">    :class:`ReadSimulation` (read simulation from log file), not directly by</span>
+<span class="sd">    the user.</span>
+
+<span class="sd">    This is a 1D version, with constant temperature, time-invariant space grid</span>
+<span class="sd">    and time step.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    work_dir : pathlib.Path</span>
+<span class="sd">        Work directory.</span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+<span class="sd">    data_dir : pathlib.Path</span>
+<span class="sd">        Data directory, user- or package-provided (see</span>
+<span class="sd">        :func:`paths.get_data_dir`).</span>
+<span class="sd">    config : dict</span>
+<span class="sd">        Simulation input parameters.</span>
+<span class="sd">    db_register : dict</span>
+<span class="sd">        Names and file paths of databases in data folder.</span>
+<span class="sd">    default_parameters : dict</span>
+<span class="sd">        Parameters used when not specified in user input.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System constituents (Va + atom components).</span>
+<span class="sd">    inds : list of str</span>
+<span class="sd">        Independent constituents (Va + atom components).</span>
+<span class="sd">    phase : str</span>
+<span class="sd">        System phase name.</span>
+<span class="sd">    temperature : :class:`temperature.Temperature`</span>
+<span class="sd">        Temperature program.</span>
+<span class="sd">    TK : float</span>
+<span class="sd">        Temperature in Kelvin</span>
+<span class="sd">    TC : float</span>
+<span class="sd">        Temperature in Celsius</span>
+<span class="sd">    databases : dict</span>
+<span class="sd">        Databases used in the simulation (thermo, mobility,</span>
+<span class="sd">        molar_volume, vacancy_formation_energy)</span>
+<span class="sd">    V_partial : dict</span>
+<span class="sd">        Partial molar volumes.</span>
+<span class="sd">    thermo : :class:`thermodynamics.Thermodynamics`</span>
+<span class="sd">        Thermodynamic properties.</span>
+<span class="sd">    mobility : :class:`mobility.Mobility`</span>
+<span class="sd">        Mobility properties.</span>
+<span class="sd">    space : :class:`space.SpaceGrid`</span>
+<span class="sd">        Space grid parameters.</span>
+<span class="sd">    boundary_conditions : dict</span>
+<span class="sd">        Instances of :class:`boundary_conditions.BoundaryConditions`, with</span>
+<span class="sd">        &#39;left&#39; and &#39;right&#39; as keys.</span>
+<span class="sd">    lattice : :class:`lattice.Lattice`</span>
+<span class="sd">        Parameters relative to vacancy annihilation/creation.</span>
+<span class="sd">    initial_conditions : :class:`initial_conditions.InitialConditions`</span>
+<span class="sd">        Initial conditions.</span>
+<span class="sd">    time : :class:`time.TimeGrid`</span>
+<span class="sd">        Time-related parameters.</span>
+<span class="sd">    L_mean_kind : str</span>
+<span class="sd">        Kind of mean used to compute L values at nodes.</span>
+<span class="sd">    ready : bool</span>
+<span class="sd">        Whether simulation is ready to run.</span>
+<span class="sd">    simres : :class:`results.SimulationResults`</span>
+<span class="sd">        Simulation results.</span>
+<span class="sd">    results : dict</span>
+<span class="sd">        Simulation results, nested dicts with syntax res[th][var][k], see</span>
+<span class="sd">        :class:`results.SimulationResults`.</span>
+<span class="sd">    res : dict</span>
+<span class="sd">        Alias of results.</span>
+<span class="sd">    result :</span>
+<span class="sd">        Function to access simulation results, see</span>
+<span class="sd">        :meth:`results.SimulationResults.result`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Simulation.__init__">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Class constructor.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">work_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">get_data_dir</span><span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_user_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_register</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_database_register</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_parameters</span><span class="p">()</span>
+        <span class="n">min_atom_fraction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;min_atom_fraction&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_required_parameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_constituents</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">][</span><span class="s1">&#39;phases&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">Temperature</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TC</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="o">.</span><span class="n">TC</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TK</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="o">.</span><span class="n">TK</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">databases</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;databases&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_partial_molar_volume</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">db_register</span><span class="p">[</span><span class="s1">&#39;partial_molar_volume&#39;</span><span class="p">],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;partial_molar_volume&#39;</span><span class="p">],</span>
+                            <span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_thermo_handler</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mobility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mob_handler</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;space&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">space</span> <span class="o">=</span> <span class="n">SpaceGrid</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">],</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span>
+                                   <span class="n">work_dir</span><span class="p">,</span>
+                                   <span class="n">logger</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;options&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">Lattice</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">ideal</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">set_nonideal_lattice</span><span class="p">()</span>
+
+        <span class="c1"># Need to handle after lattice because depends on thermo.ideal_lattice</span>
+        <span class="k">if</span> <span class="s1">&#39;initial_conditions&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;space&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Missing required &#39;space&#39; table in configuration.&quot;</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initial_conditions</span> <span class="o">=</span> <span class="n">InitialConditions</span><span class="p">(</span>
+                                          <span class="n">config</span><span class="p">[</span><span class="s1">&#39;initial_conditions&#39;</span><span class="p">],</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="p">,</span>
+                                          <span class="n">work_dir</span><span class="p">,</span>
+                                          <span class="n">min_atom_fraction</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="p">,</span>
+                                          <span class="n">logger</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;time&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">,</span> <span class="s1">&#39;initial_conditions&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">cat</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Missing required &#39;</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&#39; table in configuration.&quot;</span>
+                    <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">TimeGrid</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">initial_conditions</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">dz_init</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">mobility</span><span class="o">.</span><span class="n">DT_funx</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">,</span>
+                                 <span class="n">logger</span><span class="p">)</span>
+        
+        <span class="c1"># Flag ready if tables required for run are present in config.</span>
+        <span class="c1"># This is used in BoundaryConditions to determine whether auto-boundary</span>
+        <span class="c1"># conditions INFO should be streamed.</span>
+        <span class="n">cats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">,</span> <span class="s1">&#39;initial_conditions&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cat</span><span class="p">)</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">cats</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_boundary_conditions</span><span class="p">(</span><span class="n">min_atom_fraction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">L_mean_kind</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;L_mean_kind&#39;</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;L_mean_kind&#39;</span><span class="p">])</span>
+
+        <span class="c1"># TODO : check that all input config entries are valid. Difficulty:</span>
+        <span class="c1"># nested structure both in config and in instance attributes</span>
+
+        <span class="c1"># Initialize results if simulation is ready to run</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;comps&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                      <span class="s1">&#39;V_partial&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">,</span>
+                      <span class="s1">&#39;saved_th&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">saved_th</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">simres</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">SimulationResults</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># shortcut</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>  <span class="c1"># shortcut shortcut</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">result</span>  <span class="c1"># shortcut</span>
+
+            <span class="c1"># Shortcuts to useful plot methods</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">plot</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_quartet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">plot_quartet</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interactive_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">interactive_plot</span></div>
+
+
+<div class="viewcode-block" id="Simulation.check_required_parameters">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.check_required_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_required_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make sure required parameters are present in input dict.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;databases&#39;</span><span class="p">,</span> <span class="s1">&#39;system&#39;</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">cat</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Missing required &#39;</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&#39; entry in input dict.&quot;</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="n">possible_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;thermo&#39;</span><span class="p">,</span> <span class="s1">&#39;thermodynamics&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;databases&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">possible_keys</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Missing required &#39;thermo&#39; or &#39;thermodynamics&#39; entry in &quot;</span>
+                   <span class="s2">&quot;input dict, in &#39;databases&#39; subdict.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">if</span> <span class="s1">&#39;mobility&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;databases&#39;</span><span class="p">]:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Missing required &#39;mobility&#39; entry in input dict, in &quot;</span>
+                   <span class="s2">&quot;&#39;databases&#39; subdict.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;components&#39;</span><span class="p">,</span> <span class="s1">&#39;phases&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">cat</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">]:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required &#39;</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&#39; entry in input dict, in &quot;</span>
+                       <span class="s2">&quot;&#39;system&#39; subdict.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Simulation.get_constituents">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.get_constituents">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_constituents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get atom components from input dict and add vacancies.&quot;&quot;&quot;</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">][</span><span class="s1">&#39;components&#39;</span><span class="p">]</span>
+        <span class="n">comps</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="n">comps</span> <span class="o">=</span> <span class="p">[</span><span class="n">ut</span><span class="o">.</span><span class="n">format_element_symbol</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">]</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;Va&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">inds</span> <span class="o">+</span> <span class="p">[</span><span class="n">comps</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="Simulation.get_database_register">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.get_database_register">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_database_register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get database register from &#39;user_data.toml&#39;.</span>
+
+<span class="sd">        Four categories of databases are handled:</span>
+
+<span class="sd">        * Partial molar volume</span>
+<span class="sd">        * Vacancy formation energy</span>
+<span class="sd">        * Thermodynamics</span>
+<span class="sd">        * Mobility</span>
+
+<span class="sd">        All are optional : if no entry in &#39;user_data.toml&#39;, default to empty</span>
+<span class="sd">        dict.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">db_register</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;partial_molar_volume&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;vacancy_formation_energy&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;thermodynamics&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;mobility&#39;</span><span class="p">]:</span>
+            <span class="n">dct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">db_register</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">return</span> <span class="n">db_register</span></div>
+
+
+<div class="viewcode-block" id="Simulation.get_default_parameters">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.get_default_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_default_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get default parameters.</span>
+
+<span class="sd">        For each parameter defined in</span>
+<span class="sd">        :data:`constants.factory_default_parameters`, look for entry in</span>
+<span class="sd">        &#39;user_data.toml&#39;, and default to entry in</span>
+<span class="sd">        :data:`constants.factory_default_parameters`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">factory</span> <span class="o">=</span> <span class="n">co</span><span class="o">.</span><span class="n">factory_default_parameters</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default_parameters&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">default_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                              <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">factory</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">return</span> <span class="n">default_parameters</span></div>
+
+
+<div class="viewcode-block" id="Simulation.get_thermo_handler">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.get_thermo_handler">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_thermo_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process input parameters and make thermodynamic properties handler.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`thermodynamics.Thermodynamics`</span>
+<span class="sd">            Thermodynamic properties handler.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">possible_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;thermo&#39;</span><span class="p">,</span> <span class="s1">&#39;thermodynamics&#39;</span><span class="p">]</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">possible_keys</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_database_from_register</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;thermodynamics&#39;</span><span class="p">)</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Reading thermodynamic data in &#39;</span><span class="si">{</span><span class="n">fpath</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_thermo_from_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        
+        <span class="n">GfV</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_vacancy_formation_energy</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">db_register</span><span class="p">[</span><span class="s1">&#39;vacancy_formation_energy&#39;</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">[</span><span class="s1">&#39;vacancy_formation_energy&#39;</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Thermodynamics</span><span class="p">(</span><span class="n">params</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">,</span>
+                              <span class="n">GfV</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.get_mob_handler">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.get_mob_handler">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mob_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process input parameters and make mobility properties handler.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`mobility.Mobility`</span>
+<span class="sd">            Mobility properties handler.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="s1">&#39;mobility&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_database_from_register</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;mobility&#39;</span><span class="p">)</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_mob_from_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Reading mobility data in &#39;</span><span class="si">{</span><span class="n">fpath</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Mobility</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">TK</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Simulation.get_database_from_register">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.get_database_from_register">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_database_from_register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get database file path from register.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Database name.</span>
+<span class="sd">        table : str</span>
+<span class="sd">            Database category.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        utils.UserInputError</span>
+<span class="sd">            If database not found in register.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        val : str</span>
+<span class="sd">            Database file path.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_register</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entry &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found in table &#39;</span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">&#39; of &quot;</span>
+                   <span class="s2">&quot;&#39;user_data.toml&#39; file.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="Simulation.get_boundary_conditions">
+<a class="viewcode-back" href="../modules/simu.html#simu.Simulation.get_boundary_conditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_boundary_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_atom_fraction</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make dict of :class:`boundary_conditions.BoundaryConditions` instances.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        min_atom_fraction : min_atom_fraction : float</span>
+<span class="sd">            Minimum atom fraction accepted.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dct : dict</span>
+<span class="sd">            :class:`boundary_conditions.BoundaryConditions` instances.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;boundary_conditions&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">dct</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]:</span>
+            <span class="n">side_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">dct</span><span class="p">[</span><span class="n">side</span><span class="p">]</span> <span class="o">=</span> <span class="n">BoundaryConditions</span><span class="p">(</span><span class="n">side_params</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">,</span>
+                                           <span class="n">min_atom_fraction</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+                                           <span class="n">side</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dct</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="NewSimulation">
+<a class="viewcode-back" href="../modules/simu.html#simu.NewSimulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NewSimulation</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create new simulation from input file or dict.</span>
+
+<span class="sd">    Process user input and make :class:`Simulation` instance. The user is</span>
+<span class="sd">    expected to provide either a file or a dict, using the &#39;file&#39; or &#39;config&#39;</span>
+<span class="sd">    keyword argument.</span>
+
+<span class="sd">    See :class:`Simulation` for documentation on attributes and methods.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="NewSimulation.__init__">
+<a class="viewcode-back" href="../modules/simu.html#simu.NewSimulation.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Class constructor.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">log</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">intro_msg</span><span class="p">(),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">get_timedate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Expecting either a file path (&#39;file&#39;) or a dictionary &quot;</span>
+                   <span class="s2">&quot;(&#39;config&#39;).&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">input_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                    <span class="n">config</span> <span class="o">=</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Input file &#39;</span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+            <span class="n">init_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Reading input file &#39;</span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="n">work_dir</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">stem</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">work_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref</span> <span class="o">=</span> <span class="n">get_timedate</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">init_msg</span> <span class="o">=</span> <span class="s2">&quot;Reading input dictionary.&quot;</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">lut</span><span class="o">.</span><span class="n">CustomLogger</span><span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s2"> Creating &#39;</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">&#39; simulation.&quot;</span><span class="p">)</span>
+        <span class="n">log_fpath</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">baseFilename</span> <span class="k">if</span> <span class="n">log</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Log saved in &#39;</span><span class="si">{</span><span class="n">log_fpath</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">init_msg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="c1"># TODO : this should search through nested dicts</span>
+            <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> found more than once in input file.&quot;</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NewSimulation.prepare_simulation_log">
+<a class="viewcode-back" href="../modules/simu.html#simu.NewSimulation.prepare_simulation_log">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_simulation_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add simulation info to log.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;nt = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">nt</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dt = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;saved_steps = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">saved_steps</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;saved_th = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">saved_th</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Running simulation&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NewSimulation.run">
+<a class="viewcode-back" href="../modules/simu.html#simu.NewSimulation.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_completion</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare log and run diffusion simulation.</span>
+
+<span class="sd">        * Call to :func:`solvers.solver`. The function returns variables at</span>
+<span class="sd">          saved_steps.</span>
+<span class="sd">        * These are logged to file, and stored in simres attribute</span>
+<span class="sd">          (:class:`results.SimulationResults` instance).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        show_completion : bool, optional</span>
+<span class="sd">            Print completion rate to screen while simulation is running. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">        verbose : int, optional</span>
+<span class="sd">            Verbosity level, sets amount of information printed while</span>
+<span class="sd">            simulation is running. Valid values: 0 (less verbose) and 1</span>
+<span class="sd">            (more verbose). The default is 1. See :func:`solvers.solver` and</span>
+<span class="sd">            :func:`solvers.remesh`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        utils.UserInputError</span>
+<span class="sd">            If simulation is not ready.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">,</span> <span class="s1">&#39;initial_conditions&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">cat</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Simulation is not ready to run. Required &#39;</span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                           <span class="s2">&quot;table missing from input.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">prepare_simulation_log</span><span class="p">()</span>
+        <span class="n">resdict</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">mobility</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">initial_conditions</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span><span class="p">,</span>
+                            <span class="n">show_completion</span><span class="p">,</span>
+                            <span class="n">verbose</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">L_mean_kind</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">results</span><span class="p">(</span><span class="n">resdict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">add_results</span><span class="p">(</span><span class="n">resdict</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ReadSimulation">
+<a class="viewcode-back" href="../modules/simu.html#simu.ReadSimulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReadSimulation</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create simulation from log file.</span>
+
+<span class="sd">    See :class:`Simulation` for documentation on attributes and methods.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ReadSimulation.__init__">
+<a class="viewcode-back" href="../modules/simu.html#simu.ReadSimulation.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Read log file of a previous simulation, get input dict and simulation</span>
+<span class="sd">        results and make instance of :class:`results.SimulationResults`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">intro_msg</span><span class="p">(),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="n">work_dir</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">stem</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">lut</span><span class="o">.</span><span class="n">CustomLogger</span><span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">get_timedate</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;INFO   : </span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s2"> Reading &#39;</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">&#39; simulation.&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">config</span><span class="p">,</span> <span class="n">resdict</span> <span class="o">=</span> <span class="n">lut</span><span class="o">.</span><span class="n">parse_log</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Input file &#39;</span><span class="si">{</span><span class="n">fpath</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Reading log file &#39;</span><span class="si">{</span><span class="n">fpath</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tw</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">lut</span><span class="o">.</span><span class="n">MESSAGE_WIDTH</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;INFO   : &quot;</span> <span class="o">+</span> <span class="n">line</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simres</span><span class="o">.</span><span class="n">add_results</span><span class="p">(</span><span class="n">resdict</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="intro_msg">
+<a class="viewcode-back" href="../modules/simu.html#simu.intro_msg">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">intro_msg</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare intro message.&quot;&quot;&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">35</span> <span class="o">+</span> <span class="s1">&#39;  Noda  &#39;</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">36</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;| A Python package for simulating diffusion in multicomponent &#39;</span>
+    <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;alloys.&#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">9</span> <span class="o">+</span> <span class="s1">&#39;|</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;| Version </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">63</span> <span class="o">+</span> <span class="s1">&#39;|</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">79</span>
+    <span class="k">return</span> <span class="n">msg</span></div>
+
+
+<div class="viewcode-block" id="get_timedate">
+<a class="viewcode-back" href="../modules/simu.html#simu.get_timedate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_timedate</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current timedate str.&quot;&quot;&quot;</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">file_format</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%Hh%Mm%S.</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;s&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025-2026, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

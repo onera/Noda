@@ -1,0 +1,220 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>time_grid &mdash; noda 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="utils" href="utils.html" />
+    <link rel="prev" title="thermodynamics" href="thermodynamics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_systems.html">Working with model systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="boundary_conditions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">boundary_conditions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="initial_conditions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">initial_conditions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mobility.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mobility</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="space.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">space</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="temperature.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">temperature</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermodynamics.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermodynamics</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">time_grid</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#time_grid.TimeGrid"><code class="docutils literal notranslate"><span class="pre">TimeGrid</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#time_grid.TimeGrid.__init__"><code class="docutils literal notranslate"><span class="pre">TimeGrid.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#time_grid.TimeGrid.make_time_steps"><code class="docutils literal notranslate"><span class="pre">TimeGrid.make_time_steps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#time_grid.TimeGrid.make_saved_steps"><code class="docutils literal notranslate"><span class="pre">TimeGrid.make_saved_steps()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">time_grid</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/time_grid.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-time_grid">
+<span id="time-grid"></span><h1><a class="reference internal" href="#module-time_grid" title="time_grid"><code class="xref py py-mod docutils literal notranslate"><span class="pre">time_grid</span></code></a><a class="headerlink" href="#module-time_grid" title="Link to this heading"></a></h1>
+<p>Define time grid.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="time_grid.TimeGrid">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">time_grid.</span></span><span class="sig-name descname"><span class="pre">TimeGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DT_funx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/time_grid.html#TimeGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#time_grid.TimeGrid" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Store time-related parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>th</strong> (<em>float</em>) – Simulation time in h.</p></li>
+<li><p><strong>ts</strong> (<em>float</em>) – Simulation time in s.</p></li>
+<li><p><strong>dt_multiplier</strong> (<em>float</em>) – Factor by which default time step is multiplied (see
+<a class="reference internal" href="#time_grid.TimeGrid.make_time_steps" title="time_grid.TimeGrid.make_time_steps"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make_time_steps()</span></code></a>).</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – Time step size in s.</p></li>
+<li><p><strong>nt</strong> (<em>int</em>) – Number of time steps (positions in time sequence), including 0.</p></li>
+<li><p><strong>num_out</strong> (<em>int</em>) – Number of time steps where simulation results are stored and saved on
+file.</p></li>
+<li><p><strong>saved_steps</strong> (<em>list</em><em> of </em><em>int</em>) – Steps for which simulation results are stored and saved in log.</p></li>
+<li><p><strong>saved_th</strong> (<em>list</em><em> of </em><em>float</em>) – Times in h for which simulation results are stored and saved in log.</p></li>
+<li><p><strong>default_params</strong> (<em>dict</em>) – Parameters used when not specified in user input.</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="log_utils.html#log_utils.CustomLogger" title="log_utils.CustomLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">log_utils.CustomLogger</span></code></a>) – Logger.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="time_grid.TimeGrid.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DT_funx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/time_grid.html#TimeGrid.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#time_grid.TimeGrid.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<p>The time step dt is calculated to ensure the stability of explicit
+schemes, with Fourier given in default_parameters. The DT value is
+calculated from the initial atom fraction profile. The time step
+can be made smaller using the user-specified dt_multiplier or
+nt_multiplier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – Time-related input parameters.</p></li>
+<li><p><strong>x</strong> (<em>dict</em><em> of </em><em>1D array</em>) – Initial atom fraction profile.</p></li>
+<li><p><strong>dz</strong> (<em>1D array</em>) – Initial space step.</p></li>
+<li><p><strong>DT_funx</strong> (<em>function</em>) – Calculates tracer diffusion coefficients.</p></li>
+<li><p><strong>default_parameters</strong> (<em>dict</em>) – Parameters used when not specified in user input.</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="log_utils.html#log_utils.CustomLogger" title="log_utils.CustomLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">log_utils.CustomLogger</span></code></a>) – Logger.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If params contains both th and ts.</p></li>
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If params contains both nt_multipler and dt_multiplier.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="time_grid.TimeGrid.make_time_steps">
+<span class="sig-name descname"><span class="pre">make_time_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DT_funx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/time_grid.html#TimeGrid.make_time_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#time_grid.TimeGrid.make_time_steps" title="Link to this definition"></a></dt>
+<dd><p>Calculate time steps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="time_grid.TimeGrid.make_saved_steps">
+<span class="sig-name descname"><span class="pre">make_saved_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/time_grid.html#TimeGrid.make_saved_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#time_grid.TimeGrid.make_saved_steps" title="Link to this definition"></a></dt>
+<dd><p>Add list of time steps where simulation results will be saved to file.</p>
+<p>The time steps are determined based on the num_out parameter.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="thermodynamics.html" class="btn btn-neutral float-left" title="thermodynamics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="utils.html" class="btn btn-neutral float-right" title="utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025-2026, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

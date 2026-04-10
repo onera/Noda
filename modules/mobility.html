@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mobility &mdash; noda 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="paths" href="paths.html" />
+    <link rel="prev" title="log_utils" href="log_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_systems.html">Working with model systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="boundary_conditions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">boundary_conditions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="initial_conditions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">initial_conditions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mobility</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mobility.Mobility"><code class="docutils literal notranslate"><span class="pre">Mobility</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mobility.Mobility.DVa_fun"><code class="docutils literal notranslate"><span class="pre">Mobility.DVa_fun()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mobility.Mobility.__init__"><code class="docutils literal notranslate"><span class="pre">Mobility.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mobility.Mobility.DT_fun"><code class="docutils literal notranslate"><span class="pre">Mobility.DT_fun()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mobility.get_DT_funx"><code class="docutils literal notranslate"><span class="pre">get_DT_funx()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="space.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">space</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="temperature.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">temperature</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermodynamics.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermodynamics</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="time_grid.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">time_grid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mobility</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/mobility.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mobility">
+<span id="mobility"></span><h1><a class="reference internal" href="#module-mobility" title="mobility"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mobility</span></code></a><a class="headerlink" href="#module-mobility" title="Link to this heading"></a></h1>
+<p>Handle mobility properties.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mobility.Mobility">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">mobility.</span></span><span class="sig-name descname"><span class="pre">Mobility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mobility.html#Mobility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mobility.Mobility" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Methods to compute mobility-related quantities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em><em> of </em><em>dicts</em>) – <p>Mobility parameters arranged as follows:</p>
+<p><code class="docutils literal notranslate"><span class="pre">{i:</span> <span class="pre">subdict</span> <span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">comps}</span></code></p>
+<p>subdict: <code class="docutils literal notranslate"><span class="pre">{j:</span> <span class="pre">val</span> <span class="pre">for</span> <span class="pre">j</span> <span class="pre">in</span> <span class="pre">subsystems}</span></code>.</p>
+</p></li>
+<li><p><strong>comps</strong> (<em>list</em><em> of </em><em>str</em>) – Atom components.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">DT_funx(x)</span> <span class="pre">:</span></span></dt>
+<dd><p>Tracer diffusion coefficients, see <a class="reference internal" href="#mobility.get_DT_funx" title="mobility.get_DT_funx"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_DT_funx()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">L_fun(x):</span></span></dt>
+<dd><p>Onsager coefficients, see <a class="reference internal" href="thermo_functions.html#thermo_functions.make_Lfun" title="thermo_functions.make_Lfun"><code class="xref py py-func docutils literal notranslate"><span class="pre">thermo_functions.make_Lfun()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mobility.Mobility.DVa_fun">
+<span class="sig-name descname"><span class="pre">DVa_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mobility.Mobility.DVa_fun" title="Link to this definition"></a></dt>
+<dd><p>Vacancy diffusion coefficient, see
+<a class="reference internal" href="thermo_functions.html#thermo_functions.make_DVa_fun" title="thermo_functions.make_DVa_fun"><code class="xref py py-func docutils literal notranslate"><span class="pre">thermo_functions.make_DVa_fun()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mobility.Mobility.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mobility.html#Mobility.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mobility.Mobility.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em><em> of </em><em>dicts</em>) – <p>Mobility parameters arranged as follows:</p>
+<p><code class="docutils literal notranslate"><span class="pre">{i:</span> <span class="pre">subdict</span> <span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">comps}</span></code></p>
+<p>subdict: <code class="docutils literal notranslate"><span class="pre">{j:</span> <span class="pre">val</span> <span class="pre">for</span> <span class="pre">j</span> <span class="pre">in</span> <span class="pre">subsystems}</span></code>.</p>
+</p></li>
+<li><p><strong>comps</strong> (<em>list</em><em> of </em><em>str</em>) – Atom components.</p></li>
+<li><p><strong>TK</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mobility.Mobility.DT_fun">
+<span class="sig-name descname"><span class="pre">DT_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mobility.html#Mobility.DT_fun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mobility.Mobility.DT_fun" title="Link to this definition"></a></dt>
+<dd><p>Calculate tracer diffusion coefficients of atom components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (np.array (shape (<cite>n_inds</cite>, <cite>nz</cite>))) – Atom fractions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tracer diffusion coefficients, shape (<cite>nz</cite>)
+<code class="docutils literal notranslate"><span class="pre">{k:</span> <span class="pre">DT_k</span> <span class="pre">for</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">components}</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mobility.get_DT_funx">
+<span class="sig-prename descclassname"><span class="pre">mobility.</span></span><span class="sig-name descname"><span class="pre">get_DT_funx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pdict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TK</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mobility.html#get_DT_funx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mobility.get_DT_funx" title="Link to this definition"></a></dt>
+<dd><p>Generate DT function based on <a class="reference internal" href="thermo_functions.html#thermo_functions.lnDT_model" title="thermo_functions.lnDT_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">thermo_functions.lnDT_model()</span></code></a>.</p>
+<p>This uses a Redlich-Kister polynomial with binary and ternary
+interactions of order 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comps</strong> (<em>list</em><em> of </em><em>str</em>) – System constituents.</p></li>
+<li><p><strong>pdict</strong> (<em>dict</em><em> of </em><em>floats</em>) – Mobility parameters.</p></li>
+<li><p><strong>TK</strong> (<em>float</em>) – Temperature in Kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fun</strong> – Function that takes ayom fraction array (shape (<cite>n_inds</cite>, <cite>nz</cite>)) as
+argument, and returns tracer diffusion coefficients evaluated on this
+composition grid (shape (<cite>n_comps</cite>, <cite>nz</cite>)).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="log_utils.html" class="btn btn-neutral float-left" title="log_utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="paths.html" class="btn btn-neutral float-right" title="paths" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025-2026, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

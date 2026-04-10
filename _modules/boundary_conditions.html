@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>boundary_conditions &mdash; noda 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_systems.html">Working with model systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">boundary_conditions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for boundary_conditions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025-2026 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Handle boundary conditions.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.composition_variables</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cv</span>
+
+
+<div class="viewcode-block" id="BoundaryConditions">
+<a class="viewcode-back" href="../modules/boundary_conditions.html#boundary_conditions.BoundaryConditions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BoundaryConditions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Boundary conditions on one side of the domain (left or right).</span>
+
+<span class="sd">    Can be either:</span>
+
+<span class="sd">    * &#39;Dirichlet&#39;: prescribed composition, if &#39;atom_fractions&#39; is provided in</span>
+<span class="sd">      the input parameters.</span>
+<span class="sd">    * &#39;Neumann&#39;: prescribed flux, if &#39;flux&#39; is provided.</span>
+
+<span class="sd">    Defaults to 0-flux if none is specified in the input parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    The class is used through cvar_fun and J_fun, which are both function of</span>
+<span class="sd">    time built from the input parameters, which may be a float or a str with</span>
+<span class="sd">    t as the time variable (ex: (3*t + 2)**(1/2)).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thermo : :class:`thermodynamics.Thermodynamics`</span>
+<span class="sd">        Thermodynamic properties handler.</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System components.</span>
+<span class="sd">    inds : list of str</span>
+<span class="sd">        Independent components.</span>
+<span class="sd">    V_partial : dict</span>
+<span class="sd">        Partial molar volumes. See :func:`data_io.get_volume_data`.</span>
+<span class="sd">    min_atom_fraction : float</span>
+<span class="sd">        Minimum atom fraction accepted.</span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+<span class="sd">    side : str</span>
+<span class="sd">        Side where boundary condition applies (left or right).</span>
+<span class="sd">    type : str</span>
+<span class="sd">        Type of boundary condition (Neumann or Dirichlet).</span>
+<span class="sd">    </span>
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    cvar_fun(t) :</span>
+<span class="sd">        Function of time, returns a</span>
+<span class="sd">        :class:`composition_variables.CompositionVariables` instance.</span>
+<span class="sd">    J_fun(t)</span>
+<span class="sd">        Function of time, returns a flux array.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BoundaryConditions.__init__">
+<a class="viewcode-back" href="../modules/boundary_conditions.html#boundary_conditions.BoundaryConditions.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">V_partial</span><span class="p">,</span> <span class="n">min_atom_fraction</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span>
+                 <span class="n">side</span><span class="p">,</span> <span class="n">ready</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Class constructor.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span> <span class="o">=</span> <span class="n">thermo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">comps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span> <span class="o">=</span> <span class="n">V_partial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_atom_fraction</span> <span class="o">=</span> <span class="n">min_atom_fraction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">side</span> <span class="o">=</span> <span class="n">side</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_BC_type</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">missing_comps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;Dirichlet&quot;</span><span class="p">:</span>
+            <span class="n">xparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_BC_dict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">&quot;atom_fraction&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cvar_fun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_cvar_fun</span><span class="p">(</span><span class="n">xparams</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cvar_fun</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;Neumann&quot;</span><span class="p">:</span>
+            <span class="n">Jparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_BC_dict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">&quot;flux&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Jparams</span><span class="p">:</span>
+                    <span class="n">Jparams</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+                    <span class="n">missing_comps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">J_fun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_J_fun</span><span class="p">(</span><span class="n">Jparams</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">J_fun</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_comps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Auto boundary conditions:&quot;</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">ready</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">missing_comps</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;* </span><span class="si">{</span><span class="n">side</span><span class="si">:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> BC for </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> set to 0-flux&quot;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">ready</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BoundaryConditions.make_BC_type">
+<a class="viewcode-back" href="../modules/boundary_conditions.html#boundary_conditions.BoundaryConditions.make_BC_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_BC_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Guess BC type from input dict and make sure input is consistent.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">side</span><span class="si">}</span><span class="s2"> boundary condition: cannot specify atom &quot;</span>
+                   <span class="s2">&quot;fractions and fluxes.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;atom_fraction&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s1">&#39;Dirichlet&#39;</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="s1">&#39;flux&#39;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">or</span> <span class="n">params</span> <span class="o">==</span> <span class="p">{}):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s1">&#39;Neumann&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">side</span><span class="si">}</span><span class="s2"> boundary condition: invalid variable </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="BoundaryConditions.make_BC_dict">
+<a class="viewcode-back" href="../modules/boundary_conditions.html#boundary_conditions.BoundaryConditions.make_BC_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_BC_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format input dictionary.&quot;&quot;&quot;</span>
+        <span class="n">dct</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">ut</span><span class="o">.</span><span class="n">format_element_symbol</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="BoundaryConditions.make_J_fun">
+<a class="viewcode-back" href="../modules/boundary_conditions.html#boundary_conditions.BoundaryConditions.make_J_fun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_J_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Jparams</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make function that returns a boundary flux array.</span>
+
+<span class="sd">        The inner function returns a 1D array of fluxes, which include</span>
+<span class="sd">        all atom components.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_BC_components</span><span class="p">(</span><span class="n">Jparams</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s1">&#39;flux&#39;</span><span class="p">)</span>
+        <span class="n">fun_dct</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># the default argument is needed because of late-binding (Python</span>
+        <span class="c1"># will look up the value of k when the lambda function is called,</span>
+        <span class="c1"># and by that time k will be the last k value)</span>
+        <span class="n">fun_dct</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">Jparams</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="nb">eval</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]}</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">fun</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="n">J_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">fun_dct</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]}</span>
+            <span class="n">J_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">J_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="k">return</span> <span class="n">J_arr</span>
+        <span class="k">return</span> <span class="n">fun</span></div>
+
+
+<div class="viewcode-block" id="BoundaryConditions.make_cvar_fun">
+<a class="viewcode-back" href="../modules/boundary_conditions.html#boundary_conditions.BoundaryConditions.make_cvar_fun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_cvar_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xparams</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make function that returns a boundary composition variable.</span>
+
+<span class="sd">        The inner function returns a</span>
+<span class="sd">        :class:`composition_variables.CompositionVariables` instance. Two</span>
+<span class="sd">        assumptions are made:</span>
+
+<span class="sd">        * vacancies are at equilibrium,</span>
+<span class="sd">        * the pore fraction is 0.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_BC_components</span><span class="p">(</span><span class="n">xparams</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">,</span> <span class="s1">&#39;atom_fraction&#39;</span><span class="p">)</span>
+        <span class="n">xparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_xBC_values</span><span class="p">(</span><span class="n">xparams</span><span class="p">)</span>
+        <span class="c1"># the default argument is needed because of late-binding (Python</span>
+        <span class="c1"># will look up the value of k when the lambda function is called,</span>
+        <span class="c1"># and by that time k will be the last k value)</span>
+        <span class="n">fun_dct</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">xparams</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="nb">eval</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">}</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">fun</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="n">x_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">fun_dct</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">}</span>
+            <span class="n">x_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">])</span>
+            <span class="n">yVa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">yVa_fun</span><span class="p">(</span><span class="n">x_arr</span><span class="p">)</span>
+            <span class="n">cvar</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CompositionVariables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span> <span class="n">x_dict</span><span class="p">,</span> <span class="n">yVa</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">V_partial</span><span class="p">,</span> <span class="n">fm</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">cvar</span>
+        <span class="k">return</span> <span class="n">fun</span></div>
+
+
+<div class="viewcode-block" id="BoundaryConditions.check_BC_components">
+<a class="viewcode-back" href="../modules/boundary_conditions.html#boundary_conditions.BoundaryConditions.check_BC_components">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_BC_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">found</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">varname</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make sure all expected components are present in the BC.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing or extra elements in &#39;</span><span class="si">{</span><span class="n">varname</span><span class="si">}</span><span class="s2">&#39; boundary &quot;</span>
+                   <span class="s2">&quot;condition.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;found </span><span class="si">{</span><span class="n">found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+
+
+<div class="viewcode-block" id="BoundaryConditions.clip_xBC_values">
+<a class="viewcode-back" href="../modules/boundary_conditions.html#boundary_conditions.BoundaryConditions.clip_xBC_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clip_xBC_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xparams</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make sure atom fractions are within accepted bounds.&quot;&quot;&quot;</span>
+        <span class="n">min_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_atom_fraction</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_atom_fraction</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">xparams</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xparams</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">side</span><span class="si">}</span><span class="s2"> boundary condition : input atom fraction &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2"> replaced by minimum allowed </span><span class="si">{</span><span class="n">min_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">xparams</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">min_val</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">side</span><span class="si">}</span><span class="s2"> boundary condition : input atom fraction &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2"> replaced by maximum allowed </span><span class="si">{</span><span class="n">max_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">xparams</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xparams</span></div>
+
+    
+<div class="viewcode-block" id="BoundaryConditions.x_fun">
+<a class="viewcode-back" href="../modules/boundary_conditions.html#boundary_conditions.BoundaryConditions.x_fun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Atom fractions on boundary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cvar_fun</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">mid</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025-2026, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

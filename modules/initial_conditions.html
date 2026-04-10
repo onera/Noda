@@ -1,0 +1,426 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>initial_conditions &mdash; noda 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="lattice" href="lattice.html" />
+    <link rel="prev" title="data_io" href="data_io.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_systems.html">Working with model systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="boundary_conditions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">boundary_conditions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="composition_variables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">composition_variables</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_io.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data_io</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">initial_conditions</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#initial_conditions.InitialConditions"><code class="docutils literal notranslate"><span class="pre">InitialConditions</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.__init__"><code class="docutils literal notranslate"><span class="pre">InitialConditions.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.make_x_profile"><code class="docutils literal notranslate"><span class="pre">InitialConditions.make_x_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.check_x_profile_from_file"><code class="docutils literal notranslate"><span class="pre">InitialConditions.check_x_profile_from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.prepare_x_params"><code class="docutils literal notranslate"><span class="pre">InitialConditions.prepare_x_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.make_yVa_profile"><code class="docutils literal notranslate"><span class="pre">InitialConditions.make_yVa_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.make_fm_profile"><code class="docutils literal notranslate"><span class="pre">InitialConditions.make_fm_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.make_profile"><code class="docutils literal notranslate"><span class="pre">InitialConditions.make_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.make_profile_from_file"><code class="docutils literal notranslate"><span class="pre">InitialConditions.make_profile_from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.make_profile_from_dict"><code class="docutils literal notranslate"><span class="pre">InitialConditions.make_profile_from_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.make_step_profile"><code class="docutils literal notranslate"><span class="pre">InitialConditions.make_step_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial_conditions.InitialConditions.make_flat_profile"><code class="docutils literal notranslate"><span class="pre">InitialConditions.make_flat_profile()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#initial_conditions.make_step_profile"><code class="docutils literal notranslate"><span class="pre">make_step_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initial_conditions.make_smooth_step_profile"><code class="docutils literal notranslate"><span class="pre">make_smooth_step_profile()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="lattice.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lattice</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="log_utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">log_utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mobility.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mobility</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="paths.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">paths</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">plots</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">results</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simu.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simu</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solvers</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="space.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">space</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="temperature.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">temperature</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermo_functions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo_functions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermodynamics.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">thermodynamics</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="time_grid.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">time_grid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package reference</a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">initial_conditions</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/initial_conditions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-initial_conditions">
+<span id="initial-conditions"></span><h1><a class="reference internal" href="#module-initial_conditions" title="initial_conditions"><code class="xref py py-mod docutils literal notranslate"><span class="pre">initial_conditions</span></code></a><a class="headerlink" href="#module-initial_conditions" title="Link to this heading"></a></h1>
+<p>Define initial conditions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">initial_conditions.</span></span><span class="sig-name descname"><span class="pre">InitialConditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V_partial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_atom_fraction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Provide initial composition profiles.</p>
+<p>Make atom fraction, vacancy site fraction and pore volume fraction
+profiles. These are then used to initialize cvar, an instance of
+<a class="reference internal" href="composition_variables.html#composition_variables.CompositionVariables" title="composition_variables.CompositionVariables"><code class="xref py py-class docutils literal notranslate"><span class="pre">composition_variables.CompositionVariables</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comps</strong> (<em>list</em><em> of </em><em>str</em>) – System components.</p></li>
+<li><p><strong>inds</strong> (<em>list</em><em> of </em><em>str</em>) – Independent components.</p></li>
+<li><p><strong>space</strong> (<a class="reference internal" href="space.html#space.SpaceGrid" title="space.SpaceGrid"><code class="xref py py-class docutils literal notranslate"><span class="pre">space.SpaceGrid</span></code></a>) – Space grid.</p></li>
+<li><p><strong>work_dir</strong> (<em>pathlib.Path</em>) – Work directory.</p></li>
+<li><p><strong>min_atom_fraction</strong> (<em>float</em>) – Minimum atom fraction accepted.</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="log_utils.html#log_utils.CustomLogger" title="log_utils.CustomLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">log_utils.CustomLogger</span></code></a>) – Logger.</p></li>
+<li><p><strong>x</strong> (<em>dict</em><em> of </em><em>1D arrays</em>) – Atom fractions.</p></li>
+<li><p><strong>yVa</strong> (<em>1D array</em>) – Vacancy site fractions.</p></li>
+<li><p><strong>fm</strong> (<em>1D array</em>) – Metal volume fraction profile.</p></li>
+<li><p><strong>cvar</strong> (<a class="reference internal" href="composition_variables.html#composition_variables.CompositionVariables" title="composition_variables.CompositionVariables"><code class="xref py py-class docutils literal notranslate"><span class="pre">composition_variables.CompositionVariables</span></code></a>) – Composition variable, stores all composition data.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V_partial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_atom_fraction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.__init__" title="Link to this definition"></a></dt>
+<dd><p>Class constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – Input parameters related to initial conditions.</p></li>
+<li><p><strong>V_partial</strong> (<em>dict</em>) – Partial molar volumes. See See <code class="xref py py-func docutils literal notranslate"><span class="pre">data_io.get_volume_data()</span></code>.</p></li>
+<li><p><strong>space</strong> (<a class="reference internal" href="space.html#space.SpaceGrid" title="space.SpaceGrid"><code class="xref py py-class docutils literal notranslate"><span class="pre">space.SpaceGrid</span></code></a>) – Space grid.</p></li>
+<li><p><strong>work_dir</strong> (<em>pathlib.Path</em>) – Work directory.</p></li>
+<li><p><strong>min_atom_fraction</strong> (<em>float</em>) – Minimum atom fraction accepted.</p></li>
+<li><p><strong>thermo</strong> (<a class="reference internal" href="thermodynamics.html#thermodynamics.Thermodynamics" title="thermodynamics.Thermodynamics"><code class="xref py py-class docutils literal notranslate"><span class="pre">thermodynamics.Thermodynamics</span></code></a>) – Thermodynamic properties.</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="log_utils.html#log_utils.CustomLogger" title="log_utils.CustomLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">log_utils.CustomLogger</span></code></a>) – Logger.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If custom pore fraction or vacancy fraction profile is provided and
+    lattice is ideal (vacancy site fraction maintained at equilibrium).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.make_x_profile">
+<span class="sig-name descname"><span class="pre">make_x_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.make_x_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.make_x_profile" title="Link to this definition"></a></dt>
+<dd><p>Make initial atom fraction profile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.check_x_profile_from_file">
+<span class="sig-name descname"><span class="pre">check_x_profile_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.check_x_profile_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.check_x_profile_from_file" title="Link to this definition"></a></dt>
+<dd><p>Check initial atom fraction profile.</p>
+<ul class="simple">
+<li><p>Make sure the components match the independent components declared
+in the input file.</p></li>
+<li><p>Enforce bounds on initial atom fractions and print warning.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.prepare_x_params">
+<span class="sig-name descname"><span class="pre">prepare_x_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.prepare_x_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.prepare_x_params" title="Link to this definition"></a></dt>
+<dd><p>Prepare initial atom fraction profile.</p>
+<ul class="simple">
+<li><p>Make sure the constituents in the initial atom fraction profile match
+the list of independent constituents declared in the configuration.</p></li>
+<li><p>Enforce bounds on initial atom fractions and print warning.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.make_yVa_profile">
+<span class="sig-name descname"><span class="pre">make_yVa_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yVa_fun</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.make_yVa_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.make_yVa_profile" title="Link to this definition"></a></dt>
+<dd><p>Make initial vacancy site fraction profile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.make_fm_profile">
+<span class="sig-name descname"><span class="pre">make_fm_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.make_fm_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.make_fm_profile" title="Link to this definition"></a></dt>
+<dd><p>Make initial metal volume fraction profile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.make_profile">
+<span class="sig-name descname"><span class="pre">make_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.make_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.make_profile" title="Link to this definition"></a></dt>
+<dd><p>Make initial profile of variable var.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<em>str</em>) – Variable name (atom_fraction, pore_fraction or vacancy_fraction).</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – User input parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If params contains both ‘file’ and ‘shape’ parameters, or neither.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prof</strong> – Initial profile of variable of interest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of 1D arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.make_profile_from_file">
+<span class="sig-name descname"><span class="pre">make_profile_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.make_profile_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.make_profile_from_file" title="Link to this definition"></a></dt>
+<dd><p>Make initial profile from input file.</p>
+<p>The file is read using np.genfromtxt. It should have the independent
+component profiles arranged as columns, with the components as column
+names. The size of the columns must match that of zm (i.e., <cite>nz - 1</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – User input parameters.</p></li>
+<li><p><strong>msg</strong> (<em>str</em>) – Message indicating which variable is handled.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If left or right parameter is specified in input dict.</p></li>
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If the profile length is not compatible with the space grid.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prof</strong> – Initial profile of variable of interest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of 1D arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.make_profile_from_dict">
+<span class="sig-name descname"><span class="pre">make_profile_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.make_profile_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.make_profile_from_dict" title="Link to this definition"></a></dt>
+<dd><p>Make profile with prescribed shape (step, smooth step, flat).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.make_step_profile">
+<span class="sig-name descname"><span class="pre">make_step_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.make_step_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.make_step_profile" title="Link to this definition"></a></dt>
+<dd><p>Make step or smooth step profile from dict.</p>
+<p>Check input validity and call <a class="reference internal" href="#initial_conditions.make_step_profile" title="initial_conditions.make_step_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_step_profile()</span></code></a> or
+<a class="reference internal" href="#initial_conditions.make_smooth_step_profile" title="initial_conditions.make_smooth_step_profile"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_smooth_step_profile()</span></code></a>. The step profile is obtained
+with an heaviside function, the smooth step profile with an error
+function (see doc).
+The step position is specified using ‘step_fraction’ (fraction of the
+domain size, between 0 and 1) or ‘step_position’ (absolute position in
+m, must be within domain).
+The left and right end values are read from the ‘left’ and ‘right’
+parameters, which must be dicts with the independent components as
+keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<em>str</em>) – Variable name.</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – User input parameters.</p></li>
+<li><p><strong>msg</strong> (<em>str</em>) – Message indicating which variable is handled.</p></li>
+<li><p><strong>shape</strong> (<em>str</em>) – Profile shape, can be ‘step’ or ‘smooth step’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If parameter ‘left’ or ‘right’ is missing.</p></li>
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If a value is smaller than 0 or larger than 1.</p></li>
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If parameters ‘step_fraction’ and ‘step_position’ are missing, or
+    if both are given ;</p></li>
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If ‘step_fraction’ is smaller than 0 or larger than 1.</p></li>
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If ‘step_position’ is outside domain.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prof</strong> – Initial profile of variable of interest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of 1D arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="initial_conditions.InitialConditions.make_flat_profile">
+<span class="sig-name descname"><span class="pre">make_flat_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#InitialConditions.make_flat_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.InitialConditions.make_flat_profile" title="Link to this definition"></a></dt>
+<dd><p>Make flat profile from dict.</p>
+<p>The value is read from the ‘left’ parameter, which must be a dict with
+the independent components as keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – User input parameters.</p></li>
+<li><p><strong>msg</strong> (<em>str</em>) – Message indicating which variable is handled.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If parameter ‘left’ is missing.</p></li>
+<li><p><a class="reference internal" href="utils.html#utils.UserInputError" title="utils.UserInputError"><strong>utils.UserInputError</strong></a> – If parameter ‘right’ is provided.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prof</strong> – Initial profile of variable of interest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of 1D arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="initial_conditions.make_step_profile">
+<span class="sig-prename descclassname"><span class="pre">initial_conditions.</span></span><span class="sig-name descname"><span class="pre">make_step_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zstep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#make_step_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.make_step_profile" title="Link to this definition"></a></dt>
+<dd><p>Make step profiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>1D array</em>) – Node positions, shape (<cite>nz</cite>,).</p></li>
+<li><p><strong>zstep</strong> (<em>float</em>) – Position of the step. If <cite>zstep</cite> falls on the <cite>z</cite> grid, the value at
+<cite>zstep</cite> is the average of the end-values.</p></li>
+<li><p><strong>x_left</strong> (<em>dict</em><em> of </em><em>floats</em>) – Atom fractions on the left-hand side.</p></li>
+<li><p><strong>x_right</strong> (<em>dict</em><em> of </em><em>floats</em>) – Atom fractions on the right-hand side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> – Atom fraction profiles on <cite>z</cite> grid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict of 1D arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="initial_conditions.make_smooth_step_profile">
+<span class="sig-prename descclassname"><span class="pre">initial_conditions.</span></span><span class="sig-name descname"><span class="pre">make_smooth_step_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zstep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/initial_conditions.html#make_smooth_step_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#initial_conditions.make_smooth_step_profile" title="Link to this definition"></a></dt>
+<dd><p>Make smooth step profiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>1D array</em>) – Node positions, shape (<cite>nz</cite>,).</p></li>
+<li><p><strong>zstep</strong> (<em>float</em>) – Position of the step. If <cite>zstep</cite> falls on the <cite>z</cite> grid, the value at
+<cite>zstep</cite> is the average of the end-values.</p></li>
+<li><p><strong>x_left</strong> (<em>dict</em><em> of </em><em>floats</em>) – Atom fractions on the left-hand side.</p></li>
+<li><p><strong>x_right</strong> (<em>dict</em><em> of </em><em>floats</em>) – Atom fractions on the right-hand side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> – Atom fraction profiles on <cite>z</cite> grid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict of 1D arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="data_io.html" class="btn btn-neutral float-left" title="data_io" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="lattice.html" class="btn btn-neutral float-right" title="lattice" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025-2026, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

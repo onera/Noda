@@ -1,0 +1,631 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>initial_conditions &mdash; noda 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fee868cc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            noda
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_use.html">Basic use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_systems.html">Working with model systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_use.html">Advanced use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits and reference papers</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">noda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">initial_conditions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for initial_conditions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025-2026 Onera</span>
+<span class="c1"># This file is part of the Noda package</span>
+<span class="c1"># SPDX-License-Identifier: GPL-3.0-or-later</span>
+
+<span class="sd">&quot;&quot;&quot;Define initial conditions.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ut</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">noda.composition_variables</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cv</span>
+
+<div class="viewcode-block" id="InitialConditions">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InitialConditions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provide initial composition profiles.</span>
+
+<span class="sd">    Make atom fraction, vacancy site fraction and pore volume fraction</span>
+<span class="sd">    profiles. These are then used to initialize cvar, an instance of</span>
+<span class="sd">    :class:`composition_variables.CompositionVariables`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    comps : list of str</span>
+<span class="sd">        System components.</span>
+<span class="sd">    inds : list of str</span>
+<span class="sd">        Independent components.</span>
+<span class="sd">    space : :class:`space.SpaceGrid`</span>
+<span class="sd">        Space grid.</span>
+<span class="sd">    work_dir : pathlib.Path</span>
+<span class="sd">        Work directory.</span>
+<span class="sd">    min_atom_fraction : float</span>
+<span class="sd">        Minimum atom fraction accepted.</span>
+<span class="sd">    logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">        Logger.</span>
+<span class="sd">    x : dict of 1D arrays</span>
+<span class="sd">        Atom fractions.</span>
+<span class="sd">    yVa : 1D array</span>
+<span class="sd">        Vacancy site fractions.</span>
+<span class="sd">    fm : 1D array</span>
+<span class="sd">        Metal volume fraction profile.</span>
+<span class="sd">    cvar : :class:`composition_variables.CompositionVariables`</span>
+<span class="sd">        Composition variable, stores all composition data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="InitialConditions.__init__">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">V_partial</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span>
+                 <span class="n">work_dir</span><span class="p">,</span> <span class="n">min_atom_fraction</span><span class="p">,</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            Input parameters related to initial conditions.</span>
+<span class="sd">        V_partial : dict</span>
+<span class="sd">            Partial molar volumes. See See :func:`data_io.get_volume_data`.</span>
+<span class="sd">        space : :class:`space.SpaceGrid`</span>
+<span class="sd">            Space grid.</span>
+<span class="sd">        work_dir : pathlib.Path</span>
+<span class="sd">            Work directory.</span>
+<span class="sd">        min_atom_fraction : float</span>
+<span class="sd">            Minimum atom fraction accepted.</span>
+<span class="sd">        thermo : :class:`thermodynamics.Thermodynamics`</span>
+<span class="sd">            Thermodynamic properties.</span>
+<span class="sd">        logger : :class:`log_utils.CustomLogger`</span>
+<span class="sd">            Logger.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If custom pore fraction or vacancy fraction profile is provided and</span>
+<span class="sd">            lattice is ideal (vacancy site fraction maintained at equilibrium).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comps</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">comps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">space</span> <span class="o">=</span> <span class="n">space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">work_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_atom_fraction</span> <span class="o">=</span> <span class="n">min_atom_fraction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+
+        <span class="c1"># Make profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_x_profile</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;atom_fraction&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;vacancy_fraction&quot;</span><span class="p">,</span> <span class="s2">&quot;pore_fraction&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">thermo</span><span class="o">.</span><span class="n">ideal_lattice</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Custom initial &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; profile not compatible with &quot;</span>
+                       <span class="s2">&quot;ideal lattice.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yVa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_yVa_profile</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">thermo</span><span class="o">.</span><span class="n">yVa_fun</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_fm_profile</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cvar</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CompositionVariables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yVa</span><span class="p">,</span>
+                                            <span class="n">V_partial</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.make_x_profile">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.make_x_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_x_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make initial atom fraction profile.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s1">&#39;file&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_profile</span><span class="p">(</span><span class="s2">&quot;atom_fraction&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_x_profile_from_file</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_x_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_profile</span><span class="p">(</span><span class="s2">&quot;atom_fraction&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.check_x_profile_from_file">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.check_x_profile_from_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_x_profile_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check initial atom fraction profile.</span>
+
+<span class="sd">        * Make sure the components match the independent components declared</span>
+<span class="sd">          in the input file.</span>
+<span class="sd">        * Enforce bounds on initial atom fractions and print warning.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Missing or extra element in initial atom fraction profile.&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;User input contains data for </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;Declared independent components: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="n">min_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_atom_fraction</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_atom_fraction</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">prof</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">prof</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Some initial atom fractions were replaced&quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot; by minimum allowed </span><span class="si">{</span><span class="n">min_val</span><span class="si">}</span><span class="s2">&quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot; or maximum allowed </span><span class="si">{</span><span class="n">max_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">prof</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.prepare_x_params">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.prepare_x_params">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_x_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare initial atom fraction profile.</span>
+
+<span class="sd">        * Make sure the constituents in the initial atom fraction profile match</span>
+<span class="sd">          the list of independent constituents declared in the configuration.</span>
+<span class="sd">        * Enforce bounds on initial atom fractions and print warning.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_atom_fraction</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_atom_fraction</span>
+        <span class="n">sides</span> <span class="o">=</span> <span class="p">[</span> <span class="n">side</span> <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Reading initial conditions for &#39;atom_fraction&#39;. &quot;</span>
+        <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">sides</span><span class="p">:</span>
+            <span class="n">x_side</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">side</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">x_side</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_val</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2"> replaced &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;by minimum allowed </span><span class="si">{</span><span class="n">min_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_val</span>
+                <span class="k">if</span> <span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2"> replaced &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;by maximum allowed </span><span class="si">{</span><span class="n">max_val</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="n">x_side</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_val</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">side</span><span class="p">])</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="n">side_comps</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">side</span><span class="p">])</span>
+                <span class="n">inds</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Missing or extra element(s) in initial atom fraction &quot;</span>
+                       <span class="s2">&quot;profile.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;Components on </span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2"> side: </span><span class="si">{</span><span class="n">side_comps</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;Declared independent components: </span><span class="si">{</span><span class="n">inds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="k">return</span> <span class="n">params</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.make_yVa_profile">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.make_yVa_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_yVa_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">yVa_fun</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make initial vacancy site fraction profile.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;vacancy_fraction&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">yVa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_profile</span><span class="p">(</span><span class="s2">&quot;vacancy_fraction&quot;</span><span class="p">,</span>
+                                    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;vacancy_fraction&quot;</span><span class="p">])</span>
+            <span class="n">yVa</span> <span class="o">=</span> <span class="n">yVa</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inds</span><span class="p">])</span>
+            <span class="n">yVa</span> <span class="o">=</span> <span class="n">yVa_fun</span><span class="p">(</span><span class="n">x_arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">yVa</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.make_fm_profile">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.make_fm_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_fm_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make initial metal volume fraction profile.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;pore_fraction&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">fp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_profile</span><span class="p">(</span><span class="s2">&quot;pore_fraction&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;pore_fraction&quot;</span><span class="p">])</span>
+            <span class="n">fm</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">fp</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">nz_init</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fm</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.make_profile">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.make_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make initial profile of variable var.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        var : str</span>
+<span class="sd">            Variable name (atom_fraction, pore_fraction or vacancy_fraction).</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            User input parameters.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If params contains both &#39;file&#39; and &#39;shape&#39; parameters, or neither.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        prof : dict of 1D arrays</span>
+<span class="sd">            Initial profile of variable of interest.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Reading initial conditions for &#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+        <span class="n">cond1</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span> <span class="ow">in</span> <span class="n">params</span>
+        <span class="n">cond2</span> <span class="o">=</span> <span class="s2">&quot;shape&quot;</span> <span class="ow">in</span> <span class="n">params</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cond1</span> <span class="ow">and</span> <span class="n">cond2</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">cond1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cond2</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Expecting either &#39;file&#39; or &#39;shape&#39; parameter.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">if</span> <span class="s2">&quot;file&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_profile_from_file</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_profile_from_dict</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">prof</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.make_profile_from_file">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.make_profile_from_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_profile_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make initial profile from input file.</span>
+
+<span class="sd">        The file is read using np.genfromtxt. It should have the independent</span>
+<span class="sd">        component profiles arranged as columns, with the components as column</span>
+<span class="sd">        names. The size of the columns must match that of zm (i.e., `nz - 1`).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            User input parameters.</span>
+<span class="sd">        msg : str</span>
+<span class="sd">            Message indicating which variable is handled.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If left or right parameter is specified in input dict.</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If the profile length is not compatible with the space grid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        prof : dict of 1D arrays</span>
+<span class="sd">            Initial profile of variable of interest.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;left&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">or</span> <span class="s2">&quot;right&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;&#39;file&#39; parameter provided. &quot;</span>
+                    <span class="s2">&quot;Cannot specify &#39;left&#39; or &#39;right&#39; dictionary.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">/</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">zm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">zm_init</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">zm</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Initial atom fraction profile provided in &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> has size </span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">. It is not &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;compatible with initial grid of size </span><span class="si">{</span><span class="n">zm</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> &quot;</span>
+                   <span class="sa">f</span><span class="s2">&quot;(nz = </span><span class="si">{</span><span class="n">zm</span><span class="o">.</span><span class="n">size</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> nodes i.e. </span><span class="si">{</span><span class="n">zm</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> volumes).&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="n">prof</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">arr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">arr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">prof</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.make_profile_from_dict">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.make_profile_from_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_profile_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make profile with prescribed shape (step, smooth step, flat).&quot;&quot;&quot;</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Profile shape is &#39;</span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+        <span class="k">if</span> <span class="n">shape</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="s1">&#39;smooth step&#39;</span><span class="p">]:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_step_profile</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">shape</span> <span class="o">==</span> <span class="s1">&#39;flat&#39;</span><span class="p">:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_flat_profile</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;Invalid profile shape. Expecting &#39;flat&#39;, &#39;step&#39; or &quot;</span>
+                    <span class="s2">&quot;&#39;smooth step&#39;.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">return</span> <span class="n">prof</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.make_step_profile">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.make_step_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_step_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make step or smooth step profile from dict.</span>
+
+<span class="sd">        Check input validity and call :func:`make_step_profile` or</span>
+<span class="sd">        :func:`make_smooth_step_profile`. The step profile is obtained</span>
+<span class="sd">        with an heaviside function, the smooth step profile with an error</span>
+<span class="sd">        function (see doc).</span>
+<span class="sd">        The step position is specified using &#39;step_fraction&#39; (fraction of the</span>
+<span class="sd">        domain size, between 0 and 1) or &#39;step_position&#39; (absolute position in</span>
+<span class="sd">        m, must be within domain).</span>
+<span class="sd">        The left and right end values are read from the &#39;left&#39; and &#39;right&#39;</span>
+<span class="sd">        parameters, which must be dicts with the independent components as</span>
+<span class="sd">        keys.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        var : str</span>
+<span class="sd">            Variable name.</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            User input parameters.</span>
+<span class="sd">        msg : str</span>
+<span class="sd">            Message indicating which variable is handled.</span>
+<span class="sd">        shape : str</span>
+<span class="sd">            Profile shape, can be &#39;step&#39; or &#39;smooth step&#39;.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If parameter &#39;left&#39; or &#39;right&#39; is missing.</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If a value is smaller than 0 or larger than 1.</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If parameters &#39;step_fraction&#39; and &#39;step_position&#39; are missing, or</span>
+<span class="sd">            if both are given ;</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If &#39;step_fraction&#39; is smaller than 0 or larger than 1.</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If &#39;step_position&#39; is outside domain.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        prof : dict of 1D arrays</span>
+<span class="sd">            Initial profile of variable of interest.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">zm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">zm_init</span>
+        <span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">z_init</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">]</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Parameters &#39;left&#39; and &#39;right&#39; are required.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;vacancy_fraction&quot;</span><span class="p">,</span> <span class="s2">&quot;pore_fraction&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">]:</span>
+                <span class="n">side</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="n">side</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">side_name</span><span class="p">,</span> <span class="n">side</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">side</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value of </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">side_name</span><span class="si">}</span><span class="s2"> side must be &quot;</span>
+                            <span class="s2">&quot;between 0 and 1.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="n">cond1</span> <span class="o">=</span> <span class="s2">&quot;step_fraction&quot;</span> <span class="ow">in</span> <span class="n">params</span>
+        <span class="n">cond2</span> <span class="o">=</span> <span class="s2">&quot;step_position&quot;</span> <span class="ow">in</span> <span class="n">params</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cond1</span> <span class="ow">and</span> <span class="n">cond2</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">cond1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cond2</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;Expecting either &#39;step_fraction&#39; or &quot;</span>
+                    <span class="s2">&quot;&#39;step_position&#39;.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">if</span> <span class="s2">&quot;step_fraction&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;step_fraction&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span>
+                <span class="ow">or</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;step_fraction&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;&#39;step_fraction&#39; should be between 0 and 1.&quot;</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+            <span class="n">zstep</span> <span class="o">=</span> <span class="n">zmin</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;step_fraction&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">zmax</span> <span class="o">-</span> <span class="n">zmin</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;step_position&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">zmin</span>
+                <span class="ow">or</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;step_position&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">zmax</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;&#39;step_position&#39; should be between zmin &quot;</span>
+                        <span class="s2">&quot;(</span><span class="si">{zmin}</span><span class="s2">) and zmax (</span><span class="si">{zmax}</span><span class="s2">).&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+            <span class="n">zstep</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;step_position&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">shape</span> <span class="o">==</span> <span class="s1">&#39;step&#39;</span><span class="p">:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="n">make_step_profile</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="n">make_smooth_step_profile</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">prof</span></div>
+
+
+<div class="viewcode-block" id="InitialConditions.make_flat_profile">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.InitialConditions.make_flat_profile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_flat_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make flat profile from dict.</span>
+
+<span class="sd">        The value is read from the &#39;left&#39; parameter, which must be a dict with</span>
+<span class="sd">        the independent components as keys.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            User input parameters.</span>
+<span class="sd">        msg : str</span>
+<span class="sd">            Message indicating which variable is handled.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If parameter &#39;left&#39; is missing.</span>
+<span class="sd">        :class:`utils.UserInputError`</span>
+<span class="sd">            If parameter &#39;right&#39; is provided.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        prof : dict of 1D arrays</span>
+<span class="sd">            Initial profile of variable of interest.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">zm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">zm_init</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Parameter &#39;left&#39; is required.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="n">prof</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">zm</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">left</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">if</span> <span class="s1">&#39;right&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Cannot specify parameter &#39;right&#39;.&quot;</span>
+            <span class="k">raise</span> <span class="n">ut</span><span class="o">.</span><span class="n">UserInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">return</span> <span class="n">prof</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="make_step_profile">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.make_step_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_step_profile</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">x_left</span><span class="p">,</span> <span class="n">x_right</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make step profiles.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z: 1D array</span>
+<span class="sd">        Node positions, shape (`nz`,).</span>
+<span class="sd">    zstep: float</span>
+<span class="sd">        Position of the step. If `zstep` falls on the `z` grid, the value at</span>
+<span class="sd">        `zstep` is the average of the end-values.</span>
+<span class="sd">    x_left: dict of floats</span>
+<span class="sd">        Atom fractions on the left-hand side.</span>
+<span class="sd">    x_right: dict of floats</span>
+<span class="sd">        Atom fractions on the right-hand side.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x: dict of 1D arrays</span>
+<span class="sd">        Atom fraction profiles on `z` grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x_left</span><span class="p">:</span>
+        <span class="n">xl</span> <span class="o">=</span> <span class="n">x_left</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">xr</span> <span class="o">=</span> <span class="n">x_right</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># Round to avoid floating point precision error, which can place zstep</span>
+        <span class="c1"># off the z grid when it should in fact be on a grid point.</span>
+        <span class="n">z_rel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">xl</span> <span class="o">+</span> <span class="p">(</span><span class="n">xr</span> <span class="o">-</span> <span class="n">xl</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">heaviside</span><span class="p">(</span><span class="n">z_rel</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="make_smooth_step_profile">
+<a class="viewcode-back" href="../modules/initial_conditions.html#initial_conditions.make_smooth_step_profile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_smooth_step_profile</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">x_left</span><span class="p">,</span> <span class="n">x_right</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make smooth step profiles.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z: 1D array</span>
+<span class="sd">        Node positions, shape (`nz`,).</span>
+<span class="sd">    zstep: float</span>
+<span class="sd">        Position of the step. If `zstep` falls on the `z` grid, the value at</span>
+<span class="sd">        `zstep` is the average of the end-values.</span>
+<span class="sd">    x_left: dict of floats</span>
+<span class="sd">        Atom fractions on the left-hand side.</span>
+<span class="sd">    x_right: dict of floats</span>
+<span class="sd">        Atom fractions on the right-hand side.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x: dict of 1D arrays</span>
+<span class="sd">        Atom fraction profiles on `z` grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">zspan</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x_left</span><span class="p">:</span>
+        <span class="n">xl</span> <span class="o">=</span> <span class="n">x_left</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">xr</span> <span class="o">=</span> <span class="n">x_right</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># Round to avoid floating point precision error, which can place zstep</span>
+        <span class="c1"># off the z grid when it should in fact be on a grid point.</span>
+        <span class="n">z_rel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">zstep</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">xl</span> <span class="o">+</span> <span class="n">xr</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xr</span> <span class="o">-</span> <span class="n">xl</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sp</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="n">z_rel</span><span class="o">/</span><span class="n">zspan</span><span class="o">*</span><span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025-2026, Onera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
